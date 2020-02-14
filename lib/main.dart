@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:carousel_pro/carousel_pro.dart';
 
 void main(){
   runApp(
@@ -17,6 +18,36 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    Widget image_carousel=new Container(
+      height:200.0,
+      child:new Carousel(
+        boxFit: BoxFit.cover,
+        images:[
+
+
+        ],
+        autoplay: true,
+        animationCurve: Curves.fastOutSlowIn,
+        animationDuration: Duration(milliseconds: 1000),
+      ),
+    );
+  Widget image_carousel1=new Container(
+    height:200.00,
+    child:new Carousel(
+      boxFit: BoxFit.cover,
+      images:[
+        AssetImage('images/armani.png'),
+        AssetImage('images/watches-111a.png'),
+        AssetImage('images/Guide-mens-smart-casual-dress-code15@2x.png'),
+        AssetImage('images/men-jeans@2x.png'),
+
+      ],
+      autoplay: true,
+      animationCurve: Curves.fastOutSlowIn,
+      animationDuration: Duration(milliseconds: 1000),
+    ),
+  );
+
     return Scaffold(
       appBar: new AppBar(
 
@@ -40,7 +71,8 @@ class _HomePageState extends State<HomePage> {
             InkWell(
               onTap: (){},
               child: ListTile(
-                title: Text('Men')
+
+                title: Text('Men'),
               ),
             ),
 
@@ -154,6 +186,12 @@ class _HomePageState extends State<HomePage> {
 
           ],
         ),
+      ),
+      body:new ListView(
+        children: <Widget>[
+          image_carousel,
+          image_carousel1
+        ],
       ),
     );
   }
