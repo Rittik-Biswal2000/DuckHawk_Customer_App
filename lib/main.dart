@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_duckhawk/components/horizontal_listview.dart';
 
 void main(){
   runApp(
@@ -150,9 +151,19 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
+
+
           ],
         ),
       ),
+
+      body: new ListView(
+        children: <Widget>[
+          new Padding(padding: const EdgeInsets.all(2.0),
+          child: new Text('Categories'),),
+          HorizontalList(),
+        ],
+      )
     );
   }
 }
