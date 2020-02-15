@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class ProductDetails extends StatefulWidget {
-  final product_price;
+  final product_name;
   final product_picture;
 
   ProductDetails({
-    this.product_price,
+    this.product_name,
     this.product_picture});
 
   @override
@@ -19,7 +19,7 @@ class _ProductDetailsState extends State<ProductDetails> {
         appBar: new AppBar(
 
           backgroundColor: Color(0xff104670), //CHECK COLOR CODE
-          title: Text('Your Location \nBURLA'),
+          title: Text(widget.product_name),
 
           actions: <Widget>[
             new IconButton(

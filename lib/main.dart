@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:project_duckhawk/components/horizontal_listview.dart';
 import 'package:project_duckhawk/components/products.dart';
+import 'package:project_duckhawk/pages/product_details.dart';
+
 
 void main(){
   runApp(
@@ -133,13 +135,86 @@ class _HomePageState extends State<HomePage> {
 
             Divider(),
 
+            Container(
+              color: Color(0xffaaaaaa),
 
-            InkWell(
+              child:new Column(
+                children: <Widget>[
+                  InkWell(
+                    onTap: (){},
+                    child: ListTile(
+                        title: Text('My Orders')
+                    ),
+                  ),
+
+                  InkWell(
+                    onTap: (){},
+                    child: ListTile(
+                        title: Text('My Cart')
+                    ),
+                  ),
+
+                  InkWell(
+                    onTap: (){},
+                    child: ListTile(
+                        title: Text('Account')
+                    ),
+                  ),
+                  InkWell(
+                    onTap: (){},
+                    child: ListTile(
+                        title: Text('Notifications')
+                    ),
+                  ),
+
+                  InkWell(
+                    onTap: (){},
+                    child: ListTile(
+                        title: Text('Budget')
+                    ),
+                  ),
+
+                  InkWell(
+                    onTap: (){},
+                    child: ListTile(
+                        title: Text('Share')
+                    ),
+                  ),
+
+                  InkWell(
+                    onTap: (){},
+                    child: ListTile(
+                        title: Text('Settings')
+                    ),
+                  ),
+
+                  InkWell(
+                    onTap: (){},
+                    child: ListTile(
+                        title: Text('LOGOUT')
+                    ),
+                  ),
+
+                  InkWell(
+                    onTap: (){},
+                    child: ListTile(
+                        title: Text('HELP')
+                    ),
+                  )
+
+                ],
+              )
+
+            ),
+
+
+            /*InkWell(
               onTap: (){},
               child: ListTile(
                   title: Text('My Orders')
               ),
             ),
+
 
             InkWell(
               onTap: (){},
@@ -194,7 +269,10 @@ class _HomePageState extends State<HomePage> {
               child: ListTile(
                   title: Text('HELP')
               ),
-            ),
+            )*/
+
+
+
 
 
 
@@ -218,7 +296,7 @@ class _HomePageState extends State<HomePage> {
             height: 320.0,
             child: products(),
           ),
-          new Padding(padding: const EdgeInsets.all(20.0),
+    /*new Padding(padding: const EdgeInsets.all(20.0),
             child:new Text('Electronics'
             ) ,),
 
@@ -226,7 +304,7 @@ class _HomePageState extends State<HomePage> {
             height:320.0,
             child:products(),
 
-          ),
+          ),*/
         ],
       ),
 
