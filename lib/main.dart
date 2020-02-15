@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:project_duckhawk/components/horizontal_listview.dart';
@@ -208,68 +209,6 @@ class _HomePageState extends State<HomePage> {
             ),
 
 
-            /*InkWell(
-              onTap: (){},
-              child: ListTile(
-                  title: Text('My Orders')
-              ),
-            ),
-
-
-            InkWell(
-              onTap: (){},
-              child: ListTile(
-                  title: Text('My Cart')
-              ),
-            ),
-
-            InkWell(
-              onTap: (){},
-              child: ListTile(
-                  title: Text('Account')
-              ),
-            ),
-            InkWell(
-              onTap: (){},
-              child: ListTile(
-                  title: Text('Notifications')
-              ),
-            ),
-
-            InkWell(
-              onTap: (){},
-              child: ListTile(
-                  title: Text('Budget')
-              ),
-            ),
-
-            InkWell(
-              onTap: (){},
-              child: ListTile(
-                  title: Text('Share')
-              ),
-            ),
-
-            InkWell(
-              onTap: (){},
-              child: ListTile(
-                  title: Text('Settings')
-              ),
-            ),
-
-            InkWell(
-              onTap: (){},
-              child: ListTile(
-                  title: Text('LOGOUT')
-              ),
-            ),
-
-            InkWell(
-              onTap: (){},
-              child: ListTile(
-                  title: Text('HELP')
-              ),
-            )*/
 
 
 
@@ -287,9 +226,18 @@ class _HomePageState extends State<HomePage> {
           new Padding(padding: const EdgeInsets.all(8.0)),
           image_carousel,
           image_carousel1,
-          new Padding(padding: const EdgeInsets.all(20.0),
-            child:new Text('Fashion'
-                ) ,),
+
+          Container(
+            padding: const EdgeInsets.all(10.0),
+              color: Color(0xff104670),
+                child:
+                new Row(
+                  children: <Widget>[
+                    new Icon(Icons.arrow_right),
+                    new Text('Fashion'),
+                  ],
+                )
+            ),
 
 
           Container(

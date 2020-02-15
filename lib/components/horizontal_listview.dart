@@ -58,7 +58,7 @@ class Category extends StatelessWidget {
             child: Container(
               width: 100.0,
               child: ListTile(
-                title: Image.asset(image_location,width: 80.0, height: 50.0,),
+                title: Image.asset(image_location,width: 80.0, height: 70.0,),
                 subtitle: Container(
                   alignment: Alignment.topCenter,
                     child: Text(image_caption, style: new TextStyle(fontSize: 12.0),),
