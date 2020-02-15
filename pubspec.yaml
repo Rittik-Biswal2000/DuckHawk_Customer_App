@@ -58,6 +58,10 @@ flutter:
     - images/Guide-mens-smart-casual-dress-code15.png
     - images/pexels-photo-46710.png
     - images/16x9.png
+    - images/download.png
+    - images/download (1).png
+    - images/download (2).png
+    - images/download (4).png
 
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
