@@ -1,9 +1,32 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:project_duckhawk/pages/product_details.dart';
+import 'dart:typed_data';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class products extends StatefulWidget {
+  final FirebaseStorage storage = FirebaseStorage(
+      app: Firestore.instance.app,
+      storageBucket: 'gs://duckhawk-1699a.appspot.com');
+  Uint8List imageBytes;
+  String errorMsg;
+
   final item;
   var product_list;
+
+  String a="pro11.jpg";
+  image() {
+
+    storage.ref().child(a).getData(10000000).then((data) =>
+    {
+      imageBytes = data
+    }
+    ).catchError((e) =>
+    {
+      errorMsg = e.error
+    }
+    );
+  }
 
   products(this.item)
   {
@@ -27,14 +50,19 @@ class products extends StatefulWidget {
         ];
         break;
       case 'electronics':
+        image();
+        var img = imageBytes != null ? Image.memory(
+          imageBytes,
+          fit: BoxFit.cover,
+        ) : Text(errorMsg != null ? errorMsg : "Loading...");
         product_list = [
           {
-            "name": "Sneakers",
+            "name": a,
             "picture": "images/16x9.png",
           },
           {
-            "name": "Sun Glasses",
-            "picture": "images/pexels-photo-46710.png",
+            "name" : "Sun",
+            "picture": img.toString(),
           },
         ];
 
@@ -42,9 +70,13 @@ class products extends StatefulWidget {
   }
   @override
   _ProductsState createState() => _ProductsState(product_list: this.product_list);
+
+
 }
 
 class _ProductsState extends State<products> {
+
+
   final product_list;
 
   _ProductsState({this.product_list});

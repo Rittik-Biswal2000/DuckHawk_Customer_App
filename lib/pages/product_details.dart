@@ -37,7 +37,7 @@ class _ProductDetailsState extends State<ProductDetails> {
               Icons.shopping_cart,color: Colors.white,
             ),
             onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder:(context)=>new cart(null,null,null)));
+              Navigator.push(context, MaterialPageRoute(builder:(context)=>new cart()));
             },)
         ],
       ),

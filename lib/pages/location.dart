@@ -93,11 +93,25 @@ class _MyLocationState extends State<MyLocation> {
                     mode:Mode.overlay,
                     language: "en",
                     components: [new Component(Component.country, "in"),searchandNavigate()]);
+                    //displayPrediction(p);
+                    /*if(p!=null) {
+                      PlacesDetailsResponse detail = await _places
+                          .getDetailsByPlaceId(p.placeId);
+                      var placeId = p.placeId;
+                      double lt=detail.result.geometry.location.lat;
+                      double ln=detail.result.geometry.location.lng;
+                      var adress = await Geocoder.local.findAddressesFromQuery(
+                          p.description);
+                      print(adress);
+                      print(lt);
+                      print(ln);
+                    }*/
 
 
                     //searchandNavigate();
                     //searchAddr=p as String;
                     //displayPrediction(p);
+                    // searchAddr = (await Geocoder.local.findAddressesFromQuery(p.description)) as String;
                   },*/
                   textInputAction: TextInputAction.go,
                   decoration: InputDecoration(
@@ -223,7 +237,7 @@ _getAddressFromLatLng(result[0].position.latitude, result[0].position.longitude)
     Navigator.push(context, MaterialPageRoute(builder: (context)=>new HomePage(first.addressLine)));
   }
 
-  Future<Null> displayPrediction(Prediction p) async {
+ /*Future<Null> displayPrediction(Prediction p) async {
     if (p != null) {
       PlacesDetailsResponse detail =
       await _places.getDetailsByPlaceId(p.placeId);
@@ -232,14 +246,16 @@ _getAddressFromLatLng(result[0].position.latitude, result[0].position.longitude)
       double lat = detail.result.geometry.location.lat;
       double lng = detail.result.geometry.location.lng;
 
-      var address = await Geocoder.local.findAddressesFromQuery(p.description);
+       searchAddr = (await Geocoder.local.findAddressesFromQuery(p.description)) as String;
 
       print(lat);
       print(lng);
+      //_getAddressFromLatLng(lat, lng);
+      searchandNavigate();
     }
   }
 
-
+*/
 
 
 

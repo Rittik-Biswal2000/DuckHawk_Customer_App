@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project_duckhawk/pages/cart.dart';
 import 'package:project_duckhawk/pages/indiv_product.dart';
+import 'package:project_duckhawk/pages/item_info.dart';
 import 'package:project_duckhawk/pages/product_info.dart';
 
 
@@ -38,7 +39,7 @@ class _ProductInfoState extends State<ProductInfo> {
               Icons.shopping_cart,color: Colors.white,
             ),
             onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder:(context)=>new cart(null,null,null)));
+              Navigator.push(context, MaterialPageRoute(builder:(context)=>new cart()));
             },)
         ],
       ),
@@ -155,8 +156,10 @@ class Single_prod extends StatelessWidget {
           tag: prod_name,
           child: Material(
             child: InkWell(
-              onTap: () => Navigator.of(context).push(new MaterialPageRoute(
-                  builder: (context) => new indivProduct(prod_name,prod_pricture,prod_price))),
+              onTap: () => /*Navigator.of(context).push(new MaterialPageRoute(
+                  builder: (context) => new indivProduct(prod_name,prod_pricture,prod_price))),*/
+              Navigator.of(context).push(new MaterialPageRoute(
+                  builder: (context) => new item_info(null))),
               child: GridTile(
                   footer: Container(
                     color: Colors.white70,

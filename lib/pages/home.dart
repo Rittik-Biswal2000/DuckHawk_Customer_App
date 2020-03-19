@@ -1,31 +1,16 @@
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:project_duckhawk/components/horizontal_listview.dart';
 import 'package:project_duckhawk/components/products.dart';
-import 'package:project_duckhawk/pages/account.dart';
-import 'package:project_duckhawk/pages/cart1.dart';
-import 'package:project_duckhawk/pages/electronics.dart';
 import 'package:project_duckhawk/pages/login_page.dart';
 import 'package:project_duckhawk/pages/product_details.dart';
 import 'package:project_duckhawk/pages/cart.dart';
 import 'package:project_duckhawk/pages/location.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:project_duckhawk/pages/signup.dart';
-import './pages/login_page.dart';
 
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
-FirebaseUser user;
-
-void main() {
-  runApp(MaterialApp(debugShowCheckedModeBanner: false,
-      //home:LoginPage()));
-
-
-      home: HomePage(null)));
-}
-
 class HomePage extends StatefulWidget {
 
   final add;
@@ -35,7 +20,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 Future<void> currentUser() async {
-  user = await FirebaseAuth.instance.currentUser();
+  FirebaseUser user = await FirebaseAuth.instance.currentUser();
   print(user.email);
   print(user.uid);
   print(user.displayName);
@@ -55,9 +40,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState(){
     super.initState();
-    getproducts();
-    //getposts();
-    cart();
 
     _getCurrentLocation();
     _getCurrentUser();
@@ -106,15 +88,15 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: new AppBar(
-            backgroundColor: Color(0xff104670),
-            title: Container(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Column(
-                  children: <Widget>[
-                    Row(
-                      children:
-                     <Widget>[
+        backgroundColor: Color(0xff104670),
+        title: Container(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    children:
+                    <Widget>[
                       new IconButton(
                         icon: new Icon(Icons.place),
                         onPressed: () {
@@ -123,26 +105,26 @@ class _HomePageState extends State<HomePage> {
                           currentUser();
                         },
                       ),
-                       SingleChildScrollView(
-                           child: Container(
-                               width: 200,
-                              child: new FlatButton(onPressed: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>new MyLocation()));
-                              }, child: Text("${widget.add}",style: new TextStyle(fontSize: 15.0, color: Colors.white),))),)
-                             //child: new FlatButton(onPre,new Text("${widget.add}",style: new TextStyle(fontSize: 15.0),)))),
+                      SingleChildScrollView(
+                        child: Container(
+                            width: 200,
+                            child: new FlatButton(onPressed: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>new MyLocation()));
+                            }, child: Text("${widget.add}",style: new TextStyle(fontSize: 15.0, color: Colors.white),))),)
+                      //child: new FlatButton(onPre,new Text("${widget.add}",style: new TextStyle(fontSize: 15.0),)))),
 
 
                     ],
                   ),
-              ],
+                ],
 
-            ),
-                )
-            ),
+              ),
+            )
+        ),
         //leading:new Text("hi"),
 
 
-          ),
+      ),
 
 
       /*
@@ -179,9 +161,7 @@ class _HomePageState extends State<HomePage> {
               flex: 1,
               child: IconButton(
                 icon: new Icon(Icons.add_shopping_cart),
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart1()));
-                },
+                onPressed: () => _onClick('Button1'),
               ),
             ),
             Expanded(
@@ -243,9 +223,7 @@ class _HomePageState extends State<HomePage> {
               child: ListTile(title: Text('Women')),
             ),
             InkWell(
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>new electronics()));
-              },
+              onTap: () {},
               child: ListTile(title: Text('Electronics')),
             ),
             InkWell(
@@ -280,9 +258,7 @@ class _HomePageState extends State<HomePage> {
                       child: ListTile(title: Text('My Cart')),
                     ),
                     InkWell(
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>new account()));
-                      },
+                      onTap: () {},
                       child: ListTile(title: Text('Account')),
                     ),
                     InkWell(
@@ -377,56 +353,8 @@ class _HomePageState extends State<HomePage> {
             ) ,),*/
 
           Container(
-            //height:120.0,
-            child: InkWell(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new electronics()));
-                },
-                child: Container(
-                  //width: 100.0,
-                  child: ListTile(
-                    title: Image.asset('images/speaker.jpg', height: 70.0,),
-                    subtitle: Container(
-                      alignment: Alignment.topCenter,
-                      child: Text('Speakers', style: new TextStyle(fontSize: 12.0),),
-                    ),
-                  ),
-                )
-            ),
-            //child: products('electronics'),
-             /*child:InkWell(
-              /*onTap: () => Navigator.of(context).push(new MaterialPageRoute(
-                  builder: (context) => new ProductDetails(
-                    product_name: prod_name,
-                  ))),*/
-              child: GridTile(
-                  footer: Container(
-                    color: Colors.white70,
-                    child: ListTile(
-                      leading: Text(
-                        "Speakers",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      /*title: Text(
-                        "\$$prod_price",
-                        style: TextStyle(
-                            color: Colors.red, fontWeight: FontWeight.w800),
-                      ),
-                      subtitle: Text(
-                        "\$$prod_old_price",
-                        style: TextStyle(
-                            color: Colors.black54,
-                            fontWeight: FontWeight.w800,
-                            decoration
-                                :TextDecoration.lineThrough),
-                      ),*/
-                    ),
-                  ),
-                  child: Image.asset(
-                    'images/speaker.jpg',width: 40.0,
-                    fit: BoxFit.cover,
-                  )),
-            ),*/
+            height:120.0,
+            child: products('electronics'),
           ),
         ],
       ),

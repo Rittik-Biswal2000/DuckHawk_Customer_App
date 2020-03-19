@@ -1,4 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:project_duckhawk/main.dart';
 import 'package:project_duckhawk/pages/cart.dart';
 
 class indivProduct extends StatefulWidget {
@@ -88,13 +93,14 @@ class _indivProductState extends State<indivProduct> {
             children: <Widget>[
               Expanded(
                 child:MaterialButton(
-                  onPressed:(){
-                    Navigator.push(context,MaterialPageRoute(builder:(context)=>new cart(widget.prod_pic,widget.prod_name,widget.prod_price)));
+                  onPressed:()  {
+                    addtocart();
+                    Navigator.push(context,MaterialPageRoute(builder:(context)=>new cart()));
                   },
                   color:Colors.redAccent,
                   textColor: Colors.white,
                   elevation: 0.2,
-                    child:new Text("Buy Now"),
+                    child:new Text(currentUser().toString()),
                 ),
               ),
               new IconButton(icon:Icon(Icons.add_shopping_cart),onPressed: (){}),
@@ -110,5 +116,27 @@ class _indivProductState extends State<indivProduct> {
 
       ),
     );
+  }
+
+  Future<void> addtocart() async {
+    DocumentReference ref;
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    final Firestore _firestore = Firestore.instance;
+    FirebaseUser user = await _auth.currentUser();
+    ref = _firestore.collection('users').document(user.uid);
+    print("hi");
+    print(ref.documentID);
+    ref.collection('cart').add({
+      'prod_pic':widget.prod_pic,
+      'prod_name':widget.prod_name,
+      'prod_price':widget.prod_price
+    });/*
+    Firestore.instance.collection('/users').document().collection('/Carts').add({
+      'prod_pic':widget.prod_pic,
+      'prod_name':widget.prod_name,
+      'prod_price':widget.prod_price
+
+
+    });*/
   }
 }

@@ -1,27 +1,64 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:project_duckhawk/pages/account.dart';
 class Cart_Products extends StatefulWidget {
   final c_p_pic;
   final c_p_name;
   final c_p_price;
-
 
   Cart_Products(this.c_p_pic, this.c_p_name, this.c_p_price);
 
   @override
   _Cart_ProductsState createState() => _Cart_ProductsState();
 }
+String prod_pic;
+String prod_price;
+String prod_name;
+DocumentReference ref;
+getUserDoc() async {
+  print("hi");
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final Firestore _firestore = Firestore.instance;
 
+  FirebaseUser user = await _auth.currentUser();
+  ref = _firestore.collection('users').document(user.uid);
+  _firestore
+      .collection("users").document(user.uid).collection('cart')
+      .getDocuments()
+      .then((QuerySnapshot snapshot) {
+    //snapshot.documents.forEach((f) => print('${f.data}}'));
+    snapshot.documents.forEach((f) => s = '${f.data}');
+    print(s);
+
+    //print(s.length);
+    print(s.split(',')[0]);
+    print(s.split(',')[1]);
+    print(s.split(',')[2]);
+    //print(s.split(',')[3]);
+    //
+
+    //print("s is " + s);
+
+    //g = s.toString();
+    prod_pic=s.split(',')[0];
+    prod_price=s.split(',')[1];
+    prod_name=s.split(',')[2];
+  });
+
+}
 class _Cart_ProductsState extends State<Cart_Products> {
   var Products_on_the_cart=[
+    getUserDoc(),
     {
-      "name": "Blazer1",
-      "picture": "images/download.png",
-      "price": "₹2500",
+      "name": prod_name,
+      "picture": prod_price,
+      "price": prod_price,
       "Quantity" :1
-    },
+    },/*
     {
       "name": "Blazer2",
       "picture": "images/download (1).png",
@@ -52,7 +89,7 @@ class _Cart_ProductsState extends State<Cart_Products> {
       "price": "₹2000",
       "Quantity" :6
     },
-  ];
+ */ ];
   @override
   Widget build(BuildContext context) {
     return new ListView.builder(
