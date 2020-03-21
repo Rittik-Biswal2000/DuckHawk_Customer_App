@@ -28,7 +28,7 @@ void main() {
 
 class HomePage extends StatefulWidget {
 
-  final add;
+  String add;
   HomePage(this.add);
 
   @override
@@ -49,7 +49,6 @@ class _HomePageState extends State<HomePage> {
   String name="hello";
   FirebaseUser mCurrentUser;
   FirebaseAuth _auth;
-
   String _value = '';
   void _onClick(String value) => setState(() => _value = value);
   @override

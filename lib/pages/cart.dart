@@ -9,12 +9,14 @@ import 'package:project_duckhawk/pages/account.dart';
 import 'package:project_duckhawk/pages/cart1.dart';
 import 'package:project_duckhawk/pages/item_info.dart';
 import 'package:project_duckhawk/shared/loading.dart';
+
+import 'orderconfirm.dart';
 class cart extends StatefulWidget {
   @override
   _cartState createState() => _cartState();
 }
 
-String seller,imgurl="loading",quantity,price="loading",name="Loading",description;
+String seller,imgurl="loading",quantity,price="loading",name="Loading",description,uadd;
 List l=[];
 List imageurl=[];
 List prod_price=[];
@@ -23,6 +25,7 @@ List item_quantity=[];
 int q=1;
 var firestore = Firestore.instance;
 FirebaseUser user;
+
 class _cartState extends State<cart> {
   FirebaseUser mCurrentUser;
   FirebaseAuth _auth;
@@ -38,6 +41,7 @@ class _cartState extends State<cart> {
     DatabaseReference reference = FirebaseDatabase.instance.reference();
     final FirebaseAuth _auth = FirebaseAuth.instance;
     user = await _auth.currentUser();
+
 
     QuerySnapshot qn = await firestore.collection('users').document(user.uid)
         .collection('cart').getDocuments()
@@ -80,6 +84,163 @@ class _cartState extends State<cart> {
     //return qn.documents;
 
   }
+  cod(BuildContext context)
+  {
+    return showDialog(context: context,builder: (context){
+      return AlertDialog(
+        title: Text("We only accept Cash on Delivery as a mode of payment"),
+        content: new Column(
+          children: <Widget>[
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Image.asset('images/scooter.png',width: 100.0,height: 100.0),
+              ],
+            ),
+
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                new Text("Pay only after you get the product in hand\nNo risk of loss of your hard earned money\nNo dependent on credit or debit cards"),
+              ],
+            )
+          ],
+        ),
+        actions: <Widget>[
+          MaterialButton(
+            elevation:5.0,
+            child: Text('Conform'),
+            onPressed: (){
+              Navigator.of(context).pop();
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>new orderconfirm()));
+
+
+            },
+          )
+        ],
+      );
+    });
+  }
+  createAlertDialog(BuildContext context,String name,String pic,String quantity,String price)
+  {
+    TextEditingController customController = TextEditingController();
+    return showDialog(context: context,builder: (context){
+      return AlertDialog(
+        title: Text("Items available for checkout"),
+        content: new Column(
+          children: <Widget>[
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Center(child: Text(name),)
+                //new Text(cart_prod_name,textAlign: TextAlign.center,style: new TextStyle(fontWeight: FontWeight.bold),)
+              ],
+            ),
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Image.network(pic,width:100.0,height:400.0),
+              ],
+            ),
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                new Text("Quantuty: "+quantity+"\n"),
+                new Text("Price: "+price,textAlign: TextAlign.end,),
+              ],
+            )
+          ],
+        ),
+        actions: <Widget>[
+          MaterialButton(
+            elevation:5.0,
+            child: Text('Submit'),
+            onPressed: (){
+              Navigator.of(context).pop();
+              createAlertDialog1(context,name);
+
+            },
+          )
+        ],
+      );
+    });
+  }
+
+  createAlertDialog1(BuildContext context,String n)
+  {
+    TextEditingController customController = TextEditingController();
+    return showDialog(context: context,builder: (context){
+      return AlertDialog(
+        title: Text("Items available for checkout"),
+        content: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: new Column(
+            children: <Widget>[
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Center(child: Text(n),)
+                  //new Text(cart_prod_name,textAlign: TextAlign.center,style: new TextStyle(fontWeight: FontWeight.bold),)
+                ],
+              ),
+              Container(
+                height: 150.0,
+                child: new TextField(
+                  decoration: InputDecoration(
+                      hintText: 'Enter Address',
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.search),
+                        onPressed: searchandNavigate,
+                        iconSize: 30.0,
+                      )
+                  ),
+                  onChanged: (val) {
+                    searchAddr = val;
+                  },
+                ),
+              ),
+
+              Container(
+                height: 200.0,
+                width: double.infinity,
+                child: GoogleMap(
+                  onMapCreated: onMapCreated,
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(21.5007, 83.8995),
+                    zoom: 10.0,),
+                  markers: _markers.values.toSet(),
+
+
+
+                ),
+              ),
+
+
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          MaterialButton(
+            elevation:5.0,
+            child: Text('Submit'),
+            onPressed: (){
+              Navigator.of(context).pop();
+              cod(context);
+
+            },
+          )
+        ],
+      );
+    });
+  }
   Future<bool> _onWillPop() async {
     for(int m=0;m<=l.length;m++){
       Navigator.pop(context);
@@ -104,16 +265,17 @@ class _cartState extends State<cart> {
           backgroundColor: Color(0xff104670),
     ),
       body:RefreshIndicator(
-        child: LogoutOverlay(),
+        //child: LogoutOverlay(),
         onRefresh: refreshList,
-      ),
-      /*new ListView.builder(
+
+      child: ListView.builder(
             itemCount: l.length,
             itemBuilder:(_,index){
               print("bye");
-              return PostsUI(l[index].toString().split(': ')[1].split(',')[0],imgurl[index],item_name[index],item_quantity[index],prod_price[index]);
+              return PostsUI(l[index].toString().split(': ')[1].split(',')[0],imageurl[index],item_name[index],item_quantity[index],prod_price[index]);
             }
-        ),*/
+        ),
+      ),
       bottomNavigationBar: new Container(
           color:Colors.white,
           child:Row(
@@ -139,6 +301,152 @@ class _cartState extends State<cart> {
       ),
     );
   }
+
+  Widget PostsUI(String split, String imgurl, String item_name, String item_quantity, String prod_price) {
+    print("the image is");
+    print(imgurl);
+    return new Card(
+      child: SingleChildScrollView(
+          child:ListTile(
+            //leading:new Image.network(imgurl,width:100.0,height:400.0),
+            title:new Text(item_name),
+            subtitle: new Column(
+              children: <Widget>[
+                new Row(
+                  children: <Widget>[
+                    //new Image.network(imgurl,width:100.0,height:400.0),
+                  ],
+                ),
+                new Container(
+                    alignment: Alignment.topLeft,
+                    child:new Text(prod_price,style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
+                ),
+                new Row(
+                  children: <Widget>[
+                    new Image.network(imgurl,width:100.0,height:400.0),
+                  ],
+                ),
+
+                new Row(
+                  children: <Widget>[
+                    new FlatButton(onPressed: (){
+                      createAlertDialog(context,item_name,imgurl,item_quantity,prod_price);
+                    },
+                        child:Text("Place Order")
+                    ),
+                    new FlatButton(
+                        onPressed: (){
+                          firestore.collection('users').document(user.uid).collection('cart').document(split).delete();
+                          //Navigator.push(context, MaterialPageRoute(builder: (context)=>new LogoutOverlay()));
+                          refreshList();
+
+                        }, child: Text("Delete")),
+
+                  ],
+                ),
+              ],
+            ),
+
+          )
+      ),
+    );
+   /* return new Card(
+        elevation:10.0,
+        margin:EdgeInsets.all(15.0),
+        child:new Container(
+          padding: new EdgeInsets.all(14.0),
+          child:new Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              new Row(
+                children: <Widget>[
+                  //new Image.network(imgurl,width:100.0,height:400.0),
+                  new Text(
+                    item_name,
+
+                  ),
+                  new Text(
+                   item_quantity,
+
+                  ),
+                  new Text(
+                    prod_price,
+
+                  ),
+                ],
+              ),
+              new Row(
+                children: <Widget>[
+                  new FlatButton(onPressed: (){
+                    //createAlertDialog(context,item_name[index],imageurl[index],item_quantity[index],prod_price[index]);
+                  },
+                      child:Text("Place Order")
+                  ),
+                  new FlatButton(
+                      onPressed: (){
+                        firestore.collection('users').document(user.uid).collection('cart').document(split).delete();
+                        //Navigator.push(context, MaterialPageRoute(builder: (context)=>new LogoutOverlay()));
+                        refreshList();
+
+                      }, child: Text("Delete")),
+
+                ],
+              ),
+            ],
+          ),
+        )
+    );*/
+    return new Scaffold(
+      body:
+      RefreshIndicator(
+        onRefresh: refreshList,
+        child: new ListView.builder(
+          itemCount: l.length,
+          itemBuilder: (BuildContext context,int index){
+            //return new Text(item_name[index]);
+            return new Card(
+              child: SingleChildScrollView(
+                  child:ListTile(
+                    leading:new Image.network(imgurl,width:100.0,height:400.0),
+                    title:new Text(item_name),
+                    subtitle: new Column(
+                      children: <Widget>[
+                        new Row(
+                          children: <Widget>[],
+                        ),
+                        new Container(
+                            alignment: Alignment.topLeft,
+                            child:new Text(prod_price,style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
+                        ),
+                        new Row(
+                          children: <Widget>[
+                            new FlatButton(onPressed: (){
+                              //createAlertDialog(context,item_name[index],imageurl[index],item_quantity[index],prod_price[index]);
+                            },
+                                child:Text("Place Order")
+                            ),
+                            new FlatButton(
+                                onPressed: (){
+                                  firestore.collection('users').document(user.uid).collection('cart').document(split).delete();
+                                  //Navigator.push(context, MaterialPageRoute(builder: (context)=>new LogoutOverlay()));
+                                  refreshList();
+
+                                }, child: Text("Delete")),
+
+                          ],
+                        ),
+                      ],
+                    ),
+
+                  )
+              ),
+            );
+          },
+
+
+        ),),
+    );
+  }
 }
 
 GoogleMapController mapController;
@@ -151,6 +459,7 @@ class LogoutOverlay extends StatefulWidget {
 
 class _LogoutOverlayState extends State<LogoutOverlay> {
   getposts() async{
+    final Firestore _firestore = Firestore.instance;
     l.clear();
     DatabaseReference reference = FirebaseDatabase.instance.reference();
     final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -161,6 +470,7 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
         .then((snapshot) {
       snapshot.documents.forEach((f) => l.add('${f.data}'));
     });
+
 
     print("in cart page");
 
