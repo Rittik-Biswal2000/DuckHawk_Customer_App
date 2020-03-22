@@ -17,6 +17,7 @@ class cart extends StatefulWidget {
 }
 
 String seller,imgurl="loading",quantity,price="loading",name="Loading",description,uadd;
+String units;
 List l=[];
 List imageurl=[];
 List prod_price=[];
@@ -50,15 +51,16 @@ class _cartState extends State<cart> {
     });
 
     print("in cart page");
-
-    print(l[1].toString().split(': ')[1].split(',')[0]);
-    print(l.length);
+    print(l);
+    print(l[0].split(',')[1].split(': ')[1]);
     ref = reference.child('Products').child('Electronics');
     for (int j = 0; j < l.length; j++){
       reference.child('Products').child('Electronics').child(
-          l[j].toString().split(': ')[1].split(',')[0]).once().then((
+          l[j].split(',')[1].split(': ')[1]).once().then((
           DataSnapshot snap) {
         var data = snap.value;
+        print("Data");
+        print(data);
         seller = data.toString().split(',')[0];
         imgurl = data.toString().split(',')[1];
         quantity = data.toString().split(',')[2];
@@ -74,6 +76,8 @@ class _cartState extends State<cart> {
         prod_price.add(price);
         item_quantity.add(quantity);
         item_name.add(name);
+        print("j");
+        print(l[j]);
         print(l);
         showDialog(
            context: context,

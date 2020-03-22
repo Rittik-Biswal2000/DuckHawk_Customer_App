@@ -23,6 +23,15 @@ import 'package:project_duckhawk/shared/loading.dart';
     @override
     _item_infoState createState() => _item_infoState();
   }
+  class Item {
+    const Item(this.name,this.icon);
+    final String name;
+    final Icon icon;
+  }
+  List<String> quan=[];
+  String _dropDownValue="Quantity";
+  String units="1";
+  String _selectedLocation = 'Please choose a location';
   String p='pro4.jpg';
   String seller,imgurl,quantity,price="loading",name="Loading",description,uadd,fadd;
   double lat,lon;
@@ -40,6 +49,7 @@ getpoint()async{
   print("${first.featureName} : ${first.coordinates}");
 }
   class _item_infoState extends State<item_info> {
+
     //var _firebaseRef = FirebaseDatabase().reference().child('Products').child('Electronics');
     final FirebaseStorage storage = FirebaseStorage(
         app: Firestore.instance.app,
@@ -81,6 +91,16 @@ getpoint()async{
         quantity=quantity.split(': ')[1];
         print("Quantity");
         print(quantity);
+        var x = int.parse(quantity);
+        print(x.runtimeType);
+        quan.clear();
+
+        while(x!=0){
+          quan.add((x--).toString());
+
+        }
+
+        //print(users);
         firestore
             .collection("users").where("uid", isEqualTo: user.uid)
             .getDocuments()
@@ -168,7 +188,7 @@ getpoint()async{
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  new Text("Quantuty: "+quantity),
+                  new Text("Quantity: "+units),
                 ],
               ),
               new Row(
@@ -297,6 +317,7 @@ getpoint()async{
               ),
             ),
             Row(
+
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.all(16.0),
@@ -305,35 +326,59 @@ getpoint()async{
                   ),
                 ),
 
-                /*Expanded(
-                  child: Row(
-                    children: <Widget>[
-                      DropdownButton<List>(
+      DropdownButton<String>(
 
-                      ),
-                    ],
-                  ),
+      items: quan.map((String val) {
+      return new DropdownMenuItem<String>(
+      value: val,
+      child: new Text(val),
+      );
+      }).toList(),
+      hint: Text("Quantity",
+      style: TextStyle(color: Colors.blue),
+      ),
+      onChanged: (val) {
+      //_selectedLocation = newVal;
+      setState(() {
+        _dropDownValue=val;
+        units=_dropDownValue;
+      });
+      }),
+       /*DropdownButton(
+      hint: _dropDownValue == null
+      ? Text('Dropdown')
+          : Text(
+      _dropDownValue,
+      style: TextStyle(color: Colors.blue),
+      ),
+      isExpanded: true,
+      iconSize: 30.0,
+      style: TextStyle(color: Colors.blue),
+      items:quan.map(
+      (val) {
+      return DropdownMenuItem<String>(
+      value: val,
+      child: Text(val),
+      );
+      },
+      ).toList(),
+      onChanged: (val) {
+      setState(
+      () {
+      _dropDownValue = val;
+      },
+      );
+      },
+      ),*/
 
-                  child:MaterialButton(onPressed: (){},
-                    color:Colors.white,
-                    textColor: Colors.grey,
-                    elevation:0.2,
-                    child:Row(
-                      children: <Widget>[
-                        Expanded(
-                            child: new Text("Quantity"),
-
-                        ),
-                        /*Expanded(
-                            //child: new Icon(Icons.arrow_drop_down)
-                        ),*/
-
-                      ],
-                    ),
-                  ),
-                ),*/
 
 
+
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                new Text("Units : "+units),
               ],
             ),
             Row(
@@ -458,7 +503,8 @@ getpoint()async{
 
       ref.collection('cart').document(widget.product_id).setData({
         'ProductId':widget.product_id,
-        'category':'electronics'
+        'category':'electronics',
+        'quantity':units
       });
       /*
 

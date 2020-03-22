@@ -179,7 +179,7 @@ class _HomePageState extends State<HomePage> {
               child: IconButton(
                 icon: new Icon(Icons.add_shopping_cart),
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart1()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart()));
                 },
               ),
             ),
