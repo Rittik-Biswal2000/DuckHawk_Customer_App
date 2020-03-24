@@ -19,7 +19,7 @@ import 'package:geolocator/geolocator.dart';
 FirebaseUser user;
 String curlat,curlon;
 
-String badd;
+String badd="Loading";
 
 int d=0;
 String add="hi";
