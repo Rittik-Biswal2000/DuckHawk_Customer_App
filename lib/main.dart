@@ -132,7 +132,6 @@ class _HomePageState extends State<HomePage> {
                        SingleChildScrollView(
 
                            child: Container(
-                               width: 200,
                               child: new FlatButton(onPressed: (){
                                 Navigator.push(context, MaterialPageRoute(builder: (context)=>new MyLocation()));
                               }, child: Text(widget.add==null?badd:"${widget.add}",style: new TextStyle(fontSize: 15.0, color: Colors.white),))),
