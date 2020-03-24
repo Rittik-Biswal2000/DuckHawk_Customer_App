@@ -16,6 +16,7 @@ class MyLocation extends StatefulWidget {
 }
 
 class _MyLocationState extends State<MyLocation> {
+  Position _currentPosition;
   String lat,lon,v1,v2,add;
   var v3,v4;
   var addresses;
@@ -26,6 +27,7 @@ class _MyLocationState extends State<MyLocation> {
 
   GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: "AIzaSyC52Z3z1WF_y0Q0dbYfexizoexgAnSTov0");
 
+
   @override
   void initState() {
     super.initState();
@@ -33,7 +35,8 @@ class _MyLocationState extends State<MyLocation> {
     final marker = Marker(
       draggable: true,
       markerId: MarkerId("curr_loc"),
-      position: LatLng(21.5007,83.8994),
+     // position: LatLng(21.5007,83.8994),
+        position: LatLng(double.parse(curlat),double.parse(curlon)),
       infoWindow: InfoWindow(title: 'Your Location'),
         onDragEnd: ((value) async {
           v3=value.latitude;
@@ -47,7 +50,8 @@ class _MyLocationState extends State<MyLocation> {
         })
     );
     _markers["Current Location"] = marker;
-    _getAddressFromLatLng(21.5007,83.8994);
+    //_getAddressFromLatLng(21.5007,83.8994);
+    _getAddressFromLatLng(double.parse(curlat),double.parse(curlon));
   }
 
   GoogleMapController mapController;
@@ -70,7 +74,8 @@ class _MyLocationState extends State<MyLocation> {
             GoogleMap(
               onMapCreated: onMapCreated,
               initialCameraPosition: CameraPosition(
-                target: LatLng(21.5007, 83.8995),
+               // target: LatLng(21.5007, 83.8995),
+                target: LatLng(double.parse(curlat),double.parse(curlon)),
                 zoom: 15.0,),
               markers: _markers.values.toSet(),
 
@@ -236,6 +241,7 @@ _getAddressFromLatLng(result[0].position.latitude, result[0].position.longitude)
   void Confirm() {
     Navigator.push(context, MaterialPageRoute(builder: (context)=>new HomePage(first.addressLine)));
   }
+
 
  /*Future<Null> displayPrediction(Prediction p) async {
     if (p != null) {

@@ -17,7 +17,12 @@ import './pages/login_page.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 FirebaseUser user;
+String curlat,curlon;
 
+String badd;
+
+int d=0;
+String add="hi";
 void main() {
   runApp(MaterialApp(debugShowCheckedModeBanner: false,
       //home:LoginPage()));
@@ -27,9 +32,9 @@ void main() {
 }
 
 class HomePage extends StatefulWidget {
-
-  String add;
+String add;
   HomePage(this.add);
+  //HomePage(this.add);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -44,6 +49,7 @@ Future<void> currentUser() async {
 class _HomePageState extends State<HomePage> {
 
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+
   Position _currentPosition;
   String _currentAddress ;
   String name="hello";
@@ -57,6 +63,7 @@ class _HomePageState extends State<HomePage> {
     getproducts();
     //getposts();
     cart();
+
 
     _getCurrentLocation();
     _getCurrentUser();
@@ -123,11 +130,13 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                        SingleChildScrollView(
+
                            child: Container(
                                width: 200,
                               child: new FlatButton(onPressed: (){
                                 Navigator.push(context, MaterialPageRoute(builder: (context)=>new MyLocation()));
-                              }, child: Text("${widget.add}",style: new TextStyle(fontSize: 15.0, color: Colors.white),))),)
+                              }, child: Text(widget.add==null?badd:"${widget.add}",style: new TextStyle(fontSize: 15.0, color: Colors.white),))),
+                       )
                              //child: new FlatButton(onPre,new Text("${widget.add}",style: new TextStyle(fontSize: 15.0),)))),
 
 
@@ -448,9 +457,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   _getAddressFromLatLng() async {
+    d++;
     try {
       List<Placemark> p = await geolocator.placemarkFromCoordinates(
           _currentPosition.latitude, _currentPosition.longitude);
+      curlat=_currentPosition.latitude.toString();
+      curlon=_currentPosition.longitude.toString();
+      print("Coordinates are :");
 
       Placemark place = p[0];
 
@@ -458,6 +471,11 @@ class _HomePageState extends State<HomePage> {
         _currentAddress = "${place.locality}";
         print(place.locality);
       });
+
+        badd=_currentAddress;
+        print("badd is:");
+        print(badd);
+
     } catch (e) {
       print(e);
     }

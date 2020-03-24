@@ -17,8 +17,13 @@ class cart extends StatefulWidget {
 }
 
 String seller,imgurl="loading",quantity,price="loading",name="Loading",description,uadd;
-String units;
+String _selectedLocation=" ";
+String units=' ',_dropDownValue=" ";
+String p='1';
+var x;
 List l=[];
+List<String> quan=[];
+List<String> unit=[];
 List imageurl=[];
 List prod_price=[];
 List item_name=[];
@@ -28,6 +33,7 @@ var firestore = Firestore.instance;
 FirebaseUser user;
 
 class _cartState extends State<cart> {
+  String selected=null;
   FirebaseUser mCurrentUser;
   FirebaseAuth _auth;
 
@@ -52,7 +58,7 @@ class _cartState extends State<cart> {
 
     print("in cart page");
     print(l);
-    print(l[0].split(',')[1].split(': ')[1]);
+    print(l[0].split(',')[0].split(': ')[1]);
     ref = reference.child('Products').child('Electronics');
     for (int j = 0; j < l.length; j++){
       reference.child('Products').child('Electronics').child(
@@ -72,13 +78,28 @@ class _cartState extends State<cart> {
         quantity = quantity.split(': ')[1];
         price = price.split(': ')[1];
         name = name.split(': ')[1];
+        units=l[0].split(',')[0].split(': ')[1];
         imageurl.add(imgurl);
         prod_price.add(price);
         item_quantity.add(quantity);
         item_name.add(name);
         print("j");
-        print(l[j]);
-        print(l);
+        //print(l[j]);
+        //print(l);
+        /*x=0;
+         x = int.parse(quantity);
+        print(x.runtimeType);
+        print("x is :");
+        //print(x);
+       // quan.clear();
+        unit.clear();
+        quan.add(x.toString());
+        print("Quantity is ");
+        var y=int.parse(quan[j]);
+        while(y>0){
+          unit.add((y--).toString());
+          print(unit);
+        }*/
         showDialog(
            context: context,
            builder: (_) => build(context)
@@ -269,16 +290,16 @@ class _cartState extends State<cart> {
           backgroundColor: Color(0xff104670),
     ),
       body:RefreshIndicator(
-        //child: LogoutOverlay(),
+        child: LogoutOverlay(),
         onRefresh: refreshList,
 
-      child: ListView.builder(
+      /*child: ListView.builder(
             itemCount: l.length,
             itemBuilder:(_,index){
               print("bye");
-              return PostsUI(l[index].toString().split(': ')[1].split(',')[0],imageurl[index],item_name[index],item_quantity[index],prod_price[index]);
+              return PostsUI(l[index].split(',')[1].split(': ')[1],imageurl[index],item_name[index],item_quantity[index],prod_price[index]);
             }
-        ),
+        ),*/
       ),
       bottomNavigationBar: new Container(
           color:Colors.white,
@@ -292,7 +313,7 @@ class _cartState extends State<cart> {
               ),
               Expanded(
                   child:new FlatButton(onPressed: (){
-
+                    createAlertDialog1(context,item_name[0]+" others");
                   },
                     child: Text("Check Out",style: TextStyle(color: Colors.white)),
                     color: Colors.redAccent,
@@ -305,10 +326,32 @@ class _cartState extends State<cart> {
       ),
     );
   }
-
+int i=1;
   Widget PostsUI(String split, String imgurl, String item_name, String item_quantity, String prod_price) {
+
+    String textholder;
+    int x1=1;
+    changeText(){
+      setState(() {
+        textholder=(x1++).toString();
+      });
+    }
+    String q=item_quantity;
+    int qt=int.parse(q);
+    unit.clear();
     print("the image is");
+    var x=int.parse(item_quantity);
+    while(x!=0){
+      unit.add((x--).toString());
+    }
+    /*while(x!=0){
+      unit.add(new DropdownMenuItem(child:
+      new Text((x--).toString()),
+      value: (i++).toString(),
+      ));
+    }*/
     print(imgurl);
+
     return new Card(
       child: SingleChildScrollView(
           child:ListTile(
@@ -327,10 +370,27 @@ class _cartState extends State<cart> {
                 ),
                 new Row(
                   children: <Widget>[
-                    new Image.network(imgurl,width:100.0,height:400.0),
-                  ],
-                ),
+                    Container(
+                      padding: EdgeInsets.fromLTRB(20,20,20,20),
+                      child: Text('$textholder'),
+                    ),
+                    RaisedButton(
+                        onPressed: ()=>changeText(),
+                        child:Text("Increase")
+                    ),
 
+
+
+
+
+
+
+
+
+                  ],
+
+
+                ),
                 new Row(
                   children: <Widget>[
                     new FlatButton(onPressed: (){
@@ -451,6 +511,8 @@ class _cartState extends State<cart> {
         ),),
     );
   }
+
+
 }
 
 GoogleMapController mapController;
@@ -462,6 +524,23 @@ class LogoutOverlay extends StatefulWidget {
 }
 
 class _LogoutOverlayState extends State<LogoutOverlay> {
+  String textholder='1';
+  int x1=1;
+  increment(int y){
+    setState(() {
+      if(x1<=y)
+      textholder=(++x1).toString();
+    });
+  }
+
+
+  decrement(){
+    setState(() {
+      if(x1!=1)
+      textholder=(--x1).toString();
+    });
+  }
+
   getposts() async{
     final Firestore _firestore = Firestore.instance;
     l.clear();
@@ -640,6 +719,8 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
   }
   @override
   Widget build(BuildContext context) {
+    print("Textholder is");
+    print(textholder);
     return new Scaffold(
       body:
           RefreshIndicator(
@@ -655,8 +736,63 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
                   title:new Text(item_name[index]),
                   subtitle: new Column(
                     children: <Widget>[
-                      new Row(
-                        children: <Widget>[],
+
+                      new Column(
+                        children: <Widget>[
+
+                          new Column(
+                            children: <Widget>[
+                              /*RaisedButton(
+                                  onPressed: ()=>changeText(),
+                                  child:Text("Increase")
+                              ),*/
+                              IconButton(
+
+                                icon: Icon(Icons.arrow_drop_up),
+                                onPressed: () =>increment(int.parse(item_quantity[index])),
+                              ),
+                            ],
+                          ),
+                          new Column(
+                            children: <Widget>[
+                              Container(
+                                child: Text('${textholder}'),
+                              ),
+                            ],
+                          ),
+                          new Column(
+                            children: <Widget>[
+                              /*RaisedButton(
+                                  onPressed: ()=>changeText(),
+                                  child:Text("Decrease")
+                              ),*/
+                              IconButton(
+
+                                  icon: Icon(Icons.arrow_drop_down),
+                                  onPressed: () =>decrement(),
+                              ),
+                            ],
+                          ),
+                          /*Container(
+                            padding: EdgeInsets.fromLTRB(20,20,20,20),
+                            child: Text('${textholder}'),
+                          ),
+                          RaisedButton(
+                              onPressed: ()=>changeText(),
+                              child:Text("Increase")
+                          ),*/
+
+
+
+
+
+
+
+
+
+                        ],
+
+
                       ),
                       new Container(
                         alignment: Alignment.topLeft,

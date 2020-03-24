@@ -59,6 +59,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    print("in home page");
     Widget image_carousel = new Container(
       height: 200.0,
       child: new Carousel(
