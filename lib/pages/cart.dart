@@ -20,6 +20,7 @@ String seller,imgurl="loading",quantity,price="loading",name="Loading",descripti
 String _selectedLocation=" ";
 String units=' ',_dropDownValue=" ";
 String p='1';
+int count=1;
 var x;
 List l=[];
 List<String> quan=[];
@@ -175,7 +176,7 @@ class _cartState extends State<cart> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                new Text("Quantuty: "+quantity+"\n"),
+                new Text("Quantity: "+quantity+"\n"),
                 new Text("Price: "+price,textAlign: TextAlign.end,),
               ],
             )
@@ -279,6 +280,16 @@ class _cartState extends State<cart> {
   });
     return null;
   }
+  String textholder='1';
+  increment(String item_quantity) {
+
+    int x1=1;
+
+      setState(() {
+        textholder=(x1++).toString();
+      });
+
+  }
   @override
   Widget build(BuildContext context) {
     print("hi");
@@ -327,15 +338,9 @@ class _cartState extends State<cart> {
     );
   }
 int i=1;
-  Widget PostsUI(String split, String imgurl, String item_name, String item_quantity, String prod_price) {
+ /* Widget PostsUI(String split, String imgurl, String item_name, String item_quantity, String prod_price) {
 
-    String textholder;
-    int x1=1;
-    changeText(){
-      setState(() {
-        textholder=(x1++).toString();
-      });
-    }
+
     String q=item_quantity;
     int qt=int.parse(q);
     unit.clear();
@@ -372,10 +377,10 @@ int i=1;
                   children: <Widget>[
                     Container(
                       padding: EdgeInsets.fromLTRB(20,20,20,20),
-                      child: Text('$textholder'),
+                      child: Text('${textholder}'),
                     ),
                     RaisedButton(
-                        onPressed: ()=>changeText(),
+                        onPressed: ()=>increment(item_quantity),
                         child:Text("Increase")
                     ),
 
@@ -510,7 +515,9 @@ int i=1;
 
         ),),
     );
-  }
+  }*/
+
+
 
 
 }
@@ -524,20 +531,27 @@ class LogoutOverlay extends StatefulWidget {
 }
 
 class _LogoutOverlayState extends State<LogoutOverlay> {
+
   String textholder='1';
   int x1=1;
-  increment(int y){
+  int count=1;
+
+  int increment(int y,int i){
+    count=1;
     setState(() {
       if(x1<=y)
-      textholder=(++x1).toString();
+        //textholder=(++x1).toString();
+        count=++x1;
     });
-  }
+    //return x1.toString();
 
+    return count;
+  }
 
   decrement(){
     setState(() {
       if(x1!=1)
-      textholder=(--x1).toString();
+      count=--x1;
     });
   }
 
@@ -720,7 +734,8 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
   @override
   Widget build(BuildContext context) {
     print("Textholder is");
-    print(textholder);
+    print(count);
+    int re;
     return new Scaffold(
       body:
           RefreshIndicator(
@@ -742,21 +757,22 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
 
                           new Column(
                             children: <Widget>[
-                              /*RaisedButton(
-                                  onPressed: ()=>changeText(),
-                                  child:Text("Increase")
-                              ),*/
                               IconButton(
 
                                 icon: Icon(Icons.arrow_drop_up),
-                                onPressed: () =>increment(int.parse(item_quantity[index])),
+                                onPressed: () {
+                                  increment(int.parse(item_quantity[index]),index);
+                                  print("re is :");
+                                  print(re);
+                                },
                               ),
                             ],
                           ),
+
                           new Column(
                             children: <Widget>[
                               Container(
-                                child: Text('${textholder}'),
+                                child: Text('${count}'),
                               ),
                             ],
                           ),
