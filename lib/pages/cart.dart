@@ -2,12 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:project_duckhawk/main.dart';
 import 'package:project_duckhawk/pages/account.dart';
 import 'package:project_duckhawk/pages/cart1.dart';
 import 'package:project_duckhawk/pages/item_info.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:project_duckhawk/shared/loading.dart';
 
 import 'orderconfirm.dart';
@@ -15,11 +18,19 @@ class cart extends StatefulWidget {
   @override
   _cartState createState() => _cartState();
 }
+double total=0;
+double total_price=0;
+String custname,custphone;
+final _text = TextEditingController();
+final _text1 = TextEditingController();
+bool _validate = false;
 
+GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: "AIzaSyC52Z3z1WF_y0Q0dbYfexizoexgAnSTov0");
 String seller,imgurl="loading",quantity,price="loading",name="Loading",description,uadd;
 String _selectedLocation=" ";
 String units=' ',_dropDownValue=" ";
 String p='1';
+String searchAddr,fadd;
 int count=1;
 var x;
 List l=[];
@@ -33,12 +44,13 @@ List item_units=[];
 int q=1;
 var firestore = Firestore.instance;
 FirebaseUser user;
+var u;
 
 class _cartState extends State<cart> {
   String selected=null;
   FirebaseUser mCurrentUser;
   FirebaseAuth _auth;
-  var u;
+
 
   void initState() {
     super.initState();
@@ -64,6 +76,12 @@ class _cartState extends State<cart> {
     print("in cart page");
     //print(l[0].toString());
     print(u[0].data['category']);
+    int k;
+    item_units.clear();
+    for( k=0;k<l.length;k++){
+      item_units.add(u[k].data['quantity']);
+    }
+    print(item_units);
 
     //print(l[0].split(',')[0].split(': ')[1]);
     ref = reference.child('Products').child('Electronics');
@@ -107,6 +125,29 @@ class _cartState extends State<cart> {
           unit.add((y--).toString());
           print(unit);
         }*/
+        total_price=0;
+        for(int p=0;p<l.length;p++){
+
+          total_price+=double.parse(item_units[p])*double.parse(prod_price[p]);
+          print(total_price);
+        }
+        firestore
+            .collection("users").where("uid", isEqualTo: user.uid)
+            .getDocuments()
+            .then((QuerySnapshot snapshot) {
+
+          snapshot.documents.forEach((f) => uadd = '${f.data}');
+          print("Address is:");
+          print(uadd);
+          //print(uadd.split(',')[2].split(': ')[1]);
+          fadd=uadd.split(',')[2].split(': ')[1];
+          //searchAddr=fadd.replaceAll(' ', '\n');
+          searchAddr=fadd;
+          getpoint(searchAddr);
+
+        });
+        print("total price is :");
+        print(total_price);
         showDialog(
            context: context,
            builder: (_) => build(context)
@@ -137,14 +178,17 @@ class _cartState extends State<cart> {
               children: <Widget>[
                 new Text("Pay only after you get the product in hand\nNo risk of loss of your hard earned money\nNo dependent on credit or debit cards"),
               ],
-            )
+            ),
+
+
           ],
         ),
         actions: <Widget>[
           MaterialButton(
             elevation:5.0,
-            child: Text('Conform'),
+            child: Text('Confirm'),
             onPressed: (){
+              placeorder1();
               Navigator.of(context).pop();
               Navigator.push(context, MaterialPageRoute(builder: (context)=>new orderconfirm()));
 
@@ -155,53 +199,85 @@ class _cartState extends State<cart> {
       );
     });
   }
-  createAlertDialog(BuildContext context,String name,String pic,String quantity,String price)
+  createAlertDialog(BuildContext context,String name,String pic,String price)
   {
+
+    total=double.parse(price)*double.parse(units);
+    print("in 1st dialog box");
     TextEditingController customController = TextEditingController();
     return showDialog(context: context,builder: (context){
-      return AlertDialog(
-        title: Text("Items available for checkout"),
-        content: new Column(
-          children: <Widget>[
-            new Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Center(child: Text(name),)
-                //new Text(cart_prod_name,textAlign: TextAlign.center,style: new TextStyle(fontWeight: FontWeight.bold),)
-              ],
-            ),
-            new Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Image.network(pic,width:100.0,height:400.0),
-              ],
-            ),
-            new Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                new Text("Quantity: "+quantity+"\n"),
-                new Text("Price: "+price,textAlign: TextAlign.end,),
-              ],
+      return SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: AlertDialog(
+
+          title: Text("Items available for checkout"),
+          content: new Column(
+            children: <Widget>[
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Center(
+                    child: Container(
+                      child: Text(name),
+                    ),
+                  )
+                  //new Text(cart_prod_name,textAlign: TextAlign.center,style: new TextStyle(fontWeight: FontWeight.bold),)
+                ],
+
+              ),
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Image.network(pic,width:100.0,height:200.0),
+                ],
+              ),
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  new Text("Quantity: "+units),
+                ],
+              ),
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  new Text("Price: ₹"+price,textAlign: TextAlign.end,),
+                ],
+              ),
+              new Row(
+
+
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: new Text("Total : ₹"+total.toString(),textAlign: TextAlign.end,),
+                  ),
+
+                ],
+              )
+            ],
+          ),
+          actions: <Widget>[
+            MaterialButton(
+              elevation:5.0,
+              child: Text('Submit'),
+              onPressed: (){
+                Navigator.of(context).pop();
+                createAlertDialog1(context,name);
+
+              },
             )
           ],
         ),
-        actions: <Widget>[
-          MaterialButton(
-            elevation:5.0,
-            child: Text('Submit'),
-            onPressed: (){
-              Navigator.of(context).pop();
-              createAlertDialog1(context,name);
-
-            },
-          )
-        ],
       );
     });
   }
+
 
   createAlertDialog1(BuildContext context,String n)
   {
@@ -213,6 +289,7 @@ class _cartState extends State<cart> {
           scrollDirection: Axis.vertical,
           child: new Column(
             children: <Widget>[
+
               new Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -221,24 +298,76 @@ class _cartState extends State<cart> {
                   //new Text(cart_prod_name,textAlign: TextAlign.center,style: new TextStyle(fontWeight: FontWeight.bold),)
                 ],
               ),
+              new TextField(
+                controller: _text,
+                decoration: InputDecoration(
+                  hintText: "Enter name",
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
+                  errorText: _validate ? 'Name Can\'t Be Empty' : null,
+                ),
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+                onChanged: (val) {
+                  custname = val;
+                },
+              ),
+              new TextField(
+                controller: _text1,
+                decoration: InputDecoration(
+                  hintText: "Enter Phone Number",
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
+                  errorText: _validate ? 'Phone number Can\'t Be Empty' : null,
+                ),
+                keyboardType: TextInputType.number,
+                onChanged: (val) {
+                  custphone= val;
+                },
+              ),
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Center(child: Text("Address"),)
+                  //new Text(cart_prod_name,textAlign: TextAlign.center,style: new TextStyle(fontWeight: FontWeight.bold),)
+                ],
+              ),
+
               Container(
                 height: 150.0,
-                child: new TextField(
-                  decoration: InputDecoration(
-                      hintText: 'Enter Address',
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
-                      suffixIcon: IconButton(
-                        icon: Icon(Icons.search),
-                        onPressed: searchandNavigate,
-                        iconSize: 30.0,
-                      )
-                  ),
-                  onChanged: (val) {
-                    searchAddr = val;
+                child: InkWell(
+                  onTap: (){
+                    getpredictions();
+
                   },
+                  child:Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text('${searchAddr}', maxLines: null,),
+
+                  ),
+
                 ),
+
+                /* new TextField(
+                    decoration: InputDecoration(
+                        hintText: fadd.replaceAll(' ', '\n'),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.search),
+                          onPressed: searchandNavigate,
+                          iconSize: 30.0,
+                        )
+                    ),
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    onChanged: (val) {
+                      searchAddr = val;
+                    },
+                  ),*/
               ),
+
 
               Container(
                 height: 200.0,
@@ -258,14 +387,23 @@ class _cartState extends State<cart> {
 
             ],
           ),
+
         ),
         actions: <Widget>[
           MaterialButton(
             elevation:5.0,
             child: Text('Submit'),
             onPressed: (){
-              Navigator.of(context).pop();
-              cod(context);
+              setState(() {
+                _text.text.isEmpty ? _validate = true : _validate = false;
+                _text1.text.isEmpty ? _validate = true : _validate = false;
+              });
+              if(_text.text.isNotEmpty&&_text1.text.isNotEmpty){
+                Navigator.of(context).pop();
+                cod(context);
+              }
+
+
 
             },
           )
@@ -325,7 +463,7 @@ class _cartState extends State<cart> {
               Expanded(
                   child:ListTile(
                     title:new Text("Total Amount :"),
-                    subtitle:new Text("Loading"),
+                    subtitle:new Text(total_price.toString()),
                   )
               ),
               Expanded(
@@ -344,6 +482,63 @@ class _cartState extends State<cart> {
     );
   }
 int i=1;
+  getpredictions() async{
+    Prediction p = await PlacesAutocomplete.show(
+        context: context, apiKey: "AIzaSyC52Z3z1WF_y0Q0dbYfexizoexgAnSTov0");
+    displayPrediction(p);
+  }
+  Future<String> displayPrediction(Prediction p) async {
+    String x;
+    if (p != null) {
+      PlacesDetailsResponse detail =
+      await _places.getDetailsByPlaceId(p.placeId);
+
+      var placeId = p.placeId;
+      double lat = detail.result.geometry.location.lat;
+      double lng = detail.result.geometry.location.lng;
+
+      var address = await Geocoder.local.findAddressesFromQuery(p.description);
+      print("Address is");
+      final coordinates=new Coordinates(lat,lng);
+      var addresses=await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      var first=addresses.first;
+      //print("${first.featureName}:${first.addressLine}");
+      x=first.addressLine;
+      print(lat);
+      print(lng);
+      searchAddr="${first.addressLine}";
+      print(searchAddr);
+
+
+
+
+
+
+      searchandNavigate(x);
+    }
+  }
+
+  placeorder1() {
+    int a;
+    for(a=0;a<l.length;a++){
+      FirebaseDatabase.instance.reference().child('Orders').push().set(
+          {
+            'Address':searchAddr,
+            'buyer':custname,
+            'location':lat.toString()+","+lon.toString(),
+            'phone':custphone,
+            'prodcat':u[a].data["category"],
+            'productid':u[a].data['ProductId'],
+            'price':double.parse(item_units[a])*double.parse(prod_price[a])
+          }
+
+
+
+      );
+
+    }
+
+  }
  /* Widget PostsUI(String split, String imgurl, String item_name, String item_quantity, String prod_price) {
 
 
@@ -530,7 +725,6 @@ int i=1;
 
 GoogleMapController mapController;
 final Map<String, Marker> _markers = {};
-String searchAddr;
 class LogoutOverlay extends StatefulWidget {
   @override
   _LogoutOverlayState createState() => _LogoutOverlayState();
@@ -614,46 +808,41 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
   }
 
 
-  createAlertDialog(BuildContext context,String name,String pic,String quantity,String price)
+  cod(BuildContext context)
   {
-    TextEditingController customController = TextEditingController();
     return showDialog(context: context,builder: (context){
       return AlertDialog(
-        title: Text("Items available for checkout"),
+        title: Text("We only accept Cash on Delivery as a mode of payment"),
         content: new Column(
           children: <Widget>[
             new Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Center(child: Text(name),)
-                //new Text(cart_prod_name,textAlign: TextAlign.center,style: new TextStyle(fontWeight: FontWeight.bold),)
+                Image.asset('images/scooter.png',width: 100.0,height: 100.0),
               ],
             ),
+
             new Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Image.network(pic,width:100.0,height:400.0),
+                new Text("Pay only after you get the product in hand\nNo risk of loss of your hard earned money\nNo dependent on credit or debit cards"),
               ],
             ),
-            new Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                new Text("Quantuty: "+quantity+"\n"),
-                new Text("Price: "+price,textAlign: TextAlign.end,),
-              ],
-            )
+
+
           ],
         ),
         actions: <Widget>[
           MaterialButton(
             elevation:5.0,
-            child: Text('Submit'),
+            child: Text('Conform'),
             onPressed: (){
+              placeorder();
               Navigator.of(context).pop();
-              createAlertDialog1(context,name);
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>new orderconfirm()));
+
 
             },
           )
@@ -661,6 +850,85 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
       );
     });
   }
+  createAlertDialog(BuildContext context,String name,String pic,String price,String units)
+  {
+
+    total=double.parse(price)*double.parse(units);
+    print("in 1st dialog box");
+    TextEditingController customController = TextEditingController();
+    return showDialog(context: context,builder: (context){
+      return SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: AlertDialog(
+
+          title: Text("Items available for checkout"),
+          content: new Column(
+            children: <Widget>[
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Center(
+                    child: Container(
+                      child: Text(name),
+                    ),
+                  )
+                  //new Text(cart_prod_name,textAlign: TextAlign.center,style: new TextStyle(fontWeight: FontWeight.bold),)
+                ],
+
+              ),
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Image.network(pic,width:100.0,height:200.0),
+                ],
+              ),
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  new Text("Quantity: "+units),
+                ],
+              ),
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  new Text("Price: ₹"+price,textAlign: TextAlign.end,),
+                ],
+              ),
+              new Row(
+
+
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: new Text("Total : ₹"+total.toString(),textAlign: TextAlign.end,),
+                  ),
+
+                ],
+              )
+            ],
+          ),
+          actions: <Widget>[
+            MaterialButton(
+              elevation:5.0,
+              child: Text('Submit'),
+              onPressed: (){
+                Navigator.of(context).pop();
+                createAlertDialog1(context,name);
+
+              },
+            )
+          ],
+        ),
+      );
+    });
+  }
+
 
   createAlertDialog1(BuildContext context,String n)
   {
@@ -672,6 +940,7 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
           scrollDirection: Axis.vertical,
           child: new Column(
             children: <Widget>[
+
               new Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -680,24 +949,76 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
                   //new Text(cart_prod_name,textAlign: TextAlign.center,style: new TextStyle(fontWeight: FontWeight.bold),)
                 ],
               ),
+              new TextField(
+                controller: _text,
+                decoration: InputDecoration(
+                  hintText: "Enter name",
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
+                  errorText: _validate ? 'Name Can\'t Be Empty' : null,
+                ),
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+                onChanged: (val) {
+                  custname = val;
+                },
+              ),
+              new TextField(
+                controller: _text1,
+                decoration: InputDecoration(
+                  hintText: "Enter Phone Number",
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
+                  errorText: _validate ? 'Phone number Can\'t Be Empty' : null,
+                ),
+                keyboardType: TextInputType.number,
+                onChanged: (val) {
+                  custphone= val;
+                },
+              ),
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Center(child: Text("Address"),)
+                  //new Text(cart_prod_name,textAlign: TextAlign.center,style: new TextStyle(fontWeight: FontWeight.bold),)
+                ],
+              ),
+
               Container(
                 height: 150.0,
-                child: new TextField(
-                  decoration: InputDecoration(
-                      hintText: 'Enter Address',
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
-                      suffixIcon: IconButton(
-                        icon: Icon(Icons.search),
-                        onPressed: searchandNavigate,
-                        iconSize: 30.0,
-                      )
-                  ),
-                  onChanged: (val) {
-                    searchAddr = val;
+                child: InkWell(
+                  onTap: (){
+                    getpredictions();
+
                   },
+                  child:Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text('${searchAddr}', maxLines: null,),
+
+                  ),
+
                 ),
+
+                /* new TextField(
+                    decoration: InputDecoration(
+                        hintText: fadd.replaceAll(' ', '\n'),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.search),
+                          onPressed: searchandNavigate,
+                          iconSize: 30.0,
+                        )
+                    ),
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    onChanged: (val) {
+                      searchAddr = val;
+                    },
+                  ),*/
               ),
+
 
               Container(
                 height: 200.0,
@@ -717,12 +1038,23 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
 
             ],
           ),
+
         ),
         actions: <Widget>[
           MaterialButton(
             elevation:5.0,
             child: Text('Submit'),
             onPressed: (){
+              setState(() {
+                _text.text.isEmpty ? _validate = true : _validate = false;
+                _text1.text.isEmpty ? _validate = true : _validate = false;
+              });
+              if(_text.text.isNotEmpty&&_text1.text.isNotEmpty){
+                Navigator.of(context).pop();
+                cod(context);
+              }
+
+
 
             },
           )
@@ -731,7 +1063,7 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
     });
   }
   Future<Null>refreshList() async{
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(Duration(seconds: 1));
     setState(() {
     getposts();
 
@@ -750,81 +1082,46 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
         child: new ListView.builder(
           itemCount: l.length,
           itemBuilder: (BuildContext context,int index){
+            //total_price+=double.parse(prod_price[index])*double.parse(units[index]);
             //return new Text(item_name[index]);
             return new Card(
               child: SingleChildScrollView(
                 child:ListTile(
-                  leading:new Image.network(imageurl[index],width:100.0,height:400.0),
+
+                  leading:InkWell(
+                    onTap: (){
+                    },
+                      child:
+                      new Image.network(imageurl[index],width:100.0,height:400.0)
+                  ),
                   title:new Text(item_name[index]),
                   subtitle: new Column(
                     children: <Widget>[
-
-                      new Column(
-                        children: <Widget>[
-
-                          new Column(
-                            children: <Widget>[
-                              /*IconButton(
-
-                                icon: Icon(Icons.arrow_drop_up),
-                                onPressed: () {
-                                  increment(int.parse(item_quantity[index]),index);
-                                  print("re is :");
-                                  print(re);
-                                },
-                              ),*/
-                            ],
-                          ),
-
-                          /*new Column(
-                            children: <Widget>[
-                              Container(
-                                child: Text('${count}'),
-                              ),
-                            ],
-                          ),*/
-                          /*new Column(
-                            children: <Widget>[
-                              /*RaisedButton(
-                                  onPressed: ()=>changeText(),
-                                  child:Text("Decrease")
-                              ),*/
-                              IconButton(
-
-                                  icon: Icon(Icons.arrow_drop_down),
-                                  onPressed: () =>decrement(),
-                              ),
-                            ],
-                          ),*/
-                          /*Container(
-                            padding: EdgeInsets.fromLTRB(20,20,20,20),
-                            child: Text('${textholder}'),
-                          ),
-                          RaisedButton(
-                              onPressed: ()=>changeText(),
-                              child:Text("Increase")
-                          ),*/
-
-
-
-
-
-
-
-
-
-                        ],
-
-
-                      ),
                       new Container(
                         alignment: Alignment.topLeft,
-                        child:new Text(prod_price[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+
+                            child:new Text("Price : ₹"+prod_price[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
+                        ),
+                        /*alignment: Alignment.topLeft,
+                        child:new Text("Price is : ₹"+prod_price[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)*/
+                      ),
+                      new Container(
+                          alignment: Alignment.topLeft,
+                        child: Padding(
+                            padding: EdgeInsets.all(8.0),
+
+                            child:new Text("Quantity : "+item_units[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
+                        ),
+                          //child:new Text("Quantity : "+item_units[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
                       ),
                       new Row(
                         children: <Widget>[
                           new FlatButton(onPressed: (){
-                            createAlertDialog(context,item_name[index],imageurl[index],item_quantity[index],prod_price[index]);
+                            //createAlertDialog(context, name.split(': ')[1], imgurl, price.split(': ')[1]);
+
+                            createAlertDialog(context,item_name[index],imageurl[index],prod_price[index],item_units[index]);
                           },
                             child:Text("Place Order")
                           ),
@@ -850,6 +1147,62 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
         ),),
     );
   }
+
+  getpredictions() async{
+    Prediction p = await PlacesAutocomplete.show(
+        context: context, apiKey: "AIzaSyC52Z3z1WF_y0Q0dbYfexizoexgAnSTov0");
+    displayPrediction(p);
+  }
+  Future<String> displayPrediction(Prediction p) async {
+    String x;
+    if (p != null) {
+      PlacesDetailsResponse detail =
+      await _places.getDetailsByPlaceId(p.placeId);
+
+      var placeId = p.placeId;
+      double lat = detail.result.geometry.location.lat;
+      double lng = detail.result.geometry.location.lng;
+
+      var address = await Geocoder.local.findAddressesFromQuery(p.description);
+      print("Address is");
+      final coordinates=new Coordinates(lat,lng);
+      var addresses=await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      var first=addresses.first;
+      //print("${first.featureName}:${first.addressLine}");
+      x=first.addressLine;
+      print(lat);
+      print(lng);
+      searchAddr="${first.addressLine}";
+      print(searchAddr);
+
+
+
+
+
+
+      searchandNavigate(x);
+    }
+  }
+
+   placeorder() {
+    FirebaseDatabase.instance.reference().child('Orders').child(user.uid).push().set(
+        {
+          'Address':searchAddr,
+          'buyer':custname,
+          'location':lat.toString()+","+lon.toString(),
+          'phone':custphone,
+          'prodcat':'electronics',
+          //'productid':widget.product_id,
+          'units':units,
+          'price':total,
+        }
+
+
+
+    );
+
+  }
+
 }
 void onMapCreated(GoogleMapController controller) {
   mapController=controller;
@@ -873,8 +1226,8 @@ void onMapCreated(GoogleMapController controller) {
 
 //setMarker() {}
 
-void searchandNavigate() {
-  Geolocator().placemarkFromAddress(searchAddr).then((result) {
+void searchandNavigate(String s) {
+  Geolocator().placemarkFromAddress(s).then((result) {
     mapController.animateCamera(CameraUpdate.newCameraPosition(
         CameraPosition(target:
         LatLng(result[0].position.latitude, result[0].position.longitude),
