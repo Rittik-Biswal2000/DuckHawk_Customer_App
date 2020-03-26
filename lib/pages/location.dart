@@ -31,6 +31,7 @@ class _MyLocationState extends State<MyLocation> {
   @override
   void initState() {
     super.initState();
+
     _markers.clear();
     final marker = Marker(
       draggable: true,
@@ -55,10 +56,11 @@ class _MyLocationState extends State<MyLocation> {
   }
 
   GoogleMapController mapController;
-  String searchAddr;
+  String searchAddr="Search here";
 
   @override
   Widget build(BuildContext context) {
+    //getpredictions();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -91,50 +93,17 @@ class _MyLocationState extends State<MyLocation> {
                   borderRadius: BorderRadius.circular(10.0),
                   color: Colors.white,
                 ),
-                child: TextField(
-                  /*onTap: ()async{
-                    Prediction p=await PlacesAutocomplete.show(context: context,
-                        apiKey: "AIzaSyC52Z3z1WF_y0Q0dbYfexizoexgAnSTov0",
-                    mode:Mode.overlay,
-                    language: "en",
-                    components: [new Component(Component.country, "in"),searchandNavigate()]);
-                    //displayPrediction(p);
-                    /*if(p!=null) {
-                      PlacesDetailsResponse detail = await _places
-                          .getDetailsByPlaceId(p.placeId);
-                      var placeId = p.placeId;
-                      double lt=detail.result.geometry.location.lat;
-                      double ln=detail.result.geometry.location.lng;
-                      var adress = await Geocoder.local.findAddressesFromQuery(
-                          p.description);
-                      print(adress);
-                      print(lt);
-                      print(ln);
-                    }*/
 
+                child: InkWell(
+                  onTap: (){
+                    getpredictions();
 
-                    //searchandNavigate();
-                    //searchAddr=p as String;
-                    //displayPrediction(p);
-                    // searchAddr = (await Geocoder.local.findAddressesFromQuery(p.description)) as String;
-                  },*/
-                  textInputAction: TextInputAction.go,
-                  decoration: InputDecoration(
-                    hintText: 'Enter address',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.search),
-                      onPressed: searchandNavigate,
-                      iconSize: 30.0,
-                    ),
-                  ),
-                  onChanged: (val) {
-                    setState(() {
-                      searchAddr = val;
-                    });
                   },
-                  
+                  child:Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text(searchAddr),
+                  ),
+
                 ),
               ),
             ),
@@ -166,10 +135,10 @@ class _MyLocationState extends State<MyLocation> {
 
   }
 
-  searchandNavigate() {
+  searchandNavigate(String s) {
 
 
-    Geolocator().placemarkFromAddress(searchAddr).then((result) {
+    Geolocator().placemarkFromAddress(s).then((result) {
       mapController.animateCamera(CameraUpdate.newCameraPosition(
           CameraPosition(target:
           LatLng(result[0].position.latitude, result[0].position.longitude),
@@ -242,6 +211,13 @@ _getAddressFromLatLng(result[0].position.latitude, result[0].position.longitude)
     Navigator.push(context, MaterialPageRoute(builder: (context)=>new HomePage(first.addressLine)));
   }
 
+   getpredictions() async{
+     Prediction p = await PlacesAutocomplete.show(
+         context: context, apiKey: "AIzaSyC52Z3z1WF_y0Q0dbYfexizoexgAnSTov0");
+     displayPrediction(p);
+
+  }
+
 
  /*Future<Null> displayPrediction(Prediction p) async {
     if (p != null) {
@@ -259,9 +235,37 @@ _getAddressFromLatLng(result[0].position.latitude, result[0].position.longitude)
       //_getAddressFromLatLng(lat, lng);
       searchandNavigate();
     }
+  }*/
+
+  Future<String> displayPrediction(Prediction p) async {
+    String x;
+    if (p != null) {
+      PlacesDetailsResponse detail =
+      await _places.getDetailsByPlaceId(p.placeId);
+
+      var placeId = p.placeId;
+      double lat = detail.result.geometry.location.lat;
+      double lng = detail.result.geometry.location.lng;
+
+      var address = await Geocoder.local.findAddressesFromQuery(p.description);
+      print("Address is");
+      final coordinates=new Coordinates(lat,lng);
+      addresses=await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      first=addresses.first;
+      //print("${first.featureName}:${first.addressLine}");
+      x=first.addressLine;
+      searchAddr="${first.addressLine}";
+
+
+
+
+
+
+      searchandNavigate(x);
+    }
   }
 
-*/
+
 
 
 

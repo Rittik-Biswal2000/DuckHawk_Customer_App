@@ -5,9 +5,11 @@
   import 'package:firebase_database/firebase_database.dart';
   import 'package:firebase_storage/firebase_storage.dart';
   import 'package:flutter/material.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:project_duckhawk/pages/orderconfirm.dart';
 import 'package:project_duckhawk/shared/loading.dart';
 
@@ -28,6 +30,14 @@ import 'package:project_duckhawk/shared/loading.dart';
     final String name;
     final Icon icon;
   }
+
+  GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: "AIzaSyC52Z3z1WF_y0Q0dbYfexizoexgAnSTov0");
+  double total=0;
+  String custname,custphone;
+  final _text = TextEditingController();
+  final _text1 = TextEditingController();
+  bool _validate = false;
+
   List<String> quan=[];
   String _dropDownValue="Quantity";
   String units="1";
@@ -40,9 +50,9 @@ import 'package:project_duckhawk/shared/loading.dart';
   final Map<String, Marker> _markers = {};
   String searchAddr;
   FirebaseUser user;
-getpoint()async{
-  final query = fadd;
-  var addresses = await Geocoder.local.findAddressesFromQuery(query);
+getpoint(String s)async{
+  //final query = fadd;
+  var addresses = await Geocoder.local.findAddressesFromQuery(s);
   var first = addresses.first;
   lat=first.coordinates.latitude;
   lon=first.coordinates.longitude;
@@ -108,9 +118,12 @@ getpoint()async{
 
           snapshot.documents.forEach((f) => uadd = '${f.data}');
           print("Address is:");
-          print(uadd.split(',')[2].split(': ')[1]);
+          print(uadd);
+          //print(uadd.split(',')[2].split(': ')[1]);
           fadd=uadd.split(',')[2].split(': ')[1];
-          searchAddr=fadd.replaceAll(' ', '\n');
+          //searchAddr=fadd.replaceAll(' ', '\n');
+          searchAddr=fadd;
+          getpoint(searchAddr);
 
         });
 
@@ -118,6 +131,7 @@ getpoint()async{
       });
 
   }
+
   getuser()async{
       user= await FirebaseAuth.instance.currentUser();
   }
@@ -142,7 +156,9 @@ getpoint()async{
                 children: <Widget>[
                   new Text("Pay only after you get the product in hand\nNo risk of loss of your hard earned money\nNo dependent on credit or debit cards"),
                 ],
-              )
+              ),
+
+
             ],
           ),
           actions: <Widget>[
@@ -150,6 +166,7 @@ getpoint()async{
               elevation:5.0,
               child: Text('Conform'),
               onPressed: (){
+                placeorder();
                 Navigator.of(context).pop();
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>new orderconfirm()));
 
@@ -162,55 +179,79 @@ getpoint()async{
     }
     createAlertDialog(BuildContext context,String name,String pic,String price)
     {
+
+      total=double.parse(price)*double.parse(units);
       print("in 1st dialog box");
       TextEditingController customController = TextEditingController();
       return showDialog(context: context,builder: (context){
-        return AlertDialog(
-          title: Text("Items available for checkout"),
-          content: new Column(
-            children: <Widget>[
-              new Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Center(child: Text(name),)
-                  //new Text(cart_prod_name,textAlign: TextAlign.center,style: new TextStyle(fontWeight: FontWeight.bold),)
-                ],
-              ),
-              new Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Image.network(pic,width:100.0,height:200.0),
-                ],
-              ),
-              new Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  new Text("Quantity: "+units),
-                ],
-              ),
-              new Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  new Text("Price: "+price,textAlign: TextAlign.end,),
-                ],
+        return SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: AlertDialog(
+
+            title: Text("Items available for checkout"),
+            content: new Column(
+              children: <Widget>[
+                new Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Center(
+                      child: Container(
+                        child: Text(name),
+                      ),
+                    )
+                    //new Text(cart_prod_name,textAlign: TextAlign.center,style: new TextStyle(fontWeight: FontWeight.bold),)
+                  ],
+
+                ),
+                new Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Image.network(pic,width:100.0,height:200.0),
+                  ],
+                ),
+                new Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    new Text("Quantity: "+units),
+                  ],
+                ),
+                new Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    new Text("Price: ₹"+price,textAlign: TextAlign.end,),
+                  ],
+                ),
+                new Row(
+                  
+
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: new Text("Total : ₹"+total.toString(),textAlign: TextAlign.end,),
+                    ),
+
+                  ],
+                )
+              ],
+            ),
+            actions: <Widget>[
+              MaterialButton(
+                elevation:5.0,
+                child: Text('Submit'),
+                onPressed: (){
+                  Navigator.of(context).pop();
+                  createAlertDialog1(context,name);
+
+                },
               )
             ],
           ),
-          actions: <Widget>[
-            MaterialButton(
-              elevation:5.0,
-              child: Text('Submit'),
-              onPressed: (){
-                Navigator.of(context).pop();
-                createAlertDialog1(context,name);
-
-              },
-            )
-          ],
         );
       });
     }
@@ -225,6 +266,7 @@ getpoint()async{
             scrollDirection: Axis.vertical,
             child: new Column(
               children: <Widget>[
+
                 new Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -233,9 +275,58 @@ getpoint()async{
                     //new Text(cart_prod_name,textAlign: TextAlign.center,style: new TextStyle(fontWeight: FontWeight.bold),)
                   ],
                 ),
+                new TextField(
+                  controller: _text,
+                  decoration: InputDecoration(
+                    hintText: "Enter name",
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
+                    errorText: _validate ? 'Name Can\'t Be Empty' : null,
+                  ),
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  onChanged: (val) {
+                    custname = val;
+                  },
+                ),
+                new TextField(
+                  controller: _text1,
+                  decoration: InputDecoration(
+                    hintText: "Enter Phone Number",
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
+                    errorText: _validate ? 'Phone number Can\'t Be Empty' : null,
+                  ),
+                  keyboardType: TextInputType.number,
+                  onChanged: (val) {
+                    custphone= val;
+                  },
+                ),
+                new Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Center(child: Text("Address"),)
+                    //new Text(cart_prod_name,textAlign: TextAlign.center,style: new TextStyle(fontWeight: FontWeight.bold),)
+                  ],
+                ),
+
                 Container(
                   height: 150.0,
-                  child: new TextField(
+                  child: InkWell(
+                    onTap: (){
+                      getpredictions();
+
+                    },
+                    child:Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text('${searchAddr}', maxLines: null,),
+
+                    ),
+
+                  ),
+
+                  /* new TextField(
                     decoration: InputDecoration(
                         hintText: fadd.replaceAll(' ', '\n'),
                         border: InputBorder.none,
@@ -251,8 +342,9 @@ getpoint()async{
                     onChanged: (val) {
                       searchAddr = val;
                     },
-                  ),
+                  ),*/
                 ),
+
 
                  Container(
                 height: 200.0,
@@ -272,14 +364,22 @@ getpoint()async{
 
               ],
             ),
+
           ),
           actions: <Widget>[
             MaterialButton(
               elevation:5.0,
               child: Text('Submit'),
               onPressed: (){
-                Navigator.of(context).pop();
-               cod(context);
+                setState(() {
+                  _text.text.isEmpty ? _validate = true : _validate = false;
+                  _text1.text.isEmpty ? _validate = true : _validate = false;
+                });
+                if(_text.text.isNotEmpty&&_text1.text.isNotEmpty){
+                  Navigator.of(context).pop();
+                  cod(context);
+                }
+
 
 
               },
@@ -316,68 +416,61 @@ getpoint()async{
                 ),
               ),
             ),
+
+
+
             Row(
 
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.all(16.0),
                   child: new Container(
-                    child: new Text(name.split(': ')[1]+"\n"+price.split(': ')[1]),
+                    child: new Text(name.split(': ')[1]+"\n"+"₹"+price.split(': ')[1]),
                   ),
                 ),
-
-      DropdownButton<String>(
-
-      items: quan.map((String val) {
-      return new DropdownMenuItem<String>(
-      value: val,
-      child: new Text(val),
-      );
-      }).toList(),
-      hint: Text("Quantity",
-      style: TextStyle(color: Colors.blue),
-      ),
-      onChanged: (val) {
-      //_selectedLocation = newVal;
-      setState(() {
-        _dropDownValue=val;
-        units=_dropDownValue;
-      });
-      }),
-       /*DropdownButton(
-      hint: _dropDownValue == null
-      ? Text('Dropdown')
-          : Text(
-      _dropDownValue,
-      style: TextStyle(color: Colors.blue),
-      ),
-      isExpanded: true,
-      iconSize: 30.0,
-      style: TextStyle(color: Colors.blue),
-      items:quan.map(
-      (val) {
-      return DropdownMenuItem<String>(
-      value: val,
-      child: Text(val),
-      );
-      },
-      ).toList(),
-      onChanged: (val) {
-      setState(
-      () {
-      _dropDownValue = val;
-      },
-      );
-      },
-      ),*/
-
-
-
-
-              ],
+      ],
             ),
+      Row(children: <Widget>[
+        Padding(
+          padding: EdgeInsets.fromLTRB(16.0,0,4.0,0),
+          child: DropdownButton<String>(
+
+              items: quan.map((String val) {
+                return new DropdownMenuItem<String>(
+                  value: val,
+                  child: new Text(val),
+                );
+              }).toList(),
+              hint: Text("Quantity",
+                style: TextStyle(color: Colors.blue),
+              ),
+              onChanged: (val) {
+                //_selectedLocation = newVal;
+                setState(() {
+                  _dropDownValue=val;
+                  units=_dropDownValue;
+                });
+              }),
+        ),
+
+      ],),
+
+
+
+
+
+
+
+
+
+
+
             Row(
+
               children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.fromLTRB(16.0, 0, 0, 0),
+                ),
                 new Text("Units : "+units),
               ],
             ),
@@ -385,11 +478,12 @@ getpoint()async{
               children: <Widget>[
                 Expanded(
                   child:MaterialButton(
-                    onPressed:()  {
+                    onPressed:(quantity!='0')? (){
                       /*addtocart();
                       Navigator.push(context,MaterialPageRoute(builder:(context)=>new cart()));*/
+
                       createAlertDialog(context, name.split(': ')[1], imgurl, price.split(': ')[1]);
-                    },
+                    }:null,
                     color:Colors.redAccent,
                     textColor: Colors.white,
                     elevation: 0.2,
@@ -400,7 +494,7 @@ getpoint()async{
                   addtocart();
                   Navigator.push(context,MaterialPageRoute(builder:(context)=>new cart()));
                 }),
-                new IconButton(icon:Icon(Icons.favorite),onPressed: (){}),
+                //new IconButton(icon:Icon(Icons.favorite),onPressed: (){}),
               ],
             ),
             Divider(),
@@ -415,80 +509,6 @@ getpoint()async{
 
   );
 
-        /*body: ListView(
-          children: <Widget>[
-            new Container(
-              height: 300.0,
-              child: GridTile(
-                child: Container(
-                  color: Colors.white,
-                  child: img,
-                ),
-                footer: new Container(
-                  color: Colors.white,
-                  child: ListTile(
-                    leading: new Text("Abc",
-                      style:TextStyle(fontWeight: FontWeight.bold,fontSize: 16.0),),
-                    title:new Row(
-                      children: <Widget>[
-                        Expanded(
-                          child:new Text("2000"),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child:MaterialButton(onPressed: (){},
-                    color:Colors.white,
-                    textColor: Colors.grey,
-                    elevation:0.2,
-                    child:Row(
-                      children: <Widget>[
-                        Expanded(
-                            child: new Text("Quantity")
-                        ),
-                        Expanded(
-                            child: new Icon(Icons.arrow_drop_down)
-                        ),
-
-                      ],
-                    ),
-                  ),
-                ),
-
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child:MaterialButton(
-    onPressed:()  {
-    addtocart();
-    Navigator.push(context,MaterialPageRoute(builder:(context)=>new cart()));
-    },
-    color:Colors.redAccent,
-    textColor: Colors.white,
-    elevation: 0.2,
-    child:new Text("Buy Now"),
-    ),
-    ),
-    new IconButton(icon:Icon(Icons.add_shopping_cart),onPressed: (){}),
-    new IconButton(icon:Icon(Icons.favorite),onPressed: (){}),
-    ],
-    ),
-    Divider(),
-    new ListTile(
-    title:new Text("Product Details"),
-    subtitle: new Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."),
-    )
-    ],
-
-    ),*/
   }
 
     Future<void> addtocart() async {
@@ -506,30 +526,71 @@ getpoint()async{
         'category':'electronics',
         'quantity':units
       });
-      /*
 
-      Firestore.instance.collection('/users').document().collection('/Carts').add({
-        'prod_pic':widget.prod_pic,
-        'prod_name':widget.prod_name,
-        'prod_price':widget.prod_price
-
-
-      });*/
     }
 
-    getData() async{/*
-      DatabaseReference re;
-     // re.child('Products\Electronics\-LxGRP0DOWjWX1m0gVq').once().then((DataSnapshot data){
-        //print(data.value);
-        //print(data.key);
+    getData() async{
+
+    }
+
+   getpredictions() async{
+     Prediction p = await PlacesAutocomplete.show(
+         context: context, apiKey: "AIzaSyC52Z3z1WF_y0Q0dbYfexizoexgAnSTov0");
+     displayPrediction(p);
+   }
+    Future<String> displayPrediction(Prediction p) async {
+      String x;
+      if (p != null) {
+        PlacesDetailsResponse detail =
+        await _places.getDetailsByPlaceId(p.placeId);
+
+        var placeId = p.placeId;
+        double lat = detail.result.geometry.location.lat;
+        double lng = detail.result.geometry.location.lng;
+
+        var address = await Geocoder.local.findAddressesFromQuery(p.description);
+        print("Address is");
+        final coordinates=new Coordinates(lat,lng);
+        var addresses=await Geocoder.local.findAddressesFromCoordinates(coordinates);
+        var first=addresses.first;
+        //print("${first.featureName}:${first.addressLine}");
+        x=first.addressLine;
+        print(lat);
+        print(lng);
+        searchAddr="${first.addressLine}";
+        print(searchAddr);
+
+
+
+
+
+
+        searchandNavigate(x);
       }
-      );
-      return re;*/
     }
+
+  placeorder() {
+    FirebaseDatabase.instance.reference().child('Orders').child(user.uid).push().set(
+        {
+          'Address':searchAddr,
+          'buyer':custname,
+          'location':lat.toString()+","+lon.toString(),
+          'phone':custphone,
+          'prodcat':'electronics',
+          'productid':widget.product_id,
+          'units':units,
+          'price':total,
+        }
+
+
+
+    );
+
+  }
   }
   void onMapCreated(GoogleMapController controller) {
 
-    getpoint();
+    //getpoint();
     print(lat.toString());
     print(lon.toString());
 
@@ -555,8 +616,8 @@ getpoint()async{
 
   //setMarker() {}
 
-  void searchandNavigate() {
-    Geolocator().placemarkFromAddress(searchAddr).then((result) {
+  void searchandNavigate(String s) {
+    Geolocator().placemarkFromAddress(s).then((result) {
       mapController.animateCamera(CameraUpdate.newCameraPosition(
           CameraPosition(target:
           LatLng(result[0].position.latitude, result[0].position.longitude),

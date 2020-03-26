@@ -29,6 +29,7 @@ List imageurl=[];
 List prod_price=[];
 List item_name=[];
 List item_quantity=[];
+List item_units=[];
 int q=1;
 var firestore = Firestore.instance;
 FirebaseUser user;
@@ -37,6 +38,7 @@ class _cartState extends State<cart> {
   String selected=null;
   FirebaseUser mCurrentUser;
   FirebaseAuth _auth;
+  var u;
 
   void initState() {
     super.initState();
@@ -55,15 +57,19 @@ class _cartState extends State<cart> {
         .collection('cart').getDocuments()
         .then((snapshot) {
       snapshot.documents.forEach((f) => l.add('${f.data}'));
+      u=snapshot.documents;
     });
 
+
     print("in cart page");
-    print(l);
-    print(l[0].split(',')[0].split(': ')[1]);
+    //print(l[0].toString());
+    print(u[0].data['category']);
+
+    //print(l[0].split(',')[0].split(': ')[1]);
     ref = reference.child('Products').child('Electronics');
     for (int j = 0; j < l.length; j++){
       reference.child('Products').child('Electronics').child(
-          l[j].split(',')[1].split(': ')[1]).once().then((
+          u[j].data['ProductId']).once().then((
           DataSnapshot snap) {
         var data = snap.value;
         print("Data");
@@ -570,9 +576,10 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
 
 
     print("in cart page");
+    print(l);
 
-    print(l[1].toString().split(': ')[1].split(',')[0]);
-    print(l.length);
+    //print(l[1].toString().split(': ')[1].split(',')[0]);
+    //print(l.length);
     ref = reference.child('Products').child('Electronics');
     for (int j = 0; j < l.length; j++){
       reference.child('Products').child('Electronics').child(
@@ -733,8 +740,8 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
   }
   @override
   Widget build(BuildContext context) {
-    print("Textholder is");
-    print(count);
+    //print("Textholder is");
+    //print(count);
     int re;
     return new Scaffold(
       body:
@@ -757,7 +764,7 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
 
                           new Column(
                             children: <Widget>[
-                              IconButton(
+                              /*IconButton(
 
                                 icon: Icon(Icons.arrow_drop_up),
                                 onPressed: () {
@@ -765,18 +772,18 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
                                   print("re is :");
                                   print(re);
                                 },
-                              ),
+                              ),*/
                             ],
                           ),
 
-                          new Column(
+                          /*new Column(
                             children: <Widget>[
                               Container(
                                 child: Text('${count}'),
                               ),
                             ],
-                          ),
-                          new Column(
+                          ),*/
+                          /*new Column(
                             children: <Widget>[
                               /*RaisedButton(
                                   onPressed: ()=>changeText(),
@@ -788,7 +795,7 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
                                   onPressed: () =>decrement(),
                               ),
                             ],
-                          ),
+                          ),*/
                           /*Container(
                             padding: EdgeInsets.fromLTRB(20,20,20,20),
                             child: Text('${textholder}'),
@@ -849,7 +856,7 @@ void onMapCreated(GoogleMapController controller) {
   _markers.clear();
   final marker = Marker(
       onTap: (){
-        print('Tapped');
+        //print('Tapped');
       },
       draggable: true,
       markerId: MarkerId("curr_loc"),
@@ -857,8 +864,8 @@ void onMapCreated(GoogleMapController controller) {
 
       infoWindow: InfoWindow(title: 'Your Location'),
       onDragEnd: ((value) async {
-        print(value.latitude);
-        print(value.longitude);
+       // print(value.latitude);
+        //print(value.longitude);
       })
   );
   _markers["Current Location"] = marker;
@@ -879,7 +886,7 @@ void searchandNavigate() {
     _markers.clear();
     final marker = Marker(
         onTap: (){
-          print('Tapped');
+          //print('Tapped');
         },
         draggable: true,
         markerId: MarkerId("curr_loc"),
@@ -889,8 +896,8 @@ void searchandNavigate() {
         onDragEnd: ((value) async {
 
 
-          print(value.latitude);
-          print(value.longitude);
+         // print(value.latitude);
+         // print(value.longitude);
           //final coordinates=new Coordinates(v3,v4);
 
         })

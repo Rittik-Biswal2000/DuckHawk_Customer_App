@@ -11,13 +11,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
-class HomePage extends StatefulWidget {
+class HomePage1 extends StatefulWidget {
 
   final add;
-  HomePage(this.add);
+  HomePage1(this.add);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _HomePage1State createState() => _HomePage1State();
 }
 Future<void> currentUser() async {
   FirebaseUser user = await FirebaseAuth.instance.currentUser();
@@ -26,7 +26,7 @@ Future<void> currentUser() async {
   print(user.displayName);
   return user;
 }
-class _HomePageState extends State<HomePage> {
+class _HomePage1State extends State<HomePage1> {
 
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
   Position _currentPosition;

@@ -4,7 +4,9 @@ import 'package:carousel_pro/carousel_pro.dart';
 import 'package:project_duckhawk/components/horizontal_listview.dart';
 import 'package:project_duckhawk/components/products.dart';
 import 'package:project_duckhawk/pages/account.dart';
+import 'package:project_duckhawk/pages/auto.dart';
 import 'package:project_duckhawk/pages/cart1.dart';
+import 'package:project_duckhawk/pages/category.dart';
 import 'package:project_duckhawk/pages/electronics.dart';
 import 'package:project_duckhawk/pages/login_page.dart';
 import 'package:project_duckhawk/pages/product_details.dart';
@@ -21,8 +23,10 @@ String curlat,curlon;
 
 String badd="Loading";
 
+
 int d=0;
 String add="hi";
+
 void main() {
   runApp(MaterialApp(debugShowCheckedModeBanner: false,
       //home:LoginPage()));
@@ -36,9 +40,11 @@ String add;
   HomePage(this.add);
   //HomePage(this.add);
 
+
   @override
   _HomePageState createState() => _HomePageState();
 }
+String custadd=add;
 Future<void> currentUser() async {
   user = await FirebaseAuth.instance.currentUser();
   print(user.email);
@@ -46,13 +52,14 @@ Future<void> currentUser() async {
   print(user.displayName);
   return user;
 }
+
 class _HomePageState extends State<HomePage> {
 
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 
   Position _currentPosition;
   String _currentAddress ;
-  String name="hello";
+  String name="Login/SignUp";
   FirebaseUser mCurrentUser;
   FirebaseAuth _auth;
   String _value = '';
@@ -61,6 +68,7 @@ class _HomePageState extends State<HomePage> {
   void initState(){
     super.initState();
     getproducts();
+    getproducts1();
     //getposts();
     cart();
 
@@ -116,6 +124,7 @@ class _HomePageState extends State<HomePage> {
             title: Container(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
+
                   child: Column(
                   children: <Widget>[
                     Row(
@@ -125,6 +134,7 @@ class _HomePageState extends State<HomePage> {
                         icon: new Icon(Icons.place),
                         onPressed: () {
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>new MyLocation()));
+                          //Navigator.push(context, MaterialPageRoute(builder: (context)=>new HomePage(null)));
                           //_getCurrentLocation();
                           currentUser();
                         },
@@ -238,16 +248,20 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>new LoginPage()));
               },
             ),
+            InkWell(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new category("Home & Furniture")));
+              },
+              child: ListTile(
+                title: Text('Groceries'),
+              ),
+            ),
 
             InkWell(
               onTap: () {},
               child: ListTile(
-                title: Text('Men'),
+                title: Text('Fashion'),
               ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: ListTile(title: Text('Women')),
             ),
             InkWell(
               onTap: () {
@@ -292,32 +306,32 @@ class _HomePageState extends State<HomePage> {
                       },
                       child: ListTile(title: Text('Account')),
                     ),
-                    InkWell(
+                    /*InkWell(
                       onTap: () {},
                       child: ListTile(title: Text('Notifications')),
-                    ),
-                    InkWell(
+                    ),*/
+                    /*InkWell(
                       onTap: () {},
                       child: ListTile(title: Text('Budget')),
-                    ),
-                    InkWell(
+                    ),*/
+                    /*InkWell(
                       onTap: () {},
                       child: ListTile(title: Text('Share')),
-                    ),
-                    InkWell(
+                    ),*/
+                    /*InkWell(
                       onTap: () {},
                       child: ListTile(title: Text('Settings')),
-                    ),
+                    ),*/
                     InkWell(
                       onTap: () {
                         _signOut();
-                        name="hi";
+                        name="Login";
                       },
-                      child: ListTile(title: Text('LOGOUT')),
+                      child: ListTile(title: Text('Logout')),
                     ),
                     InkWell(
                       onTap: () {},
-                      child: ListTile(title: Text('HELP')),
+                      child: ListTile(title: Text('Contact Us')),
                     )
                   ],
                 )),
@@ -333,7 +347,7 @@ class _HomePageState extends State<HomePage> {
           new Padding(padding: const EdgeInsets.all(8.0)),
           image_carousel,
           image_carousel1,
-          Container(
+          /*Container(
               padding: const EdgeInsets.all(10.0),
               color: Color(0xff104670),
               child: new Row(
@@ -359,7 +373,7 @@ class _HomePageState extends State<HomePage> {
             child: products(
               'fashion',
             ),
-          ),
+          ),*/
           Container(
               padding: const EdgeInsets.all(10.0),
               color: Color(0xff104670),
