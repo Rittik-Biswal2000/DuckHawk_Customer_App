@@ -6,6 +6,7 @@
   import 'package:firebase_storage/firebase_storage.dart';
   import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -84,7 +85,7 @@ getpoint(String s)async{
 
       getuser();
       DatabaseReference reference=FirebaseDatabase.instance.reference();
-      reference.child('Products').child('Electronics').child(widget.product_id).once().then((DataSnapshot snap){
+      reference.child('Products').child('Bhubaneswar').child('Electronics').child(widget.product_id).once().then((DataSnapshot snap){
         var keys=snap.value.keys;
         print("The keys are :"+keys.toString());
         var data=snap.value;
@@ -492,7 +493,15 @@ getpoint(String s)async{
                 ),
                 new IconButton(icon:Icon(Icons.add_shopping_cart),onPressed: (){
                   addtocart();
-                  Navigator.push(context,MaterialPageRoute(builder:(context)=>new cart()));
+                  Fluttertoast.showToast(
+                      msg: "Added to cart",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      textColor: Colors.white,
+                      fontSize: 8.0
+                  );
+                 // Navigator.push(context,MaterialPageRoute(builder:(context)=>new cart()));
                 }),
                 //new IconButton(icon:Icon(Icons.favorite),onPressed: (){}),
               ],

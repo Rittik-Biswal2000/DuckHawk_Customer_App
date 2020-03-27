@@ -9,16 +9,41 @@ class electronics extends StatefulWidget {
   @override
   _electronicsState createState() => _electronicsState();
 }
-List n;
+List n=[];
+List item_id=[];
+List it_im=[];
 int i;
 void getproducts() {
+  item_id.clear();
+  //id.add(" ");
+
+  int l;
+  String d;
   print("hello");
   DatabaseReference reference=FirebaseDatabase.instance.reference();
-  reference.child('Products').child('Electronics').once().then((DataSnapshot snap){
+  reference.child('Products').child('Bhubaneswar').child('Electronics').once().then((DataSnapshot snap){
     var keys=snap.key;
     var data=snap.value;
     print("keys are :"+ keys.toString());
+    for(var product in data){
+      print(product);
+    }
+    print(snap.value);
+    print("Data is :");
+    print(data);
+
+
      n=data.toString().split('},');
+     print("0th node is ");
+     print(n);
+     //print(n[0].split(': {')[0].toString());
+     d=n[0].split(': {')[0].toString();
+     l=n[0].split(': {')[0].toString().length;
+     //print(d.substring(1,l));
+     //print(n[0].toString().split('{ '));
+     item_id.add(d.substring(1,l));
+     //print("Something");
+    //print(n[2].toString().split(': ').toString().split(', {')[0].split('[ ')[1]);
     //data.toString().split('},').length;
     //print("Lenght of lenght");
     //print(n[0].toString().split('{'));
@@ -26,12 +51,21 @@ void getproducts() {
     //String m=n[1].toString().split('{').toString();
     //print(m.split(',')[2].split(': ')[1]);
     //print(n[2]);
-    print(n[1].toString().split(': ').toString().split(', {')[0].split('[ ')[1]);
+    //print(n[1].toString().split(': ').toString().split(', {')[0].split('[ ')[1]);
 
     for(i=1;i<n.length;i++)
       {
-        print(n[i].toString().split('{').toString().split(',')[5].split(': ')[1]);
+
+            //print(n[i].toString().split(': ').toString().split(', {')[0].split('[ ')[1]);
+        //print(n[i].toString().split('{').toString().split(',')[5].split(': ')[1]);
+        item_id.add(n[i].toString().split(': ').toString().split(', {')[0].split('[ ')[1]);
       }
+
+    print("id is ");
+    for(i=0;i<item_id.length;i++){
+      //print(item_id[i]);
+      //print(n[i]);
+    }
     /*
       seller=data.toString().split(',')[0];
       imgurl=data.toString().split(',')[1];
@@ -100,7 +134,8 @@ class _electronicsState extends State<electronics> {
                      child:InkWell(
                        onTap: (){
                          Loading();
-                         Navigator.push(context, MaterialPageRoute(builder: (context)=>new item_info(n[index].toString().split(': ').toString().split(', {')[0].split('[ ')[1])));
+                         Navigator.push(context, MaterialPageRoute(builder: (context)=>new item_info(item_id[index].toString())));
+                             //n[index].toString().split(': ').toString().split(', {')[0].split('[ ')[1])));
                          print("item_info");
                        },
                          /*footer: Container(

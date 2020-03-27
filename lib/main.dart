@@ -187,7 +187,7 @@ class _HomePageState extends State<HomePage> {
         ),
 
       ],*/
-      bottomNavigationBar: new Container(
+     /* bottomNavigationBar: new Container(
         padding: EdgeInsets.all(0.0),
         child: Row(
           mainAxisSize: MainAxisSize.max,
@@ -227,7 +227,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-      ),
+      ),*/
       endDrawer: new Drawer(
         child: new ListView(
           children: <Widget>[
@@ -250,7 +250,7 @@ class _HomePageState extends State<HomePage> {
             ),
             InkWell(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>new category("Home & Furniture")));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new category("Groceries")));
               },
               child: ListTile(
                 title: Text('Groceries'),
@@ -258,31 +258,42 @@ class _HomePageState extends State<HomePage> {
             ),
 
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new category("Fashion")));
+
+              },
               child: ListTile(
                 title: Text('Fashion'),
               ),
             ),
             InkWell(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>new electronics()));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new category("Electronics")));
               },
               child: ListTile(title: Text('Electronics')),
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new category("Sports")));
+              },
               child: ListTile(title: Text('Sports')),
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new category("Books")));
+              },
               child: ListTile(title: Text('Books')),
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new category("Home & Furniture")));
+              },
               child: ListTile(title: Text('Home & Furniture')),
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new category("Beauty & Personal Care")));
+              },
               child: ListTile(title: Text('Beauty & Personal Care')),
             ),
             Divider(),
@@ -325,6 +336,7 @@ class _HomePageState extends State<HomePage> {
                     InkWell(
                       onTap: () {
                         _signOut();
+
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>new HomePage(null)));
                         name="Login";
                       },

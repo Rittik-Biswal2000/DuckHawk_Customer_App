@@ -12,6 +12,7 @@ import 'package:project_duckhawk/pages/cart1.dart';
 import 'package:project_duckhawk/pages/item_info.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:project_duckhawk/shared/loading.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'orderconfirm.dart';
 class cart extends StatefulWidget {
@@ -63,6 +64,7 @@ class _cartState extends State<cart> {
 
   }
   getposts() async{
+    total=0;
     l.clear();
     quan.clear();
     unit.clear();
@@ -97,7 +99,7 @@ class _cartState extends State<cart> {
     //print(l[0].split(',')[0].split(': ')[1]);
     ref = reference.child('Products').child('Electronics');
     for (int j = 0; j < l.length; j++){
-      reference.child('Products').child('Electronics').child(
+      reference.child('Products').child('Bhubaneswar').child('Electronics').child(
           u[j].data['ProductId']).once().then((
           DataSnapshot snap) {
         var data = snap.value;
@@ -160,9 +162,9 @@ class _cartState extends State<cart> {
         print("total price is :");
         print(total_price);
         showDialog(
-           context: context,
-           builder: (_) => build(context)
-         );
+            context: context,
+            builder: (_) => build(context)
+        );
       });
     }
     //return qn.documents;
@@ -200,8 +202,14 @@ class _cartState extends State<cart> {
             child: Text('Confirm'),
             onPressed: (){
               placeorder1();
+              sendmsg();
               Navigator.of(context).pop();
               Navigator.push(context, MaterialPageRoute(builder: (context)=>new orderconfirm()));
+              firestore.collection('users').document(user.uid).collection('cart').getDocuments().then((snapshot) {
+                for (DocumentSnapshot ds in snapshot.documents) {
+                  ds.reference.delete();
+                }
+              });
 
 
             },
@@ -432,7 +440,7 @@ class _cartState extends State<cart> {
     setState(() {
 
       cart();
-  });
+    });
     return null;
   }
   String textholder='1';
@@ -440,59 +448,59 @@ class _cartState extends State<cart> {
 
     int x1=1;
 
-      setState(() {
-        textholder=(x1++).toString();
-      });
+    setState(() {
+      textholder=(x1++).toString();
+    });
 
   }
   @override
   Widget build(BuildContext context) {
     print("hi");
     return new WillPopScope(
-        onWillPop: _onWillPop,
-        child: new Scaffold(
+      onWillPop: _onWillPop,
+      child: new Scaffold(
         appBar: new AppBar(
-        title: new Text("Cart"),
+          title: new Text("Cart"),
           backgroundColor: Color(0xff104670),
-    ),
-      body:RefreshIndicator(
-        child: LogoutOverlay(),
-        onRefresh: refreshList,
+        ),
+        body:RefreshIndicator(
+          child: LogoutOverlay(),
+          onRefresh: refreshList,
 
-      /*child: ListView.builder(
+          /*child: ListView.builder(
             itemCount: l.length,
             itemBuilder:(_,index){
               print("bye");
               return PostsUI(l[index].split(',')[1].split(': ')[1],imageurl[index],item_name[index],item_quantity[index],prod_price[index]);
             }
         ),*/
-      ),
-      bottomNavigationBar: new Container(
-          color:Colors.white,
-          child:Row(
-            children: <Widget>[
-              Expanded(
-                  child:ListTile(
-                    title:new Text("Total Amount :"),
-                    subtitle:new Text(total_price.toString()),
-                  )
-              ),
-              Expanded(
-                  child:new FlatButton(onPressed: (){
-                    createAlertDialog1(context,item_name[0]+" others");
-                  },
-                    child: Text("Check Out",style: TextStyle(color: Colors.white)),
-                    color: Colors.redAccent,
-                  )
-              )
-            ],
-          )
-      ),
+        ),
+        bottomNavigationBar: new Container(
+            color:Colors.white,
+            child:Row(
+              children: <Widget>[
+                Expanded(
+                    child:ListTile(
+                      title:new Text("Total Amount :"),
+                      subtitle:new Text(total_price.toString()),
+                    )
+                ),
+                Expanded(
+                    child:new FlatButton(onPressed: (){
+                      createAlertDialog1(context,item_name[0]+" others");
+                    },
+                      child: Text("Check Out",style: TextStyle(color: Colors.white)),
+                      color: Colors.redAccent,
+                    )
+                )
+              ],
+            )
+        ),
 
       ),
     );
   }
-int i=1;
+  int i=1;
   getpredictions() async{
     Prediction p = await PlacesAutocomplete.show(
         context: context, apiKey: "AIzaSyC52Z3z1WF_y0Q0dbYfexizoexgAnSTov0");
@@ -532,7 +540,7 @@ int i=1;
   placeorder1() {
     int a;
     for(a=0;a<l.length;a++){
-      FirebaseDatabase.instance.reference().child('Orders').push().set(
+      FirebaseDatabase.instance.reference().child('Orders').child(user.uid).push().set(
           {
             'Address':searchAddr,
             'buyer':custname,
@@ -550,9 +558,7 @@ int i=1;
     }
 
   }
- /* Widget PostsUI(String split, String imgurl, String item_name, String item_quantity, String prod_price) {
-
-
+/* Widget PostsUI(String split, String imgurl, String item_name, String item_quantity, String prod_price) {
     String q=item_quantity;
     int qt=int.parse(q);
     unit.clear();
@@ -568,7 +574,6 @@ int i=1;
       ));
     }*/
     print(imgurl);
-
     return new Card(
       child: SingleChildScrollView(
           child:ListTile(
@@ -595,18 +600,7 @@ int i=1;
                         onPressed: ()=>increment(item_quantity),
                         child:Text("Increase")
                     ),
-
-
-
-
-
-
-
-
-
                   ],
-
-
                 ),
                 new Row(
                   children: <Widget>[
@@ -620,14 +614,11 @@ int i=1;
                           firestore.collection('users').document(user.uid).collection('cart').document(split).delete();
                           //Navigator.push(context, MaterialPageRoute(builder: (context)=>new LogoutOverlay()));
                           refreshList();
-
                         }, child: Text("Delete")),
-
                   ],
                 ),
               ],
             ),
-
           )
       ),
     );
@@ -644,15 +635,12 @@ int i=1;
                   //new Image.network(imgurl,width:100.0,height:400.0),
                   new Text(
                     item_name,
-
                   ),
                   new Text(
                    item_quantity,
-
                   ),
                   new Text(
                     prod_price,
-
                   ),
                 ],
               ),
@@ -668,9 +656,7 @@ int i=1;
                         firestore.collection('users').document(user.uid).collection('cart').document(split).delete();
                         //Navigator.push(context, MaterialPageRoute(builder: (context)=>new LogoutOverlay()));
                         refreshList();
-
                       }, child: Text("Delete")),
-
                 ],
               ),
             ],
@@ -711,20 +697,15 @@ int i=1;
                                   firestore.collection('users').document(user.uid).collection('cart').document(split).delete();
                                   //Navigator.push(context, MaterialPageRoute(builder: (context)=>new LogoutOverlay()));
                                   refreshList();
-
                                 }, child: Text("Delete")),
-
                           ],
                         ),
                       ],
                     ),
-
                   )
               ),
             );
           },
-
-
         ),),
     );
   }*/
@@ -742,7 +723,7 @@ class LogoutOverlay extends StatefulWidget {
 }
 
 class _LogoutOverlayState extends State<LogoutOverlay> {
- /* List<String> quan=new List<String>();
+  /* List<String> quan=new List<String>();
   List<String> unit=new List<String>();
   List imageurl=new List();
   List prod_price=new List();
@@ -758,6 +739,7 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
 
   getposts() async{
     final Firestore _firestore = Firestore.instance;
+    total=0;
     l.clear();
     quan.clear();
     unit.clear();
@@ -783,10 +765,10 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
 
     //print(l[1].toString().split(': ')[1].split(',')[0]);
     //print(l.length);
-   // l[j].toString().split(': ')[1].split(',')[0]
-    ref = reference.child('Products').child('Electronics');
+    // l[j].toString().split(': ')[1].split(',')[0]
+    ref = reference.child('Products').child('Bhubaneswar').child('Electronics');
     for (int j = 0; j < l.length; j++){
-      reference.child('Products').child('Electronics').child(
+      reference.child('Products').child('Bhubaneswar').child('Electronics').child(
           l[j].toString().split(': ')[1].split(',')[0]).once().then((
           DataSnapshot snap) {
         var data = snap.value;
@@ -818,7 +800,7 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
   }
 
 
-  cod(BuildContext context)
+  cod(BuildContext context,String d)
   {
     return showDialog(context: context,builder: (context){
       return AlertDialog(
@@ -847,11 +829,17 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
         actions: <Widget>[
           MaterialButton(
             elevation:5.0,
-            child: Text('Conform'),
+            child: Text('Confirm'),
             onPressed: (){
-              placeorder();
+              placeorder(d);
+              sendmsg();
+
               Navigator.of(context).pop();
+              Navigator.pop(context, MaterialPageRoute(builder: (context)=>new cart()));
               Navigator.push(context, MaterialPageRoute(builder: (context)=>new orderconfirm()));
+
+
+
 
 
             },
@@ -860,7 +848,7 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
       );
     });
   }
-  createAlertDialog(BuildContext context,String name,String pic,String price,String units)
+  createAlertDialog(BuildContext context,String name,String pic,String price,String units,String id)
   {
 
     total=double.parse(price)*double.parse(units);
@@ -929,7 +917,7 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
               child: Text('Submit'),
               onPressed: (){
                 Navigator.of(context).pop();
-                createAlertDialog1(context,name);
+                createAlertDialog1(context,name,id);
 
               },
             )
@@ -940,7 +928,7 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
   }
 
 
-  createAlertDialog1(BuildContext context,String n)
+  createAlertDialog1(BuildContext context,String n,String i)
   {
     TextEditingController customController = TextEditingController();
     return showDialog(context: context,builder: (context){
@@ -1061,7 +1049,7 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
               });
               if(_text.text.isNotEmpty&&_text1.text.isNotEmpty){
                 Navigator.of(context).pop();
-                cod(context);
+                cod(context,i);
               }
 
 
@@ -1076,10 +1064,10 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
     await Future.delayed(Duration(seconds: 2));
     getposts();
     setState(() {
-    cart();
+      cart();
 
 
-  });
+    });
     return null;
   }
   @override
@@ -1089,8 +1077,8 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
     int re;
     return new Scaffold(
       body:
-          RefreshIndicator(
-            onRefresh: refreshList,
+      RefreshIndicator(
+        onRefresh: refreshList,
         child: new ListView.builder(
           itemCount: l.length,
           itemBuilder: (BuildContext context,int index){
@@ -1098,62 +1086,63 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
             //return new Text(item_name[index]);
             return new Card(
               child: SingleChildScrollView(
-                child:ListTile(
+                  child:ListTile(
 
-                  leading:InkWell(
-                    onTap: (){
-                    },
-                      child:
-                      new Image.network(imageurl[index],width:100.0,height:400.0)
-                  ),
-                  title:new Text(item_name[index]),
-                  subtitle: new Column(
-                    children: <Widget>[
-                      new Container(
-                        alignment: Alignment.topLeft,
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-
-                            child:new Text("Price : ₹"+prod_price[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
-                        ),
-                        /*alignment: Alignment.topLeft,
-                        child:new Text("Price is : ₹"+prod_price[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)*/
-                      ),
-                      new Container(
+                    leading:InkWell(
+                        onTap: (){
+                        },
+                        child:
+                        new Image.network(imageurl[index],width:100.0,height:400.0)
+                    ),
+                    title:new Text(item_name[index]),
+                    subtitle: new Column(
+                      children: <Widget>[
+                        new Container(
                           alignment: Alignment.topLeft,
-                        child: Padding(
-                            padding: EdgeInsets.all(8.0),
+                          child: Padding(
+                              padding: EdgeInsets.all(8.0),
 
-                            child:new Text("Quantity : "+item_units[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
-                        ),
-                          //child:new Text("Quantity : "+item_units[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
-                      ),
-                      new Row(
-                        children: <Widget>[
-                          new FlatButton(onPressed: (){
-                            //createAlertDialog(context, name.split(': ')[1], imgurl, price.split(': ')[1]);
-
-                            createAlertDialog(context,item_name[index],imageurl[index],prod_price[index],item_units[index]);
-                          },
-                            child:Text("Place Order")
+                              child:new Text("Price : ₹"+prod_price[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
                           ),
-                          new FlatButton(
-                              onPressed: (){
-                                //l[index].toString().split(': ')[1].split(',')[0]
-                            firestore.collection('users').document(user.uid).collection('cart').document(u[index].data["ProductId"]).delete();
+                          /*alignment: Alignment.topLeft,
+                        child:new Text("Price is : ₹"+prod_price[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)*/
+                        ),
+                        new Container(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                              padding: EdgeInsets.all(8.0),
+
+                              child:new Text("Quantity : "+item_units[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
+                          ),
+                          //child:new Text("Quantity : "+item_units[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
+                        ),
+                        new Row(
+                          children: <Widget>[
+                            new FlatButton(onPressed: (){
+                              //createAlertDialog(context, name.split(': ')[1], imgurl, price.split(': ')[1]);
+
+                              createAlertDialog(context,item_name[index],imageurl[index],prod_price[index],item_units[index],u[index].data["ProductId"]);
+                            },
+                                child:Text("Place Order")
+                            ),
+                            new FlatButton(
+                                onPressed: (){
+                                  //l[index].toString().split(': ')[1].split(',')[0]
+                                  firestore.collection('users').document(user.uid).collection('cart').document(u[index].data["ProductId"]).delete();
 
 
-                           refreshList();
-                            //Navigator.pop(context, MaterialPageRoute(builder: (context)=>new LogoutOverlay()));
+                                  //refreshList();
+                                  Navigator.pop(context, MaterialPageRoute(builder: (context)=>new LogoutOverlay()));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart()));
 
-                          }, child: Text("Delete")),
+                                }, child: Text("Delete")),
 
-                        ],
-                      ),
-                    ],
-                  ),
+                          ],
+                        ),
+                      ],
+                    ),
 
-                )
+                  )
               ),
             );
           },
@@ -1199,24 +1188,35 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
     }
   }
 
-   placeorder() {
-    FirebaseDatabase.instance.reference().child('Orders').push().set(
+  placeorder(String item_id) async{
+    FirebaseDatabase.instance.reference().child('Orders').child(user.uid).push().set(
         {
           'Address':searchAddr,
           'buyer':custname,
           'location':lat.toString()+","+lon.toString(),
           'phone':custphone,
           'prodcat':'electronics',
-          'productid':null,
-          'units':units,
+          'productid':item_id,
+          //'units':units,
           'price':total,
         }
 
 
 
     );
+    /*await launch(
+        "https://wa.me/${919439200913}?text=Hello");
+    print("hi");*/
 
   }
+
+
+
+}
+sendmsg()async {
+  await launch(
+      "https://wa.me/${919439200913}?text=Order Received for user id ${user.uid}");
+  print("message");
 
 }
 void onMapCreated(GoogleMapController controller) {
@@ -1232,7 +1232,7 @@ void onMapCreated(GoogleMapController controller) {
 
       infoWindow: InfoWindow(title: 'Your Location'),
       onDragEnd: ((value) async {
-       // print(value.latitude);
+        // print(value.latitude);
         //print(value.longitude);
       })
   );
@@ -1264,8 +1264,8 @@ void searchandNavigate(String s) {
         onDragEnd: ((value) async {
 
 
-         // print(value.latitude);
-         // print(value.longitude);
+          // print(value.latitude);
+          // print(value.longitude);
           //final coordinates=new Coordinates(v3,v4);
 
         })
@@ -1287,7 +1287,3 @@ void searchandNavigate(String s) {
       });*/
   });
 }
-
-
-
-

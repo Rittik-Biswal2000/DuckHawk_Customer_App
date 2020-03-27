@@ -67,7 +67,7 @@ class _categoryState extends State<category> {
     print("hello");
     print(cat);
     DatabaseReference reference=FirebaseDatabase.instance.reference();
-    reference.child('Products').child(widget.c).once().then((DataSnapshot snap){
+    reference.child('Products').child('Bhubaneswar').child(widget.c).once().then((DataSnapshot snap){
       var keys=snap.key;
       var data=snap.value;
       print("keys are :"+ keys.toString());

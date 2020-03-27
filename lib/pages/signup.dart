@@ -42,10 +42,10 @@ class _SignupPageState extends State<SignupPage> {
                           _phone = value;
                           else{
                             Fluttertoast.showToast(
-                                msg: "This is Toast messaget",
+                                msg: "Should be a 10 digit number",
                                 toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.CENTER,
-                                timeInSecForIos: 1
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 1
                             );
                           }
                         });
