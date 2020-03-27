@@ -325,6 +325,7 @@ class _HomePageState extends State<HomePage> {
                     InkWell(
                       onTap: () {
                         _signOut();
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>new HomePage(null)));
                         name="Login";
                       },
                       child: ListTile(title: Text('Logout')),

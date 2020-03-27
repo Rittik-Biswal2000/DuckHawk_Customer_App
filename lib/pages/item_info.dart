@@ -570,7 +570,7 @@ getpoint(String s)async{
     }
 
   placeorder() {
-    FirebaseDatabase.instance.reference().child('Orders').child(user.uid).push().set(
+    FirebaseDatabase.instance.reference().child('Orders').push().set(
         {
           'Address':searchAddr,
           'buyer':custname,
@@ -578,7 +578,7 @@ getpoint(String s)async{
           'phone':custphone,
           'prodcat':'electronics',
           'productid':widget.product_id,
-          'units':units,
+          //'units':units,
           'price':total,
         }
 

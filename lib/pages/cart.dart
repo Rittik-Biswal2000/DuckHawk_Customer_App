@@ -33,6 +33,7 @@ String p='1';
 String searchAddr,fadd;
 int count=1;
 var x;
+
 List l=[];
 List<String> quan=[];
 List<String> unit=[];
@@ -47,9 +48,12 @@ FirebaseUser user;
 var u;
 
 class _cartState extends State<cart> {
+  //List<Manga> _listContent = new List<Manga>();
   String selected=null;
   FirebaseUser mCurrentUser;
   FirebaseAuth _auth;
+
+
 
 
   void initState() {
@@ -60,6 +64,13 @@ class _cartState extends State<cart> {
   }
   getposts() async{
     l.clear();
+    quan.clear();
+    unit.clear();
+    imageurl.clear();
+    prod_price.clear();
+    item_name.clear();
+    item_quantity.clear();
+    item_units.clear();
     DatabaseReference reference = FirebaseDatabase.instance.reference();
     final FirebaseAuth _auth = FirebaseAuth.instance;
     user = await _auth.currentUser();
@@ -412,15 +423,15 @@ class _cartState extends State<cart> {
     });
   }
   Future<bool> _onWillPop() async {
-    for(int m=0;m<=l.length;m++){
-      Navigator.pop(context);
-    }
+    Navigator.pop(context, MaterialPageRoute(builder: (context)=>new cart()));
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>new HomePage(null)));
   }
   Future<Null>refreshList() async{
     await Future.delayed(Duration(seconds: 2));
-
-    setState(() {
     getposts();
+    setState(() {
+
+      cart();
   });
     return null;
   }
@@ -731,33 +742,30 @@ class LogoutOverlay extends StatefulWidget {
 }
 
 class _LogoutOverlayState extends State<LogoutOverlay> {
+ /* List<String> quan=new List<String>();
+  List<String> unit=new List<String>();
+  List imageurl=new List();
+  List prod_price=new List();
+  List item_name=new List();
+  List item_quantity=new List();
+  List item_units=new List();*/
 
   String textholder='1';
   int x1=1;
   int count=1;
 
-  int increment(int y,int i){
-    count=1;
-    setState(() {
-      if(x1<=y)
-        //textholder=(++x1).toString();
-        count=++x1;
-    });
-    //return x1.toString();
 
-    return count;
-  }
-
-  decrement(){
-    setState(() {
-      if(x1!=1)
-      count=--x1;
-    });
-  }
 
   getposts() async{
     final Firestore _firestore = Firestore.instance;
     l.clear();
+    quan.clear();
+    unit.clear();
+    imageurl.clear();
+    prod_price.clear();
+    item_name.clear();
+    item_quantity.clear();
+    item_units.clear();
     DatabaseReference reference = FirebaseDatabase.instance.reference();
     final FirebaseAuth _auth = FirebaseAuth.instance;
     user = await _auth.currentUser();
@@ -766,6 +774,7 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
         .collection('cart').getDocuments()
         .then((snapshot) {
       snapshot.documents.forEach((f) => l.add('${f.data}'));
+      u=snapshot.documents;
     });
 
 
@@ -774,6 +783,7 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
 
     //print(l[1].toString().split(': ')[1].split(',')[0]);
     //print(l.length);
+   // l[j].toString().split(': ')[1].split(',')[0]
     ref = reference.child('Products').child('Electronics');
     for (int j = 0; j < l.length; j++){
       reference.child('Products').child('Electronics').child(
@@ -1063,9 +1073,11 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
     });
   }
   Future<Null>refreshList() async{
-    await Future.delayed(Duration(seconds: 1));
-    setState(() {
+    await Future.delayed(Duration(seconds: 2));
     getposts();
+    setState(() {
+    cart();
+
 
   });
     return null;
@@ -1127,9 +1139,12 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
                           ),
                           new FlatButton(
                               onPressed: (){
-                            firestore.collection('users').document(user.uid).collection('cart').document(l[index].toString().split(': ')[1].split(',')[0]).delete();
-                            //Navigator.push(context, MaterialPageRoute(builder: (context)=>new LogoutOverlay()));
+                                //l[index].toString().split(': ')[1].split(',')[0]
+                            firestore.collection('users').document(user.uid).collection('cart').document(u[index].data["ProductId"]).delete();
+
+
                            refreshList();
+                            //Navigator.pop(context, MaterialPageRoute(builder: (context)=>new LogoutOverlay()));
 
                           }, child: Text("Delete")),
 
@@ -1185,14 +1200,14 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
   }
 
    placeorder() {
-    FirebaseDatabase.instance.reference().child('Orders').child(user.uid).push().set(
+    FirebaseDatabase.instance.reference().child('Orders').push().set(
         {
           'Address':searchAddr,
           'buyer':custname,
           'location':lat.toString()+","+lon.toString(),
           'phone':custphone,
           'prodcat':'electronics',
-          //'productid':widget.product_id,
+          'productid':null,
           'units':units,
           'price':total,
         }
