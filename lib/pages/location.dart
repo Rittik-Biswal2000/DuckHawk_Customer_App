@@ -208,7 +208,8 @@ _getAddressFromLatLng(result[0].position.latitude, result[0].position.longitude)
   }
 
   void Confirm() {
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>new HomePage(first.addressLine)));
+    Navigator.pop(context);
+    Navigator.push(context, MaterialPageRoute(builder: (context)=> HomePage(first.addressLine)));
   }
 
    getpredictions() async{

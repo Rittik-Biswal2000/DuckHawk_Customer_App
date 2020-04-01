@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:project_duckhawk/components/horizontal_listview.dart';
 import 'package:project_duckhawk/components/products.dart';
+import 'package:project_duckhawk/pages/Help.dart';
 import 'package:project_duckhawk/pages/account.dart';
 import 'package:project_duckhawk/pages/auto.dart';
 import 'package:project_duckhawk/pages/cart1.dart';
@@ -66,9 +67,10 @@ class _HomePageState extends State<HomePage> {
   void _onClick(String value) => setState(() => _value = value);
   @override
   void initState(){
+    getd();
     super.initState();
-    getproducts();
-    getproducts1();
+    //getproducts();
+    //getproducts1();
     //getposts();
     cart();
 
@@ -121,6 +123,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: new AppBar(
             backgroundColor: Color(0xff104670),
+        automaticallyImplyLeading: false,
             title: Container(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -133,6 +136,7 @@ class _HomePageState extends State<HomePage> {
                       new IconButton(
                         icon: new Icon(Icons.place),
                         onPressed: () {
+
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>new MyLocation()));
                           //Navigator.push(context, MaterialPageRoute(builder: (context)=>new HomePage(null)));
                           //_getCurrentLocation();
@@ -268,7 +272,7 @@ class _HomePageState extends State<HomePage> {
             ),
             InkWell(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>new category("Electronics")));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new electronics()));
               },
               child: ListTile(title: Text('Electronics')),
             ),
@@ -343,8 +347,10 @@ class _HomePageState extends State<HomePage> {
                       child: ListTile(title: Text('Logout')),
                     ),
                     InkWell(
-                      onTap: () {},
-                      child: ListTile(title: Text('Contact Us')),
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>new help()));
+                      },
+                      child: ListTile(title: Text('Help')),
                     )
                   ],
                 )),

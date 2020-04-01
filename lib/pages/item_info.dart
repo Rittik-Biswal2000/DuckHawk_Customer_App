@@ -588,7 +588,7 @@ getpoint(String s)async{
           'prodcat':'electronics',
           'productid':widget.product_id,
           //'units':units,
-          'price':total,
+          'price':total.toString(),
         }
 
 

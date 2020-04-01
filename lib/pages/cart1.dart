@@ -1,154 +1,13 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-/*
-FirebaseUser user;
-class cart1 extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return new MaterialApp(
-      title:'Cart',
-      theme: new ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: new MyCart(title: 'Cart'),
-    );
-  }
-}
-class MyCart extends StatefulWidget {
-  MyCart({Key key,this.title}):super(key: key);
-  final String title;
-  @override
-  _MyCartState createState() => _MyCartState();
-}
-
-class _MyCartState extends State<MyCart> {
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(widget.title),
-      ),
-      body:ListPage(),
-    );
-  }
-}
-class ListPage extends StatefulWidget {
-  @override
-  _ListPageState createState() => _ListPageState();
-}
-
-class _ListPageState extends State<ListPage> {
-  Future getPosts() async{
-    user=await FirebaseAuth.instance.currentUser();
-    var firestore=Firestore.instance;
-    print("user id:");
-    print(user.uid);
-    QuerySnapshot qn=await firestore.collection('users').document(user.uid).collection('cart').getDocuments();
-    return qn.documents.toString();
-  }
-  @override
-  Widget build(BuildContext context) {
-    getPosts();
-    return Container(
-      height: 0.0,
-      width: 0.0,
+import 'package:project_duckhawk/pages/item_info.dart';
+/*void main() {
+  runApp(MaterialApp(debugShowCheckedModeBanner: false,
+      //home:LoginPage()));
 
 
-      child: FutureBuilder(
-        future: getPosts(),
-          builder:(_,snapshot){
-        if(snapshot.connectionState==ConnectionState.waiting){
-          return Center(
-            child: Text("Loading"),
-          );
-        }else{
-          ListView.builder(
-            itemCount: snapshot.data.length,
-              itemBuilder: (_,index){
-              print("cart1 page");
-              print(snapshot.data[index].data["ProductId"]);
-            return ListTile(
-              title:Text(snapshot.data[index].data["ProductId"]),
-            );
-          });
-
-        }
-      }),
-    );
-
-  }
-}
-*/
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-
-import 'Posts.dart';
-FirebaseUser user;
-List l=[];
-getuser() async{
-  user=await FirebaseAuth.instance.currentUser();
-  print(user.uid);
-  Firestore.instance.collection('users').document(user.uid)
-      .collection('cart').getDocuments()
-      .then((snapshot) {
-    snapshot.documents.forEach((f) => l.add('${f.data}'));
-    print(l);
-  });
-
-  /* return Firestore.instance
-      .collection('users')
-      .document(user.uid).collection('cart')
-      .getDocuments();*/
-
-}/*
-class cart1 extends StatelessWidget {
-  List<Posts> postslist=[];
-  void initState(){
-    super.initState();
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
-
-// TODO: implement build
-    return new Scaffold(
-      body: new Container(
-        child: new FutureBuilder(
-            future:getuser(), /*Firestore.instance
-                .collection('users')
-                .document('Y5odhsqgYeUKE98KtxdYis4vp4N2').collection('cart')
-                .getDocuments(),*/
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data != null) {
-                  return new Column(
-                    children: <Widget>[
-                      new Expanded(
-                        child: new ListView(
-                          children: snapshot.data.documents
-                              .map<Widget>((DocumentSnapshot document) {
-                            return new ListTile(
-                              title: new Text(document['ProductId']),
-                              subtitle: new Text(document['category']),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    ],
-                  );
-                }
-              }else {
-                return new CircularProgressIndicator();
-              }
-            }),),
-    );
-  }
+      home:cart1()));
 }*/
 class cart1 extends StatefulWidget {
   @override
@@ -156,93 +15,91 @@ class cart1 extends StatefulWidget {
 }
 
 class _cart1State extends State<cart1> {
-  List<Posts> postsList=[];
+  List n=[];
+  List p=[];
+  List im=[];
+  getd() async{
+    n.clear();
+    p.clear();
+    im.clear();
+    DatabaseReference reference=FirebaseDatabase.instance.reference();
+    reference.child('Products').child('Bhubaneswar').child('Electronics').once().then((DataSnapshot snap){
+      var keys=snap.key;
+      var data=snap.value;
+      //print(data.toString());
+      //print( data);
+      //print(data.toString().split(': {')[1].split(',')[1].split(': ')[1]);
+      var l=data.toString().split(': {')[0].length;
+      //print(data.toString().split(': {')[0].substring(1,l));
+      im.add(data.toString().split(': {')[1].split(',')[1].split(': ')[1]);
+      p.add(data.toString().split(': {')[0].substring(1,l));
+      n=data.toString().split('},');
+      for(int i=1;i<n.length;i++)
+      {
+        p.add(n[i].toString().split(': ').toString().split(', {')[0].split('[ ')[1]);
+        im.add(n[i].toString().split('{').toString().split(',')[2].split(': ')[1]);
+
+      }
+
+      for(int i=0;i<p.length;i++)
+      {
+        print(im[i]);
+      }
+
+
+    });
+
+
+
+
+  }
   @override
   void initState() {
     // TODO: implement initState
+    getd();
     super.initState();
-
-    getdoc();
-  }
-  getdoc()async{
-    user=await FirebaseAuth.instance.currentUser();
-    print(user.uid);
-    Firestore.instance.collection('users').document(user.uid)
-        .collection('cart').getDocuments()
-        .then((snapshot) {
-      snapshot.documents.forEach((f) => l.add('${f.data}'));
-      for(int j=0;j<l.length;j++){
-        DatabaseReference postsRef=FirebaseDatabase.instance.reference().child('Products').child('Electronics');
-        postsRef.
-      once().then((DataSnapshot snap)
-        {
-          var KEYS=snap.value.keys;
-          var DATA=snap.value;
-          postsList.clear();
-          for(var individualKey in KEYS){
-            Posts posts=new Posts
-              (
-              DATA[individualKey]['name'],
-              DATA[individualKey]['price'],
-              DATA[individualKey]['quantity'],
-
-            );
-            postsList.add(posts);
-          }
-          setState(() {
-            print('length: $postsList.length');
-          });
-
-        });
-      }
-  });
   }
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("Cart1"),
-      ),
-      body:new Container(
-        child: postsList.length==0?new Text("No items in cart"):new ListView.builder(
-          itemCount: postsList.length,
-            itemBuilder:(_,index){
-            return PostsUI(postsList[index].name,postsList[index].quantity,postsList[index].price);
-            }
-        ),
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
 
-      ),
-    );
-  }
-  Widget PostsUI(String name,String quantity,String price)
-  {
-    return new Card(
-      elevation:10.0,
-      margin:EdgeInsets.all(15.0),
-      child:new Container(
-        padding: new EdgeInsets.all(14.0),
-        child:new Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-           new Row(
-             children: <Widget>[
-               new Text(
-                 name,
+        // title: title,
+        home:Scaffold(
+            appBar: AppBar(
+              backgroundColor: Color(0xff104670),
+              title: Text("electronics"),
+            ),
+            body:GridView.count(
+              crossAxisCount: 2,
+              children: List.generate(p.length, (index) {
+                print("hi");
+                print(p[index]);
+                print(im[index]);
+                return Center(
+                  child:Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Material(
+                      child: GridTile(
+                        child:InkWell(
+                            onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>new item_info(p[index])));
+                              print("item_info");
+                            },
+                            child: Image.network(
+                              im[index]
+                              //fit: BoxFit.cover,
+                            )
+                        ),
+                      ),
 
-               ),
-               new Text(
-                 quantity,
+                    ),
+                  ),
 
-               ),
-               new Text(
-                 price,
-
-               ),
-             ],
-           )
-          ],
-        ),
-      )
+                );
+              }),
+            )
+        )
     );
   }
 }
