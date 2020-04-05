@@ -6,7 +6,7 @@ import 'package:project_duckhawk/components/products.dart';
 import 'package:project_duckhawk/pages/Help.dart';
 import 'package:project_duckhawk/pages/account.dart';
 import 'package:project_duckhawk/pages/auto.dart';
-import 'package:project_duckhawk/pages/cart1.dart';
+
 import 'package:project_duckhawk/pages/category.dart';
 import 'package:project_duckhawk/pages/electronics.dart';
 import 'package:project_duckhawk/pages/login_page.dart';
@@ -15,6 +15,7 @@ import 'package:project_duckhawk/pages/cart.dart';
 import 'package:project_duckhawk/pages/location.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:project_duckhawk/pages/signup.dart';
+import 'package:project_duckhawk/src/welcomPage.dart';
 import './pages/login_page.dart';
 
 import 'package:flutter/services.dart';
@@ -28,13 +29,13 @@ String badd="Loading";
 int d=0;
 String add="hi";
 
-void main() {
+/*void main() {
   runApp(MaterialApp(debugShowCheckedModeBanner: false,
       //home:LoginPage()));
 
 
       home: HomePage(null)));
-}
+}*/
 
 class HomePage extends StatefulWidget {
 String add;
@@ -249,7 +250,8 @@ class _HomePageState extends State<HomePage> {
                 decoration: new BoxDecoration(color: Color(0xff104670)),
               ),
               onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>new LoginPage()));
+                //Navigator.push(context, MaterialPageRoute(builder: (context)=>new LoginPage()));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new account()));
               },
             ),
             InkWell(
@@ -272,7 +274,7 @@ class _HomePageState extends State<HomePage> {
             ),
             InkWell(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>new electronics()));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new category("Electronics")));
               },
               child: ListTile(title: Text('Electronics')),
             ),
@@ -341,7 +343,7 @@ class _HomePageState extends State<HomePage> {
                       onTap: () {
                         _signOut();
 
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>new HomePage(null)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>new WelcomePage()));
                         name="Login";
                       },
                       child: ListTile(title: Text('Logout')),

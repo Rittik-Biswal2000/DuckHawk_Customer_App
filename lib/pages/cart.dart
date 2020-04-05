@@ -8,7 +8,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:project_duckhawk/main.dart';
 import 'package:project_duckhawk/pages/account.dart';
-import 'package:project_duckhawk/pages/cart1.dart';
 import 'package:project_duckhawk/pages/item_info.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:project_duckhawk/shared/loading.dart';
