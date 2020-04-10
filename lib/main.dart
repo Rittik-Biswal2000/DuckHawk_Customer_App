@@ -1,6 +1,8 @@
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/components/horizontal_listview.dart';
 import 'package:project_duckhawk/components/products.dart';
 import 'package:project_duckhawk/pages/Help.dart';
@@ -24,6 +26,12 @@ FirebaseUser user;
 String curlat,curlon;
 
 String badd="Loading";
+List se=[];
+List se_name=[];
+List se_phone=[];
+var n;
+int j;
+ProgressDialog pr;
 
 
 int d=0;
@@ -68,6 +76,8 @@ class _HomePageState extends State<HomePage> {
   void _onClick(String value) => setState(() => _value = value);
   @override
   void initState(){
+
+
     getd();
     super.initState();
     //getproducts();
@@ -79,6 +89,7 @@ class _HomePageState extends State<HomePage> {
     _getCurrentLocation();
     _getCurrentUser();
     print("Here outside async");
+
   }
   _getCurrentUser()async{
     _auth=FirebaseAuth.instance;
@@ -94,6 +105,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    print(se_name);
+    print(se_phone);
+    pr = new ProgressDialog(context, showLogs: true);
+    pr.style(message: 'Please wait...');
+
+   /*
     Widget image_carousel = new Container(
       height: 200.0,
       child: new Carousel(
@@ -119,7 +136,7 @@ class _HomePageState extends State<HomePage> {
         animationDuration: Duration(milliseconds: 1000),
         dotBgColor: Colors.transparent,
       ),
-    );
+    );*/
 
     return Scaffold(
       appBar: new AppBar(
@@ -137,6 +154,7 @@ class _HomePageState extends State<HomePage> {
                       new IconButton(
                         icon: new Icon(Icons.place),
                         onPressed: () {
+                          getseller();
 
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>new MyLocation()));
                           //Navigator.push(context, MaterialPageRoute(builder: (context)=>new HomePage(null)));
@@ -148,6 +166,7 @@ class _HomePageState extends State<HomePage> {
 
                            child: Container(
                               child: new FlatButton(onPressed: (){
+                                getseller();
                                 Navigator.push(context, MaterialPageRoute(builder: (context)=>new MyLocation()));
                               }, child: Text(widget.add==null?badd:"${widget.add}",style: new TextStyle(fontSize: 15.0, color: Colors.white),))),
                        )
@@ -359,7 +378,10 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: new ListView(
+      body:
+        new Text("Hi")
+      /*
+      new ListView(
         children: <Widget>[
           new Padding(
             padding: const EdgeInsets.all(2.0),
@@ -471,11 +493,12 @@ class _HomePageState extends State<HomePage> {
             ),*/
           ),
         ],
-      ),
+      ),*/
     );
   }
 
   _getCurrentLocation() {
+
     final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 
     geolocator
@@ -513,5 +536,96 @@ class _HomePageState extends State<HomePage> {
     } catch (e) {
       print(e);
     }
+
+    getseller();
+  }
+
+  getseller() {
+
+
+    print("seller");
+    print("badd"+_currentAddress);
+    DatabaseReference reference = FirebaseDatabase.instance.reference();
+    reference.child('Seller').child(badd).once().then((DataSnapshot snapshot) {
+      //print('Key : ${snapshot.key}');
+     // print('Data : ${snapshot.value}');
+      var l=snapshot.value.toString().split(': ')[0].length;
+      //print('Data : ${snapshot.value.toString().split(': ')[0]}');
+      //print('Data : ${snapshot.value.toString().split(': ')[0].substring(1,l)}');
+      se.add(snapshot.value.toString().split(': ')[0].substring(1,l));
+      //print('Data : ${snapshot.value.toString().split('}},')[1]}');
+      //print('Data : ${snapshot.value.toString().split('}},')[1].split(': ')[0]}');
+       n=snapshot.value.toString().split('}},').length;
+      DatabaseReference ref1=FirebaseDatabase.instance.reference();
+      for(i=1;i<n;i++)
+        {
+          se.add(snapshot.value.toString().split('}}, ')[i].split(':')[0]);
+          ref1.child('ApplicationForSeller').child(se[i]).once().then((DataSnapshot snapshot){
+            //print('Key : ${snapshot.key}');
+            print('Data : ${snapshot.value}');
+            pr.show();
+            se_name.add(snapshot.value.toString().split(',')[3]);
+            se_phone.add(snapshot.value.toString().split(',')[10]);
+            pr.hide();
+
+
+
+
+          });
+        }
+      print("se");
+      print(se_name);
+
+     /* DatabaseReference ref1=FirebaseDatabase.instance.reference();
+      for( j=0;j<s.length;j++){
+        ref1.child('ApplicationForSeller').child(se[j]).once().then((DataSnapshot snapshot){
+          //print('Key : ${snapshot.key}');
+          print('Data : ${snapshot.value}');
+          se_name.add(snapshot.value.toString().split(',')[3]);
+          se_phone.add(snapshot.value.toString().split(',')[10]);
+
+
+
+        });
+      }*/
+
+      print("se is");
+      print(se);
+
+
+
+
+
+
+
+    });
+
+
+
+    Navigator.push(context, MaterialPageRoute(builder: (context) => new Seller(),));
+
+
   }
 }
+
+class Seller extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    //print("length is :");
+   // print(s.length);
+    return ListView.builder(
+      padding:const EdgeInsets.all(8),
+        itemCount: s.length,
+        itemBuilder: (BuildContext context,int index){
+        return Container(
+          height: 50.0,
+          child:Center(
+            child: Text(s[index].toString()),
+          ),
+        );
+
+        });
+  }
+}
+

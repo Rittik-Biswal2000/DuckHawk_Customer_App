@@ -1,4 +1,4 @@
 class Posts{
-  String name,price,quantity;
-  Posts(this.name,this.price,this.quantity);
+  String cat,prodid;
+  Posts(this.cat,this.prodid);
 }
