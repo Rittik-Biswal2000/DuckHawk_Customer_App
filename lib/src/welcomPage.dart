@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/main.dart';
+import 'package:project_duckhawk/pages/category.dart';
 import 'package:project_duckhawk/pages/front.dart';
 import 'package:project_duckhawk/src/loginPage.dart';
 import 'package:project_duckhawk/src/signup.dart';
@@ -21,20 +22,32 @@ class WelcomePage extends StatefulWidget {
   _WelcomePageState createState() => _WelcomePageState();
 }
 FirebaseUser user;
+ProgressDialog pr;
 String curlat,curlon;
-
+List seller=[];
+List imgurl=[];
+List quantity=[];
+List price=[];
+List name=[];
+List description=[];
+List l=[];
+List prod_id=[];
+List prod_cat=[];
+var len;
 String badd="Loading";
 List se=[];
 List se_name=[];
 List se_phone=[];
+List owner_name=[];
+List owner_phone=[];
 var n;
+var length;
 int j;
-ProgressDialog pr;
 final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 
 Position _currentPosition;
 String _currentAddress ;
-String name="Login/SignUp";
+String na="Login/SignUp";
 FirebaseUser mCurrentUser;
 FirebaseAuth _auth;
 
@@ -146,15 +159,30 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
     getcurrentlocation();
-    getseller();
+   // getseller();
 
     getuser();
+    //getproducts();
     // TODO: implement initState
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    pr = new ProgressDialog(context);
+    pr.style(
+        message: 'Please Wait...',
+        borderRadius: 10.0,
+        backgroundColor: Colors.white,
+        progressWidget: CircularProgressIndicator(),
+        elevation: 10.0,
+        insetAnimCurve: Curves.easeInOut,
+        progress: 0.0,
+        progressTextStyle: TextStyle(
+            color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
+        messageTextStyle: TextStyle(
+            color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600)
+    );
     return Scaffold(
       body:SingleChildScrollView(
         child:Container(
@@ -212,9 +240,12 @@ class _WelcomePageState extends State<WelcomePage> {
         );
 
       }
+    pr.show();
+    await getproducts();
+    pr.hide();
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => front()),
+      MaterialPageRoute(builder: (context) => HomePage(null)),
     );
 
 
@@ -261,60 +292,84 @@ class _WelcomePageState extends State<WelcomePage> {
     }
   }
 }
-getseller() {
-  int i;
 
+getproducts() async {
+  owner_phone.clear();
+  owner_name.clear();
+  var o=await _getCurrentLocation();
+  print("badd is : "+'${o}');
+ DatabaseReference ref=FirebaseDatabase.instance.reference().child('Seller').child(o);
+  await ref.once().then((DataSnapshot s){
+    print(s.value);
+    var data=s.value;
+    print(s.value.toString().split('}}, ').length);
+    length=s.value.toString().split('}}, ').length;
+    var ind=data.toString().split('}}, ');
 
-  print("seller");
-  print("badd" + _currentAddress);
-  DatabaseReference reference = FirebaseDatabase.instance.reference();
-  reference.child('Seller').child(badd).once().then((DataSnapshot snapshot) {
-    //print('Key : ${snapshot.key}');
-    // print('Data : ${snapshot.value}');
-    var l = snapshot.value.toString().split(': ')[0].length;
-    //print('Data : ${snapshot.value.toString().split(': ')[0]}');
-    //print('Data : ${snapshot.value.toString().split(': ')[0].substring(1,l)}');
-    se.add(snapshot.value.toString().split(': ')[0].substring(1, l));
-    //print('Data : ${snapshot.value.toString().split('}},')[1]}');
-    //print('Data : ${snapshot.value.toString().split('}},')[1].split(': ')[0]}');
-    n = snapshot.value
-        .toString()
-        .split('}},')
-        .length;
-    DatabaseReference ref1 = FirebaseDatabase.instance.reference();
-    for (i = 1; i < n; i++) {
-      se.add(snapshot.value.toString().split('}}, ')[i].split(':')[0]);
-      ref1.child('ApplicationForSeller').child(se[i]).once().then((
-          DataSnapshot snapshot) {
-        //print('Key : ${snapshot.key}');
-        print('Data : ${snapshot.value}');
-        se_name.add(snapshot.value.toString().split(',')[3]);
-        se_phone.add(snapshot.value.toString().split(',')[10]);
-      });
-    }
-    print("hi");
-    print("se");
-    print(se_name);
-
-    /* DatabaseReference ref1=FirebaseDatabase.instance.reference();
-      for( j=0;j<s.length;j++){
-        ref1.child('ApplicationForSeller').child(se[j]).once().then((DataSnapshot snapshot){
-          //print('Key : ${snapshot.key}');
-          print('Data : ${snapshot.value}');
-          se_name.add(snapshot.value.toString().split(',')[3]);
-          se_phone.add(snapshot.value.toString().split(',')[10]);
+    for(int i=0;i<length;i++)
+      {
+        owner_name.add(ind[i].split(': {')[1].split(',')[1].split(': ')[1]);
+        owner_phone.add(ind[i].split(': {')[1].split(',')[0].split(': ')[1]);
+      }
+   // print(owner_name);
+   // print(owner_phone);
+   // print(owner[1].split(',')[1].split(': ')[1]);
+    //print(owner[1]);
+  });
+  print("bye");
 
 
 
-        });
-      }*/
 
-    print("se is");
-    print(se);
+
+
+}
+
+Future<String>_getCurrentLocation() async{
+  var p;
+  final Geolocator geolocator = Geolocator()
+    ..forceAndroidLocationManager;
+
+  await geolocator
+      .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+      .then((Position position) async {
+    _currentPosition = position;
+    p=await _getAddressFromLatLng();
+    /*setState(() {
+
+    });*/
+    //
+  }).catchError((e) {
+    print(e);
   });
 
+  //print("p is :"+'${p}');
+  return p;
+}
 
-  //Navigator.push(context, MaterialPageRoute(builder: (context) => new Seller(),));
+Future<String>_getAddressFromLatLng() async {
+  try {
+    List<Placemark> p = await geolocator.placemarkFromCoordinates(
+        _currentPosition.latitude, _currentPosition.longitude);
+    curlat = _currentPosition.latitude.toString();
+    curlon = _currentPosition.longitude.toString();
 
+    Placemark place = p[0];
+    //print("in this page");
+    _currentAddress="${place.locality}";
+    //print(place.locality);
 
+    /*setState(() {
+        _currentAddress = "${place.locality}";
+        print(place.locality);
+      });*/
+    badd = _currentAddress;
+    // print("Current location is :"+badd);
+  } catch (e) {
+    print(e);
+  }
+
+  var x=badd;
+  // print("location is : "+x);
+  return x;
 }

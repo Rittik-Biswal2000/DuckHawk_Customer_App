@@ -1,4 +1,4 @@
 class Posts{
-  String cat,prodid;
-  Posts(this.cat,this.prodid);
+  String Owner_Number,Shop_Name;
+  Posts(this.Owner_Number,this.Shop_Name);
 }

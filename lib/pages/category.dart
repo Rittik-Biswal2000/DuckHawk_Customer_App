@@ -70,6 +70,8 @@ class _categoryState extends State<category> {
     reference.child('Products').child('Bhubaneswar').child(widget.c).once().then((DataSnapshot snap){
       var keys=snap.key;
       var data=snap.value;
+      print("prod_keys are :");
+      print(keys);
       //print(data.toString());
       //print( data);
       //print(data.toString().split(': {')[1].split(',')[1].split(': ')[1]);

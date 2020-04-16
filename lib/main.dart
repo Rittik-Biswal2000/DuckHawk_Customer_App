@@ -105,8 +105,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print(se_name);
-    print(se_phone);
+    print("in Main Page");
+    print(owner_name);
+    print(owner_phone);
     pr = new ProgressDialog(context, showLogs: true);
     pr.style(message: 'Please wait...');
 
@@ -154,7 +155,6 @@ class _HomePageState extends State<HomePage> {
                       new IconButton(
                         icon: new Icon(Icons.place),
                         onPressed: () {
-                          getseller();
 
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>new MyLocation()));
                           //Navigator.push(context, MaterialPageRoute(builder: (context)=>new HomePage(null)));
@@ -166,7 +166,7 @@ class _HomePageState extends State<HomePage> {
 
                            child: Container(
                               child: new FlatButton(onPressed: (){
-                                getseller();
+
                                 Navigator.push(context, MaterialPageRoute(builder: (context)=>new MyLocation()));
                               }, child: Text(widget.add==null?badd:"${widget.add}",style: new TextStyle(fontSize: 15.0, color: Colors.white),))),
                        )
@@ -378,8 +378,30 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body:
-        new Text("Hi")
+      body:Container(
+        child:new ListView.builder(
+          itemCount: length,
+            itemBuilder: (BuildContext context,int index){
+            return new Card(
+              child:SingleChildScrollView(
+                child:ListTile(
+                  title: new Text(owner_name[index]),
+                  subtitle: new Column(
+                    children: <Widget>[
+                      new Container(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: new Text("Contact - "+owner_phone[index]),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              )
+            );
+            }),
+      ),
       /*
       new ListView(
         children: <Widget>[
@@ -537,95 +559,11 @@ class _HomePageState extends State<HomePage> {
       print(e);
     }
 
-    getseller();
-  }
-
-  getseller() {
-
-
-    print("seller");
-    print("badd"+_currentAddress);
-    DatabaseReference reference = FirebaseDatabase.instance.reference();
-    reference.child('Seller').child(badd).once().then((DataSnapshot snapshot) {
-      //print('Key : ${snapshot.key}');
-     // print('Data : ${snapshot.value}');
-      var l=snapshot.value.toString().split(': ')[0].length;
-      //print('Data : ${snapshot.value.toString().split(': ')[0]}');
-      //print('Data : ${snapshot.value.toString().split(': ')[0].substring(1,l)}');
-      se.add(snapshot.value.toString().split(': ')[0].substring(1,l));
-      //print('Data : ${snapshot.value.toString().split('}},')[1]}');
-      //print('Data : ${snapshot.value.toString().split('}},')[1].split(': ')[0]}');
-       n=snapshot.value.toString().split('}},').length;
-      DatabaseReference ref1=FirebaseDatabase.instance.reference();
-      for(i=1;i<n;i++)
-        {
-          se.add(snapshot.value.toString().split('}}, ')[i].split(':')[0]);
-          ref1.child('ApplicationForSeller').child(se[i]).once().then((DataSnapshot snapshot){
-            //print('Key : ${snapshot.key}');
-            print('Data : ${snapshot.value}');
-            pr.show();
-            se_name.add(snapshot.value.toString().split(',')[3]);
-            se_phone.add(snapshot.value.toString().split(',')[10]);
-            pr.hide();
-
-
-
-
-          });
-        }
-      print("se");
-      print(se_name);
-
-     /* DatabaseReference ref1=FirebaseDatabase.instance.reference();
-      for( j=0;j<s.length;j++){
-        ref1.child('ApplicationForSeller').child(se[j]).once().then((DataSnapshot snapshot){
-          //print('Key : ${snapshot.key}');
-          print('Data : ${snapshot.value}');
-          se_name.add(snapshot.value.toString().split(',')[3]);
-          se_phone.add(snapshot.value.toString().split(',')[10]);
-
-
-
-        });
-      }*/
-
-      print("se is");
-      print(se);
-
-
-
-
-
-
-
-    });
-
-
-
-    Navigator.push(context, MaterialPageRoute(builder: (context) => new Seller(),));
-
 
   }
+
+
 }
 
-class Seller extends StatelessWidget {
 
-  @override
-  Widget build(BuildContext context) {
-    //print("length is :");
-   // print(s.length);
-    return ListView.builder(
-      padding:const EdgeInsets.all(8),
-        itemCount: s.length,
-        itemBuilder: (BuildContext context,int index){
-        return Container(
-          height: 50.0,
-          child:Center(
-            child: Text(s[index].toString()),
-          ),
-        );
-
-        });
-  }
-}
 
