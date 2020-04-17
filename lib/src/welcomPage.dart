@@ -315,12 +315,12 @@ getproducts() async {
     print(s.value.toString().split('}}, ').length);
     length=s.value.toString().split('}}, ').length;
     var ind=data.toString().split('}}, ');
-
-    for(int i=0;i<length;i++)
-      {
-        owner_name.add(ind[i].split(': {')[1].split(',')[1].split(': ')[1]);
-        owner_phone.add(ind[i].split(': {')[1].split(',')[0].split(': ')[1]);
-      }
+//
+//    for(int i=0;i<length;i++)
+//      {
+//        owner_name.add(ind[i].split(': {')[1].split(',')[1].split(': ')[1]);
+//        owner_phone.add(ind[i].split(': {')[1].split(',')[0].split(': ')[1]);
+//      }
    // print(owner_name);
    // print(owner_phone);
    // print(owner[1].split(',')[1].split(': ')[1]);
@@ -358,6 +358,7 @@ Future<String>_getCurrentLocation() async{
 }
 
 Future getData() async {
+  List list;
   String link = "https://duckhawk-1699a.firebaseio.com/Seller.json";
   final resource = await http.get(link);
   if (resource.statusCode == 200) {
@@ -379,12 +380,25 @@ Future getData() async {
 //    print(list1);
 
     int i=0;
-    while(i <= list1.length) {
+    while(i < list1.length) {
       LinkedHashMap<String, dynamic> data2 = jsonDecode(resource.body)[list[3]][list1[i]];
       List list2 = data2.keys.toList();
-
+//      print(list2);
+      LinkedHashMap<String, dynamic> data3 = jsonDecode(resource.body)[list[3]][list1[i]][list2[2]];
+      List list3 = data3.keys.toList();
       print("owner number: " + data2[list2[0]].toString());
       print("shop name: " + data2[list2[1]]);
+      int j=0;
+      while(j<list3.length)
+        {
+          LinkedHashMap<String, dynamic> data4 = jsonDecode(resource.body)[list[3]][list1[i]][list2[2]][list3[j]];
+          List list4 = data4.keys.toList();
+          print("City: " + data4[list4[0]].toString());
+          print("Cat: " + data4[list4[1]]);
+          print("Cat: " + data4[list4[2]]);
+          j++;
+        }
+
       i++;
     }
 
