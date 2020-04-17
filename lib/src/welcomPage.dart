@@ -1,3 +1,8 @@
+import 'dart:collection';
+import 'dart:convert';
+import 'dart:core';
+import 'dart:core';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +16,9 @@ import 'package:project_duckhawk/src/loginPage.dart';
 import 'package:project_duckhawk/src/signup.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:project_duckhawk/pages/login_page.dart';
+import 'package:http/http.dart' as http;
+
+
 import 'package:project_duckhawk/src/signup.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -55,6 +63,7 @@ FirebaseAuth _auth;
 int d=0;
 String add="hi";
 class _WelcomePageState extends State<WelcomePage> {
+
   Widget _submitButton() {
     return InkWell(
       onTap: () {
@@ -162,6 +171,7 @@ class _WelcomePageState extends State<WelcomePage> {
    // getseller();
 
     getuser();
+    getData();
     //getproducts();
     // TODO: implement initState
     super.initState();
@@ -345,6 +355,54 @@ Future<String>_getCurrentLocation() async{
 
   //print("p is :"+'${p}');
   return p;
+}
+
+Future getData() async {
+  String link = "https://duckhawk-1699a.firebaseio.com/Seller.json";
+  final resource = await http.get(link);
+  if (resource.statusCode == 200) {
+   // print(resource.body);
+    //var data = jsonDecode(resource.body)["Cuttack"];
+    LinkedHashMap<String, dynamic> data = jsonDecode(resource.body);
+//    Iterator hmIterator = data.entrySet().iterator();
+//    while (hmIterator.hasNext()) {
+//      Map.Entry mapElement = (Map.Entry)hmIterator.next();
+//      int marks = ((int)mapElement.getValue() + 10);
+//      print(mapElement.get)
+//  }
+//    var list = new List<int>.generate(data.length, (i) => i + 1);
+    List list = data.keys.toList();
+    //print(list);
+  //  print(data[list[3]]);
+    LinkedHashMap<String, dynamic> data1 = jsonDecode(resource.body)[list[3]];
+    List list1 = data1.keys.toList();
+//    print(list1);
+
+    int i=0;
+    while(i <= list1.length) {
+      LinkedHashMap<String, dynamic> data2 = jsonDecode(resource.body)[list[3]][list1[i]];
+      List list2 = data2.keys.toList();
+
+      print("owner number: " + data2[list2[0]].toString());
+      print("shop name: " + data2[list2[1]]);
+      i++;
+    }
+
+//  for (i in list1)
+//  print(data[i]);
+//    for(Map i in data){
+//      print(i);}
+
+//  var rest = data['Cuttack'];
+//
+//  print(rest);
+
+    //for (a in data1["Cuttack"])
+    //print(a);
+
+    //list = rest.map<Article>((json) => Article.fromJson(json)).toList();
+  }
+  return list;
 }
 
 Future<String>_getAddressFromLatLng() async {
