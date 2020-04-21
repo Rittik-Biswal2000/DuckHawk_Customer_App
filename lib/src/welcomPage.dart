@@ -359,7 +359,7 @@ Future<String>_getCurrentLocation() async{
 
 Future getData() async {
   List list;
-  String link = "https://duckhawk-1699a.firebaseio.com/Seller.json";
+  String link = "https://duckhawk-1699a.firebaseio.com/Seller/Rourkela.json";
   final resource = await http.get(link);
   if (resource.statusCode == 200) {
    // print(resource.body);
@@ -373,33 +373,31 @@ Future getData() async {
 //  }
 //    var list = new List<int>.generate(data.length, (i) => i + 1);
     List list = data.keys.toList();
-    //print(list);
+
   //  print(data[list[3]]);
-    LinkedHashMap<String, dynamic> data1 = jsonDecode(resource.body)[list[3]];
-    List list1 = data1.keys.toList();
-//    print(list1);
 
-    int i=0;
-    while(i < list1.length) {
-      LinkedHashMap<String, dynamic> data2 = jsonDecode(resource.body)[list[3]][list1[i]];
-      List list2 = data2.keys.toList();
-//      print(list2);
-      LinkedHashMap<String, dynamic> data3 = jsonDecode(resource.body)[list[3]][list1[i]][list2[2]];
-      List list3 = data3.keys.toList();
-      print("owner number: " + data2[list2[0]].toString());
-      print("shop name: " + data2[list2[1]]);
-      int j=0;
-      while(j<list3.length)
-        {
-          LinkedHashMap<String, dynamic> data4 = jsonDecode(resource.body)[list[3]][list1[i]][list2[2]][list3[j]];
-          List list4 = data4.keys.toList();
-          print("City: " + data4[list4[0]].toString());
-          print("Cat: " + data4[list4[1]]);
-          print("Cat: " + data4[list4[2]]);
-          j++;
-        }
+    int h=0;
+    while(h<list.length) {
+      LinkedHashMap<String, dynamic> data1 = jsonDecode(resource.body)[list[h]];
+      List list1 = data1.keys.toList();
 
-      i++;
+        print("owner number: " + data1["Owner_Number"].toString());
+        print("shop name: " + data1["Shop_Name"]);
+//
+//        LinkedHashMap<String, dynamic> data3 = jsonDecode(resource.body)[list[h]]["Products"];
+//        List list3 = data3.keys.toList();
+//        int j = 0;
+//        while (j < list3.length) {
+//          LinkedHashMap<String, dynamic> data4 = jsonDecode(
+//              resource.body)[list[h]]["Products"][list3[j]];
+//          List list4 = data4.keys.toList();
+//          print("City: " + data4[list4[0]].toString());
+//          print("Cat: " + data4[list4[1]]);
+//          print("Cat: " + data4[list4[2]]);
+//          j++;
+//        }
+
+      h++;
     }
 
 //  for (i in list1)
