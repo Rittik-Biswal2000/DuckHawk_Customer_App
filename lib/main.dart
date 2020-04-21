@@ -106,8 +106,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     print("in Main Page");
-    print(owner_name);
-    print(owner_phone);
+    //print(owner_name);
+    //print(owner_phone);
     pr = new ProgressDialog(context, showLogs: true);
     pr.style(message: 'Please wait...');
 
@@ -548,7 +548,7 @@ class _HomePageState extends State<HomePage> {
 
       setState(() {
         _currentAddress = "${place.locality}";
-        print(place.locality);
+        print(place.postalCode);
       });
 
         badd=_currentAddress;

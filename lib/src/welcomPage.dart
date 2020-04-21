@@ -3,15 +3,19 @@ import 'dart:convert';
 import 'dart:core';
 import 'dart:core';
 
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geodesy/geodesy.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:latlong/latlong.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/main.dart';
 import 'package:project_duckhawk/pages/category.dart';
 import 'package:project_duckhawk/pages/front.dart';
+import 'package:project_duckhawk/pages/item_info.dart';
 import 'package:project_duckhawk/src/loginPage.dart';
 import 'package:project_duckhawk/src/signup.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -31,6 +35,7 @@ class WelcomePage extends StatefulWidget {
 }
 FirebaseUser user;
 ProgressDialog pr;
+var a,b;
 String curlat,curlon;
 List seller=[];
 List imgurl=[];
@@ -171,7 +176,7 @@ class _WelcomePageState extends State<WelcomePage> {
    // getseller();
 
     getuser();
-    getData();
+    //getData();
     //getproducts();
     // TODO: implement initState
     super.initState();
@@ -251,7 +256,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
       }
     pr.show();
-    await getproducts();
+    await getData();
     pr.hide();
     Navigator.push(
       context,
@@ -302,16 +307,25 @@ class _WelcomePageState extends State<WelcomePage> {
     }
   }
 }
-
+/*
 getproducts() async {
+
   owner_phone.clear();
   owner_name.clear();
   var o=await _getCurrentLocation();
   print("badd is : "+'${o}');
+   var url="https://duckhawk-1699a.firebaseio.com/Seller/"+o+".json";
+  //var res=await Uri.http(authority, unencodedPath)get(Uri.encodeFull(url),headers:{'Accept':'application/json'});
+
+  
+
  DatabaseReference ref=FirebaseDatabase.instance.reference().child('Seller').child(o);
   await ref.once().then((DataSnapshot s){
-    print(s.value);
+    print("keys are");
+    print(s.key);
+
     var data=s.value;
+    print(data[0]);
     print(s.value.toString().split('}}, ').length);
     length=s.value.toString().split('}}, ').length;
     var ind=data.toString().split('}}, ');
@@ -334,7 +348,7 @@ getproducts() async {
 
 
 }
-
+*/
 Future<String>_getCurrentLocation() async{
   var p;
   final Geolocator geolocator = Geolocator()
@@ -344,6 +358,8 @@ Future<String>_getCurrentLocation() async{
       .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
       .then((Position position) async {
     _currentPosition = position;
+    a=position.latitude;
+    b=position.longitude;
     p=await _getAddressFromLatLng();
     /*setState(() {
 
@@ -356,13 +372,16 @@ Future<String>_getCurrentLocation() async{
   //print("p is :"+'${p}');
   return p;
 }
-
 Future getData() async {
+  var lati,longi;
+  var x=await _getCurrentLocation();
+  owner_name.clear();
+  owner_phone.clear();
   List list;
-  String link = "https://duckhawk-1699a.firebaseio.com/Seller/Rourkela.json";
+  String link = "https://duckhawk-1699a.firebaseio.com/Seller/"+x+".json";
   final resource = await http.get(link);
   if (resource.statusCode == 200) {
-   // print(resource.body);
+    // print(resource.body);
     //var data = jsonDecode(resource.body)["Cuttack"];
     LinkedHashMap<String, dynamic> data = jsonDecode(resource.body);
 //    Iterator hmIterator = data.entrySet().iterator();
@@ -374,15 +393,48 @@ Future getData() async {
 //    var list = new List<int>.generate(data.length, (i) => i + 1);
     List list = data.keys.toList();
 
-  //  print(data[list[3]]);
+    //  print(data[list[3]]);
 
     int h=0;
     while(h<list.length) {
       LinkedHashMap<String, dynamic> data1 = jsonDecode(resource.body)[list[h]];
       List list1 = data1.keys.toList();
 
-        print("owner number: " + data1["Owner_Number"].toString());
-        print("shop name: " + data1["Shop_Name"]);
+      print("Latitude: " + data1["Latitude"].toString());
+      lati=data1["Latitude"];
+      owner_phone.add(data1["Owner_Number"].toString());
+      owner_name.add(data1["Shop_Name"]);
+      print("Longitude: " + data1["Longitude"].toString());
+      longi=data1["longitude"];
+      print(a.toString());
+      print(b.toString());
+      print("Set Coordinates are :");
+      LatLng l1=new LatLng(a,b);
+      LatLng l2=new LatLng(lati,longi);
+      Dio dio = new Dio();
+      Response response=await dio.get("https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins="+l1.latitude.toString()+","+l1.longitude.toString()+
+          "&destinations="+l2.latitude.toString()+","+l2.longitude.toString()+"&key=AIzaSyC52Z3z1WF_y0Q0dbYfexizoexgAnSTov0");
+      print("Received Data is :");
+      print(response.data);
+      //double distanceInMeters = await Geolocator().distanceBetween(a.toDouble(),b.toDouble(),lati.toDouble(),longi.toDouble());
+      //print(distanceInMeters.toString());
+      /*final Distance distance = new Distance();
+
+
+      // km = 423
+      final int km = distance.as(LengthUnit.Kilometer,
+          new LatLng(a,b),new LatLng(lati,longi));
+      print("Distance is :");
+      print(km.toString());*/
+
+
+
+
+      // meter = 422591.551
+     /* final int meter = distance(
+          new LatLng(52.518611,13.408056),
+          new LatLng(51.519475,7.46694444)
+      );*/
 //
 //        LinkedHashMap<String, dynamic> data3 = jsonDecode(resource.body)[list[h]]["Products"];
 //        List list3 = data3.keys.toList();
@@ -416,6 +468,95 @@ Future getData() async {
   }
   return list;
 }
+/*
+Future getData() async {
+  List list;
+  //String link = "https://duckhawk-1699a.firebaseio.com/Seller/Cuttack.json";
+  String link = "https://duckhawk-1699a.firebaseio.com/Seller.json";
+  final resource = await http.get(link);
+  if (resource.statusCode == 200) {
+   // print(resource.body);
+    //var data = jsonDecode(resource.body)["Cuttack"];
+    LinkedHashMap<String, dynamic> data = jsonDecode(resource.body);
+//    Iterator hmIterator = data.entrySet().iterator();
+//    while (hmIterator.hasNext()) {
+//      Map.Entry mapElement = (Map.Entry)hmIterator.next();
+//      int marks = ((int)mapElement.getValue() + 10);
+//      print(mapElement.get)
+//  }
+//    var list = new List<int>.generate(data.length, (i) => i + 1);
+    print("data is :");
+    print(data);
+    List list = data.keys.toList();
+    print("list is");
+    print(list);
+   // print(list[3]);
+    //print(list);
+  //  print(data[list[3]]);
+    //LinkedHashMap<String, dynamic> data1 = jsonDecode(resource.body)[list[3]];
+    //List list1 = data1.keys.toList();
+//    print(list1);
+    //print("list 1 is :");
+    //print(list1);
+
+    int i=0;
+    while(i < list.length) {
+      LinkedHashMap<String, dynamic> data2 = jsonDecode(resource.body)[list[i]];
+     // LinkedHashMap<String, dynamic> data2 = jsonDecode(resource.body)[list[3]][list1[i]];
+      //List list2 = data2.keys.toList();
+      List list2 = data2.values.toList();
+      print("hi");
+      print(list2[1]);
+      //print(list[3]);
+/*
+      print("list[3][list[i]");
+      //print([list[3]][list[i]]);
+
+
+      print("data 2 is :");
+      print(data2);
+
+    //  LinkedHashMap<String, dynamic> data3 = jsonDecode(resource.body)[list[3]][list1[i]][list2[2]];
+      List list3 = data3.keys.toList();
+      print("in third loop");
+     // print([list[3]][list1[i]][list2[2]]);
+      print(data3);
+      print(list3);
+
+      print("owner number: " + data2[list2[0]].toString());
+      owner_name.add(data2[list2[0]].toString());
+      owner_phone.add(data2[list2[1]]);
+      print("shop name: " + data2[list2[1]]);
+      int j=0;
+      while(j<list3.length)
+        {
+          LinkedHashMap<String, dynamic> data4 = jsonDecode(resource.body)[list[3]][list1[i]][list2[2]][list3[j]];
+          List list4 = data4.keys.toList();
+          print("City: " + data4[list4[0]].toString());
+          print("Cat: " + data4[list4[1]]);
+          print("Cat: " + data4[list4[2]]);
+          j++;
+        }
+*/
+      i++;
+    }
+
+//  for (i in list1)
+//  print(data[i]);
+//    for(Map i in data){
+//      print(i);}
+
+//  var rest = data['Cuttack'];
+//
+//  print(rest);
+
+    //for (a in data1["Cuttack"])
+    //print(a);
+
+    //list = rest.map<Article>((json) => Article.fromJson(json)).toList();
+  }
+  return list;
+}*/
 
 Future<String>_getAddressFromLatLng() async {
   try {
