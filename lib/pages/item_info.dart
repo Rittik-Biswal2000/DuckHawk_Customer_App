@@ -18,9 +18,14 @@ import 'package:project_duckhawk/shared/loading.dart';
   import 'cart.dart';
  // String prod_id;
   class item_info extends StatefulWidget {
-    String product_id;
+    String id;
+    String image;
+    String n;
+    String p;
+    String des;
+    String q;
     item_info(
-      this.product_id,);
+      this.id,this.image,this.n,this.p,this.des,this.q);
 
 
     @override
@@ -83,8 +88,10 @@ getpoint(String s)async{
   void initState(){
       super.initState();
 
+
       getuser();
-      DatabaseReference reference=FirebaseDatabase.instance.reference();
+
+     /* DatabaseReference reference=FirebaseDatabase.instance.reference();
       reference.child('Products').child('Bhubaneswar').child('Electronics').child(widget.product_id).once().then((DataSnapshot snap){
         var keys=snap.value.keys;
         print("The keys are :"+keys.toString());
@@ -129,12 +136,35 @@ getpoint(String s)async{
         });
 
 
-      });
+      });*/
 
   }
 
   getuser()async{
       user= await FirebaseAuth.instance.currentUser();
+      firestore
+          .collection("users").where("uid", isEqualTo: user.uid)
+          .getDocuments()
+          .then((QuerySnapshot snapshot) {
+
+        snapshot.documents.forEach((f) => uadd = '${f.data}');
+        print("Address is:");
+        print(uadd);
+        //print(uadd.split(',')[2].split(': ')[1]);
+        fadd=uadd.split(',')[2].split(': ')[1];
+        //searchAddr=fadd.replaceAll(' ', '\n');
+        searchAddr=fadd;
+        getpoint(searchAddr);
+
+      });
+      var x = int.parse(widget.q);
+      print(x.runtimeType);
+      quan.clear();
+
+      while(x!=0){
+        quan.add((x--).toString());
+
+      }
   }
     cod(BuildContext context)
     {
@@ -395,6 +425,11 @@ getpoint(String s)async{
         print('Value is');
         print(val.price);
       });*/
+      print(widget.image);
+      print(widget.des);
+      print(widget.p);
+      print(widget.q);
+      print(widget.n);
       image();
       var img = imageBytes != null ? Image.memory(
         imageBytes,
@@ -403,7 +438,8 @@ getpoint(String s)async{
 
       return new Scaffold(
           appBar: new AppBar(
-            title: new Text(name.split(': ')[1]),
+            title: new Text(widget.n),
+            //title: new Text(name.split(': ')[1]),
           ),
         body:
         ListView(
@@ -413,7 +449,7 @@ getpoint(String s)async{
               child: GridTile(
                 child: Container(
                   color: Colors.white,
-                  child: Image.network(imgurl),
+                  child: Image.network(widget.image),
                 ),
               ),
             ),
@@ -426,7 +462,8 @@ getpoint(String s)async{
                 Padding(
                   padding: EdgeInsets.all(16.0),
                   child: new Container(
-                    child: new Text(name.split(': ')[1]+"\n"+"₹"+price.split(': ')[1]),
+                    child: new Text(widget.n+"\n"+"₹"+widget.p),
+                    //child: new Text(name.split(': ')[1]+"\n"+"₹"+price.split(': ')[1]),
                   ),
                 ),
       ],
@@ -483,7 +520,8 @@ getpoint(String s)async{
                       /*addtocart();
                       Navigator.push(context,MaterialPageRoute(builder:(context)=>new cart()));*/
 
-                      createAlertDialog(context, name.split(': ')[1], imgurl, price.split(': ')[1]);
+                      createAlertDialog(context, widget.n, widget.image, widget.p);
+                      //Navigator.pop(context);
                     }:null,
                     color:Colors.redAccent,
                     textColor: Colors.white,
@@ -509,7 +547,7 @@ getpoint(String s)async{
             Divider(),
             new ListTile(
               title:new Text("Product Details"),
-              subtitle: new Text(description.split(': ')[1]),
+              subtitle: new Text(widget.des),
               //subtitle: new Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."),
             )
           ],
@@ -530,11 +568,11 @@ getpoint(String s)async{
       ref1=ref.collection('cart').document();
       //print(ref.documentID);
 
-      ref.collection('cart').document(widget.product_id).setData({
+      /*ref.collection('cart').document(widget.product_id).setData({
         'ProductId':widget.product_id,
-        'category':'electronics',
+        'category':widget.product_id,
         'quantity':units
-      });
+      });*/
 
     }
 
@@ -586,7 +624,7 @@ getpoint(String s)async{
           'location':lat.toString()+","+lon.toString(),
           'phone':custphone,
           'prodcat':'electronics',
-          'productid':widget.product_id,
+          'productid':widget.id,
           //'units':units,
           'price':total.toString(),
         }

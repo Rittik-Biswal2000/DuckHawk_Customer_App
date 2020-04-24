@@ -129,7 +129,7 @@ class _categoryState extends State<category> {
                       child: GridTile(
                         child:InkWell(
                             onTap: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=>new item_info(p[index])));
+                              //Navigator.push(context, MaterialPageRoute(builder: (context)=>new item_info(p[index])));
                               print("item_info");
                             },
                             child: Image.network(

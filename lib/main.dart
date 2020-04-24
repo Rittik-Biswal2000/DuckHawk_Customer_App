@@ -1,4 +1,7 @@
 
+import 'dart:collection';
+import 'dart:convert';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
@@ -19,16 +22,25 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:project_duckhawk/pages/signup.dart';
 import 'package:project_duckhawk/src/welcomPage.dart';
 import './pages/login_page.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 FirebaseUser user;
 String curlat,curlon;
+var len1;
 
 String badd="Loading";
 List se=[];
 List se_name=[];
 List se_phone=[];
+List imgurl1=[];
+List quantity1=[];
+List price1=[];
+List name1=[];
+List description1=[];
+List prod_id2=[];
+List prod_cat2=[];
 var n;
 int j;
 ProgressDialog pr;
@@ -78,7 +90,7 @@ class _HomePageState extends State<HomePage> {
   void initState(){
 
 
-    getd();
+    //getd();
     super.initState();
     //getproducts();
     //getproducts1();
@@ -384,18 +396,39 @@ class _HomePageState extends State<HomePage> {
             itemBuilder: (BuildContext context,int index){
             return new Card(
               child:SingleChildScrollView(
-                child:ListTile(
-                  title: new Text(owner_name[index]),
-                  subtitle: new Column(
-                    children: <Widget>[
-                      new Container(
-                        alignment: Alignment.topLeft,
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: new Text("Contact - "+owner_phone[index]),
+                child:InkWell(
+                  onTap: ()async{
+                    pr.show();
+                    await getproductdetails(prod_id[index]);
+                    pr.hide();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => e()),
+                    );
+                   // Navigator.pop(context);
+
+
+                  },
+                  child: ListTile(
+                    title: new Text(fowner_name[index]),
+                    subtitle: new Column(
+                      children: <Widget>[
+                        new Container(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: new Text("Contact - "+fowner_phone[index]),
+                          ),
                         ),
-                      )
-                    ],
+                        new Container(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: new Text("Distance - "+distance[index]),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 )
               )
@@ -561,6 +594,65 @@ class _HomePageState extends State<HomePage> {
 
 
   }
+
+
+
+
+}
+getproductdetails(String id) async{
+  imgurl1.clear();
+  quantity1.clear();
+  price1.clear();
+  name1.clear();
+  description1.clear();
+  prod_id2.clear();
+  prod_cat2.clear();
+  String link="https://duckhawk-1699a.firebaseio.com/Seller/"+badd+"/"+id+"/products.json";
+  final resource=await http.get(link);
+  if(resource.statusCode==200)
+  {
+    LinkedHashMap<String,dynamic>data1=jsonDecode(resource.body);
+    List k=data1.keys.toList();
+    //print(k);
+    List d=data1.values.toList();
+    //print(d);
+    int h=0;
+    len1=d.length;
+    while(h<d.length){
+      LinkedHashMap<String, dynamic> data2 = jsonDecode(resource.body)[k[h]];
+      //List x=data2.values.toList();
+      //print(data2["cat"]);
+      prod_id2.add(k[h]);
+      prod_cat2.add(data2["cat"]);
+
+      String link2="https://duckhawk-1699a.firebaseio.com/Products/"+badd+"/"+data2["cat"]+"/"+k[h]+".json";
+      print(link2);
+      final resource3 = await http.get(link2);
+      if(resource3.statusCode == 200)
+      {
+        LinkedHashMap<String,dynamic>data4=jsonDecode(resource3.body);
+        // print("city is:");
+        imgurl1.add(data4["imgurl"]);
+        quantity1.add(data4["quantity"]);
+        price1.add(data4["price"]);
+        name1.add(data4["name"]);
+        description1.add(data4["description"]);
+
+
+
+      }
+      h++;
+
+    }
+
+
+  }
+  print(imgurl1);
+  print(quantity1);
+  print(price1);
+  print(name1);
+  print(prod_id2);
+  print(prod_cat2);
 
 
 }

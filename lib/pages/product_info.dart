@@ -159,7 +159,7 @@ class Single_prod extends StatelessWidget {
               onTap: () => /*Navigator.of(context).push(new MaterialPageRoute(
                   builder: (context) => new indivProduct(prod_name,prod_pricture,prod_price))),*/
               Navigator.of(context).push(new MaterialPageRoute(
-                  builder: (context) => new item_info(null))),
+                  builder: (context) => new item_info(null,null,null,null,null,null))),
               child: GridTile(
                   footer: Container(
                     color: Colors.white70,
