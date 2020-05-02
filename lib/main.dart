@@ -7,15 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/components/horizontal_listview.dart';
-import 'package:project_duckhawk/components/products.dart';
+
 import 'package:project_duckhawk/pages/Help.dart';
 import 'package:project_duckhawk/pages/account.dart';
-import 'package:project_duckhawk/pages/auto.dart';
 
-import 'package:project_duckhawk/pages/category.dart';
 import 'package:project_duckhawk/pages/electronics.dart';
 import 'package:project_duckhawk/pages/login_page.dart';
-import 'package:project_duckhawk/pages/product_details.dart';
+
 import 'package:project_duckhawk/pages/cart.dart';
 import 'package:project_duckhawk/pages/location.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -264,7 +262,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),*/
-      endDrawer: new Drawer(
+     /* endDrawer: new Drawer(
         child: new ListView(
           children: <Widget>[
             InkWell(
@@ -389,7 +387,7 @@ class _HomePageState extends State<HomePage> {
                 )),
           ],
         ),
-      ),
+      ),*/
       body:Container(
         child:new ListView.builder(
           itemCount: length,

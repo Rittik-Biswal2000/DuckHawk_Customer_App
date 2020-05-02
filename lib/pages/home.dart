@@ -2,9 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:project_duckhawk/components/horizontal_listview.dart';
-import 'package:project_duckhawk/components/products.dart';
 import 'package:project_duckhawk/pages/login_page.dart';
-import 'package:project_duckhawk/pages/product_details.dart';
+
 import 'package:project_duckhawk/pages/cart.dart';
 import 'package:project_duckhawk/pages/location.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -324,12 +323,12 @@ class _HomePage1State extends State<HomePage1> {
 
                 ],
               )),
-          Container(
+          /*Container(
             height:120.0,
             child: products(
               'fashion',
             ),
-          ),
+          ),*/
           Container(
               padding: const EdgeInsets.all(10.0),
               color: Color(0xff104670),
@@ -353,10 +352,10 @@ class _HomePage1State extends State<HomePage1> {
             child:new Text('Electronics'
             ) ,),*/
 
-          Container(
+          /*Container(
             height:120.0,
             child: products('electronics'),
-          ),
+          ),*/
         ],
       ),
     );

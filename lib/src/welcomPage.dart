@@ -16,8 +16,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong/latlong.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/main.dart';
-import 'package:project_duckhawk/pages/category.dart';
-import 'package:project_duckhawk/pages/front.dart';
 import 'package:project_duckhawk/pages/item_info.dart';
 import 'package:project_duckhawk/src/loginPage.dart';
 import 'package:project_duckhawk/src/signup.dart';

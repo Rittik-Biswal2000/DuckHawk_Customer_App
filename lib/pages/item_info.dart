@@ -12,7 +12,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:project_duckhawk/pages/orderconfirm.dart';
-import 'package:project_duckhawk/shared/loading.dart';
 
   import '../main.dart';
   import 'cart.dart';
@@ -141,6 +140,7 @@ getpoint(String s)async{
   }
 
   getuser()async{
+      await getquanlist();
       user= await FirebaseAuth.instance.currentUser();
       firestore
           .collection("users").where("uid", isEqualTo: user.uid)
@@ -157,14 +157,16 @@ getpoint(String s)async{
         getpoint(searchAddr);
 
       });
-      var x = int.parse(widget.q);
+
+      /*pr.show();*/
+      /*var x = int.parse(widget.q);
       print(x.runtimeType);
       quan.clear();
 
       while(x!=0){
         quan.add((x--).toString());
-
-      }
+      }*/
+      /*pr.hide();*/
   }
     cod(BuildContext context)
     {
@@ -421,15 +423,6 @@ getpoint(String s)async{
     }
     @override
     Widget build(BuildContext context) {
-      /*getData().then((val){
-        print('Value is');
-        print(val.price);
-      });*/
-      print(widget.image);
-      print(widget.des);
-      print(widget.p);
-      print(widget.q);
-      print(widget.n);
       image();
       var img = imageBytes != null ? Image.memory(
         imageBytes,
@@ -633,6 +626,17 @@ getpoint(String s)async{
 
     );
 
+  }
+
+  getquanlist() {
+    var x = int.parse(widget.q);
+    print(x.runtimeType);
+    quan.clear();
+
+    while(x!=0){
+      quan.add((x--).toString());
+    }
+    print(quan);
   }
   }
   void onMapCreated(GoogleMapController controller) {
