@@ -10,8 +10,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_webservice/directions.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:intl/intl.dart';
 import 'package:project_duckhawk/pages/orderconfirm.dart';
+import 'package:project_duckhawk/src/welcomPage.dart';
 
   import '../main.dart';
   import 'cart.dart';
@@ -23,8 +26,9 @@ import 'package:project_duckhawk/pages/orderconfirm.dart';
     String p;
     String des;
     String q;
+    String curse;
     item_info(
-      this.id,this.image,this.n,this.p,this.des,this.q);
+      this.curse,this.id,this.image,this.n,this.p,this.des,this.q);
 
 
     @override
@@ -170,6 +174,8 @@ getpoint(String s)async{
   }
     cod(BuildContext context)
     {
+      print("current seller ");
+      print(currrentseller);
       return showDialog(context: context,builder: (context){
         return AlertDialog(
           title: Text("We only accept Cash on Delivery as a mode of payment"),
@@ -610,21 +616,24 @@ getpoint(String s)async{
     }
 
   placeorder() {
-    FirebaseDatabase.instance.reference().child('Orders').push().set(
-        {
-          'Address':searchAddr,
-          'buyer':custname,
-          'location':lat.toString()+","+lon.toString(),
-          'phone':custphone,
-          'prodcat':'electronics',
-          'productid':widget.id,
-          //'units':units,
-          'price':total.toString(),
-        }
+    var now = new DateTime.now();
+    //print(now.millisecondsSinceEpoch);
+    var d=new DateFormat("dd-MM-yyyy").format(now);
+   var t=new DateFormat("H:m:s").format(now);
+   String time=d.toString()+" "+t.toString();
+   print(currrentseller);
+    //print(new DateFormat("yyyy/MM/dd", "en_US").parse(DateFormat("dd-MM-yyyy").format(now)));
+
+    FirebaseDatabase.instance.reference().child('Orders').child(loc).push().set({
+
+      'Address':searchAddr,
+      'total':widget.p,
+      'buyer':user.uid,
+      'time':time,
+      'seller':widget.curse,
 
 
-
-    );
+    });
 
   }
 
@@ -653,7 +662,7 @@ getpoint(String s)async{
         },
         draggable: true,
         markerId: MarkerId("curr_loc"),
-        position: LatLng(lat,lon),
+        position: LatLng(double.parse(curlat),double.parse(curlon)),
         //position: LatLng(21.5007, 83.8995),
 
         infoWindow: InfoWindow(title: 'Your Location'),

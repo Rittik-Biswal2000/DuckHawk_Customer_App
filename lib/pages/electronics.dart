@@ -9,6 +9,10 @@ import 'package:project_duckhawk/pages/item_info.dart';
 import 'package:project_duckhawk/main.dart';
 
 class e extends StatefulWidget {
+  String s;
+
+  e(
+      this.s);
   @override
   _eState createState() => _eState();
 }
@@ -116,7 +120,7 @@ class _eState extends State<e> {
                     ),
                     onTap: (){
                       Navigator.push(
-                          context, MaterialPageRoute(builder: (context) => new item_info(prod_id2[index],imgurl1[index],name1[index],price1[index],description1[index],quantity1[index])));
+                          context, MaterialPageRoute(builder: (context) => new item_info(widget.s,prod_id2[index],imgurl1[index],name1[index],price1[index],description1[index],quantity1[index])));
                       //Navigator.pop(context);
                       /*print(prod_id[index]);
                       print(imgurl1[index]);

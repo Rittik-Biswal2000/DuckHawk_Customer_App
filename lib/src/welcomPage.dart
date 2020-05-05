@@ -36,9 +36,9 @@ class WelcomePage extends StatefulWidget {
 }
 FirebaseUser user;
 ProgressDialog pr;
-var a,b;
-String curlat,curlon;
+var a,b,loc;
 List seller=[];
+List sellerlist=[];
 List fdistance=[];
 List fowner_name=[];
 List fowner_phone=[];
@@ -124,33 +124,6 @@ class _WelcomePageState extends State<WelcomePage> {
     );
   }
 
-/*  Widget _label() {
-    return Container(
-        margin: EdgeInsets.only(top: 40, bottom: 20),
-        child: Column(
-          children: <Widget>[
-            Text(
-              'Quick login with Touch ID',
-              style: TextStyle(color: Colors.white, fontSize: 17),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Icon(Icons.fingerprint, size: 90, color: Colors.white),
-            SizedBox(
-              height: 20,
-            ),
-            Text(
-              'Touch ID',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-                decoration: TextDecoration.underline,
-              ),
-            ),
-          ],
-        ));
-  }*/
 
   Widget _title() {
     return RichText(
@@ -260,8 +233,10 @@ class _WelcomePageState extends State<WelcomePage> {
       );
 
     }
+
     pr.show();
-    await getData();
+    loc=await _getCurrentLocation();
+    await getData(loc);
     pr.hide();
     Navigator.push(
       context,
@@ -313,38 +288,7 @@ class _WelcomePageState extends State<WelcomePage> {
     }
   }
 }
-/*
-getproducts() async {
-  owner_phone.clear();
-  owner_name.clear();
-  var o=await _getCurrentLocation();
-  print("badd is : "+'${o}');
-   var url="https://duckhawk-1699a.firebaseio.com/Seller/"+o+".json";
-  //var res=await Uri.http(authority, unencodedPath)get(Uri.encodeFull(url),headers:{'Accept':'application/json'});
 
- DatabaseReference ref=FirebaseDatabase.instance.reference().child('Seller').child(o);
-  await ref.once().then((DataSnapshot s){
-    print("keys are");
-    print(s.key);
-    var data=s.value;
-    print(data[0]);
-    print(s.value.toString().split('}}, ').length);
-    length=s.value.toString().split('}}, ').length;
-    var ind=data.toString().split('}}, ');
-//
-//    for(int i=0;i<length;i++)
-//      {
-//        owner_name.add(ind[i].split(': {')[1].split(',')[1].split(': ')[1]);
-//        owner_phone.add(ind[i].split(': {')[1].split(',')[0].split(': ')[1]);
-//      }
-   // print(owner_name);
-   // print(owner_phone);
-   // print(owner[1].split(',')[1].split(': ')[1]);
-    //print(owner[1]);
-  });
-  print("bye");
-}
-*/
 Future<String>_getCurrentLocation() async{
   var p;
   final Geolocator geolocator = Geolocator()
@@ -367,9 +311,9 @@ Future<String>_getCurrentLocation() async{
   //print("p is :"+'${p}');
   return p;
 }
-Future getData() async {
+Future getData(String x) async {
   var lati,longi;
-  var x=await _getCurrentLocation();
+  //var x=await _getCurrentLocation();
   owner_name.clear();
   owner_phone.clear();
   fdistance.clear();
@@ -378,7 +322,7 @@ Future getData() async {
   distance.clear();
   prod_id.clear();
   List list;
-  String link = "https://duckhawk-1699a.firebaseio.com/Seller/"+x+".json";
+  String link = "https://duckhawk-1699a.firebaseio.com/Seller/"+loc+".json";
   final resource = await http.get(link);
   if (resource.statusCode == 200) {
     // print(resource.body);
@@ -393,6 +337,12 @@ Future getData() async {
 //    var list = new List<int>.generate(data.length, (i) => i + 1);
     List list = data.keys.toList();
     length=list.length;
+    print('Seller list');
+    for(var i=0;i<length;i++)
+      {
+        sellerlist.add(list[i]);
+      }
+    print(sellerlist);
 
     //  print(data[list[3]]);
 
@@ -499,121 +449,12 @@ print(prod_id);
     }
 
 
-      /*var smallest_value = double.parse(distance[0].toString().split(' ')[0]);
-      for (int i = 0; i < distance.length; i++){
-      if (double.parse(distance[i].toString().split(' ')[0]) < smallest_value) {
-        smallest_value = double.parse(distance[i].toString().split(' ')[0]);
-        fdistance.add(smallest_value);
-        distance.removeAt(i);
-      }
-
-      }*/
-
-
-
-
-
-  /*final Map mappings={
-    /*for(int i=0;i<distance.length;i++){
-      distance[i]: owner_name[i]
-    }*/
-    <Widget>[
-      for (final category in categories)
-        CategoryWidget(category: category)
-    ],
-
-  } as Map;
-  distance.sort();
-  owner_name = [
-    for (int number in distance) mappings[number]
-  ];*/
-
 
 
 
 
   return list;
 }
-/*
-Future getData() async {
-  List list;
-  //String link = "https://duckhawk-1699a.firebaseio.com/Seller/Cuttack.json";
-  String link = "https://duckhawk-1699a.firebaseio.com/Seller.json";
-  final resource = await http.get(link);
-  if (resource.statusCode == 200) {
-   // print(resource.body);
-    //var data = jsonDecode(resource.body)["Cuttack"];
-    LinkedHashMap<String, dynamic> data = jsonDecode(resource.body);
-//    Iterator hmIterator = data.entrySet().iterator();
-//    while (hmIterator.hasNext()) {
-//      Map.Entry mapElement = (Map.Entry)hmIterator.next();
-//      int marks = ((int)mapElement.getValue() + 10);
-//      print(mapElement.get)
-//  }
-//    var list = new List<int>.generate(data.length, (i) => i + 1);
-    print("data is :");
-    print(data);
-    List list = data.keys.toList();
-    print("list is");
-    print(list);
-   // print(list[3]);
-    //print(list);
-  //  print(data[list[3]]);
-    //LinkedHashMap<String, dynamic> data1 = jsonDecode(resource.body)[list[3]];
-    //List list1 = data1.keys.toList();
-//    print(list1);
-    //print("list 1 is :");
-    //print(list1);
-    int i=0;
-    while(i < list.length) {
-      LinkedHashMap<String, dynamic> data2 = jsonDecode(resource.body)[list[i]];
-     // LinkedHashMap<String, dynamic> data2 = jsonDecode(resource.body)[list[3]][list1[i]];
-      //List list2 = data2.keys.toList();
-      List list2 = data2.values.toList();
-      print("hi");
-      print(list2[1]);
-      //print(list[3]);
-/*
-      print("list[3][list[i]");
-      //print([list[3]][list[i]]);
-      print("data 2 is :");
-      print(data2);
-    //  LinkedHashMap<String, dynamic> data3 = jsonDecode(resource.body)[list[3]][list1[i]][list2[2]];
-      List list3 = data3.keys.toList();
-      print("in third loop");
-     // print([list[3]][list1[i]][list2[2]]);
-      print(data3);
-      print(list3);
-      print("owner number: " + data2[list2[0]].toString());
-      owner_name.add(data2[list2[0]].toString());
-      owner_phone.add(data2[list2[1]]);
-      print("shop name: " + data2[list2[1]]);
-      int j=0;
-      while(j<list3.length)
-        {
-          LinkedHashMap<String, dynamic> data4 = jsonDecode(resource.body)[list[3]][list1[i]][list2[2]][list3[j]];
-          List list4 = data4.keys.toList();
-          print("City: " + data4[list4[0]].toString());
-          print("Cat: " + data4[list4[1]]);
-          print("Cat: " + data4[list4[2]]);
-          j++;
-        }
-*/
-      i++;
-    }
-//  for (i in list1)
-//  print(data[i]);
-//    for(Map i in data){
-//      print(i);}
-//  var rest = data['Cuttack'];
-//
-//  print(rest);
-    //for (a in data1["Cuttack"])
-    //print(a);
-    //list = rest.map<Article>((json) => Article.fromJson(json)).toList();
-  }
-  return list;
-}*/
 
 Future<String>_getAddressFromLatLng() async {
   try {

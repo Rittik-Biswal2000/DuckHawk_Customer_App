@@ -9,6 +9,7 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:project_duckhawk/main.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:project_duckhawk/src/welcomPage.dart';
 
 class MyLocation extends StatefulWidget {
   @override
@@ -207,8 +208,10 @@ _getAddressFromLatLng(result[0].position.latitude, result[0].position.longitude)
 
   }
 
-  void Confirm() {
+  void Confirm() async{
+
     Navigator.pop(context);
+    //await getData(first.locality);
     Navigator.push(context, MaterialPageRoute(builder: (context)=> HomePage(first.locality)));
     //Navigator.pushReplacementNamed(context, MaterialPageRoute(builder: (context)=> HomePage(first.addressLine)));
   }

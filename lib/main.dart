@@ -30,6 +30,7 @@ var len1;
 
 String badd="Loading";
 List se=[];
+var currrentseller;
 List se_name=[];
 List se_phone=[];
 List imgurl1=[];
@@ -196,32 +197,32 @@ class _HomePageState extends State<HomePage> {
           ),
 
 
-      /*
 
 
 
-      persistentFooterButtons: <Widget>[/*
-        new IconButton(icon: new Icon(Icons.add_shopping_cart), onPressed: () => _onClick('Button1')),
-        new IconButton(icon: new Icon(Icons.shop), onPressed: () => _onClick('Button2')),
-        new IconButton(icon: new Icon(Icons.monetization_on), onPressed: () => _onClick('Button3')),
-        new IconButton(icon: new Icon(Icons.notifications), onPressed: () => _onClick('Button4')),
-        new IconButton(icon: new Icon(Icons.share), onPressed: () => _onClick('Button5')),*/
+
+     /* persistentFooterButtons: <Widget>[
+        new IconButton(icon: new Icon(Icons.shop), onPressed: () => _onClick('Button1')),
+        new IconButton(icon: new Icon(Icons.search), onPressed: () => _onClick('Button2')),
+        new IconButton(icon: new Icon(Icons.account_box), onPressed: () => _onClick('Button3')),
+        new IconButton(icon: new Icon(Icons.shopping_cart), onPressed: () => _onClick('Button4')),
+       // new IconButton(icon: new Icon(Icons.share), onPressed: () => _onClick('Button5')),
         Container(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              new IconButton(icon: new Icon(Icons.add_shopping_cart), onPressed: () => _onClick('Button1')),
-              new IconButton(icon: new Icon(Icons.shop), onPressed: () => _onClick('Button2')),
-              new IconButton(icon: new Icon(Icons.monetization_on), onPressed: () => _onClick('Button3')),
-              new IconButton(icon: new Icon(Icons.notifications), onPressed: () => _onClick('Button4')),
-              new IconButton(icon: new Icon(Icons.share), onPressed: () => _onClick('Button5')),
+              new IconButton(icon: new Icon(Icons.shop), onPressed: () => _onClick('Button1')),
+              new IconButton(icon: new Icon(Icons.search), onPressed: () => _onClick('Button2')),
+              new IconButton(icon: new Icon(Icons.account_box), onPressed: () => _onClick('Button3')),
+              new IconButton(icon: new Icon(Icons.shopping_cart), onPressed: () => _onClick('Button4')),
+              //new IconButton(icon: new Icon(Icons.share), onPressed: () => _onClick('Button5')),
 
             ],
           ),
         ),
 
       ],*/
-     /* bottomNavigationBar: new Container(
+      bottomNavigationBar: new Container(
         padding: EdgeInsets.all(0.0),
         child: Row(
           mainAxisSize: MainAxisSize.max,
@@ -229,7 +230,7 @@ class _HomePageState extends State<HomePage> {
             Expanded(
               flex: 1,
               child: IconButton(
-                icon: new Icon(Icons.add_shopping_cart),
+                icon: new Icon(Icons.shop),
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart()));
                 },
@@ -238,30 +239,30 @@ class _HomePageState extends State<HomePage> {
             Expanded(
               flex: 1,
               child: IconButton(
-                  icon: new Icon(Icons.shop),
+                  icon: new Icon(Icons.search),
                   onPressed: () => _onClick('Button2')),
             ),
             Expanded(
               flex: 1,
               child: IconButton(
-                  icon: new Icon(Icons.monetization_on),
+                  icon: new Icon(Icons.account_box),
                   onPressed: () => _onClick('Button3')),
             ),
             Expanded(
               flex: 1,
               child: IconButton(
-                  icon: new Icon(Icons.notifications),
+                  icon: new Icon(Icons.shopping_cart),
                   onPressed: () => _onClick('Button3')),
             ),
-            Expanded(
+            /*Expanded(
               flex: 1,
               child: IconButton(
                   icon: new Icon(Icons.share),
                   onPressed: () => _onClick('Button3')),
-            ),
+            ),*/
           ],
         ),
-      ),*/
+      ),
      /* endDrawer: new Drawer(
         child: new ListView(
           children: <Widget>[
@@ -392,6 +393,7 @@ class _HomePageState extends State<HomePage> {
         child:new ListView.builder(
           itemCount: length,
             itemBuilder: (BuildContext context,int index){
+            //currrentseller=sellerlist[index];
             return new Card(
               child:SingleChildScrollView(
                 child:InkWell(
@@ -401,7 +403,7 @@ class _HomePageState extends State<HomePage> {
                     pr.hide();
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => e()),
+                      MaterialPageRoute(builder: (context) => e(sellerlist[index])),
                     );
                    // Navigator.pop(context);
 
