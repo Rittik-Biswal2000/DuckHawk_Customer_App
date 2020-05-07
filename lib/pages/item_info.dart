@@ -18,6 +18,7 @@ import 'package:intl/intl.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/model/Orders.dart';
 import 'package:project_duckhawk/model/Products.dart';
+import 'package:project_duckhawk/model/loc.dart';
 import 'package:project_duckhawk/pages/orderconfirm.dart';
 import 'package:project_duckhawk/src/welcomPage.dart';
   import 'package:http/http.dart' as http;
@@ -593,7 +594,7 @@ getpoint(String s)async{
     });*/
     Orders todo = new Orders(loc, user.uid, widget.curse, time, double.parse(widget.p));
     Products prod = new Products("aagrin", "Fashion", "Bhubaneswar", 57, 1, "rittik");
-    Location loc1 = new Location(lat, lon);
+    locs loc1 = new locs(20.4571, 85.9999);
     _database.reference().child("Orders").child(loc).push().set(todo.toJson());
     String link = "https://duckhawk-1699a.firebaseio.com/Orders/"+loc+".json";
     final resource = await http.get(link);
@@ -605,8 +606,8 @@ getpoint(String s)async{
       print('Seller list');
       String y = list[length-1];
       print(y);
-      _database.reference().child("Orders").child(loc).child(y).child("Products").push().set(prod.toJson());
-      _database.reference().child("Orders").child(loc).child(y).child("location").set(loc1.toJson());
+      await _database.reference().child("Orders").child(loc).child(y).child("Products").push().set(prod.toJson());
+      await _database.reference().child("Orders").child(loc).child(y).child("location").set(loc1.toJson());
     }
 //  todo.completed = true;
 //  if (todo != null) {
