@@ -591,11 +591,11 @@ getpoint(String s)async{
 
 
     });*/
-    Orders todo = new Orders(x, user.uid, widget.curse, time, double.parse(widget.p));
+    Orders todo = new Orders(loc, user.uid, widget.curse, time, double.parse(widget.p));
     Products prod = new Products("aagrin", "Fashion", "Bhubaneswar", 57, 1, "rittik");
-    Location loc = new Location(lat, lon);
-    _database.reference().child("Orders").child(x).push().set(todo.toJson());
-    String link = "https://duckhawk-1699a.firebaseio.com/Orders/"+x+".json";
+    Location loc1 = new Location(lat, lon);
+    _database.reference().child("Orders").child(loc).push().set(todo.toJson());
+    String link = "https://duckhawk-1699a.firebaseio.com/Orders/"+loc+".json";
     final resource = await http.get(link);
     if (resource.statusCode == 200) {
       LinkedHashMap<String, dynamic> data = jsonDecode(resource.body);
@@ -605,8 +605,8 @@ getpoint(String s)async{
       print('Seller list');
       String y = list[length-1];
       print(y);
-      _database.reference().child("Orders").child(x).child(x).child("Products").push().set(prod.toJson());
-      _database.reference().child("Orders").child(x).child(x).child("location").set(loc.toJson());
+      _database.reference().child("Orders").child(loc).child(y).child("Products").push().set(prod.toJson());
+      _database.reference().child("Orders").child(loc).child(y).child("location").set(loc1.toJson());
     }
 //  todo.completed = true;
 //  if (todo != null) {
