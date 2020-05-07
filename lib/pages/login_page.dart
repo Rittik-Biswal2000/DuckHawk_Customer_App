@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:project_duckhawk/main.dart';
 import 'package:project_duckhawk/pages/signup.dart';
+import 'package:project_duckhawk/src/welcomPage.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -27,7 +28,12 @@ Future<DocumentReference> getUserDoc() async {
 class _LoginPageState extends State<LoginPage> {
   String _email;
   String _password;
+@override
+  void initState() {
+    // TODO: implement initState
 
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -64,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                       FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password).then((user){
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => HomePage(null)),
+                          MaterialPageRoute(builder: (context) => WelcomePage()),
                         );
                       }).catchError((e) {});
                     },

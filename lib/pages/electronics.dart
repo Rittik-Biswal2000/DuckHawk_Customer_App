@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -7,6 +9,9 @@ import 'package:project_duckhawk/pages/cart.dart';
 
 import 'package:project_duckhawk/pages/item_info.dart';
 import 'package:project_duckhawk/main.dart';
+import 'package:project_duckhawk/src/welcomPage.dart';
+
+import 'cart1.dart';
 
 class e extends StatefulWidget {
   String s;
@@ -17,6 +22,7 @@ class e extends StatefulWidget {
   _eState createState() => _eState();
 }
 String a,b,c,d,f,g;
+List li=[];
 class _eState extends State<e> {
   @override
   Widget build(BuildContext context) {
@@ -24,7 +30,16 @@ class _eState extends State<e> {
       appBar: new AppBar(
           backgroundColor: Color(0xff104670),
           automaticallyImplyLeading: false,
-          title: Text("My Products")
+          title: Text("My Products"),
+          actions: <Widget>[
+            // action button
+            IconButton(icon:Icon(Icons.shopping_cart),
+              onPressed: () async{
+              await getCartProducts();
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart1()));
+              },
+            ),
+          ]
         //leading:new Text("hi"),
 
 
@@ -43,21 +58,7 @@ class _eState extends State<e> {
 
                       leading:
                         new Image.network(imgurl1[index],width:100.0,height:400.0),
-                      /*InkWell(
-                          onTap: (){
-                            print(prod_id[index]);
-                            print(imgurl1[index]);
-                            print(name1[index]);
-                            print(price1[index]);
-                            print(description1[index]);
-                            print(quantity1[index]);
-                            Navigator.push(
-                                context, MaterialPageRoute(builder: (context) => item_info(prod_id[index],imgurl1[index],name1[index],price1[index],description1[index],quantity1[index])));
 
-                          },
-                          child:
-                          new Image.network(imgurl1[index],width:100.0,height:400.0)
-                      ),*/
                       title:new Text(name1[index]),
                       subtitle: new Column(
                         children: <Widget>[
@@ -120,7 +121,7 @@ class _eState extends State<e> {
                     ),
                     onTap: (){
                       Navigator.push(
-                          context, MaterialPageRoute(builder: (context) => new item_info(widget.s,prod_id2[index],imgurl1[index],name1[index],price1[index],description1[index],quantity1[index])));
+                          context, MaterialPageRoute(builder: (context) => new item_info(widget.s,prod_cat2[index],prod_id2[index],imgurl1[index],name1[index],price1[index],description1[index],quantity1[index])));
                       //Navigator.pop(context);
                       /*print(prod_id[index]);
                       print(imgurl1[index]);
@@ -146,3 +147,37 @@ class _eState extends State<e> {
 }
 
 
+getCartProducts() async {
+  li.clear();
+  dynamic data;
+
+  print("bye");
+  DatabaseReference reference = FirebaseDatabase.instance.reference();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseUser user = await _auth.currentUser();
+  Future<DocumentSnapshot> s=firestore.collection('users').document(user.uid).collection('cart').document(loc).get();
+  s.then((snapshot){
+    print(snapshot);
+  });
+
+
+
+  /*QuerySnapshot qn = await firestore.collection('users').document(user.uid).collection('cart').document(loc).
+      .then((snapshot) {
+    snapshot.documents.forEach((f) => li.add(f.documentID));
+    u=snapshot.documents;
+    print(li[0]);
+    /*for(int i=0;i<li.length;i++)
+      {
+        if(loc==li[i])
+          print(li[i]);
+      }*/
+  });*/
+
+
+
+  print("in cart page");
+  print(data);
+  //print(l[0].toString());
+
+}

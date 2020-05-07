@@ -10,6 +10,7 @@ import 'package:project_duckhawk/components/horizontal_listview.dart';
 
 import 'package:project_duckhawk/pages/Help.dart';
 import 'package:project_duckhawk/pages/account.dart';
+import 'package:project_duckhawk/pages/cart1.dart';
 
 import 'package:project_duckhawk/pages/electronics.dart';
 import 'package:project_duckhawk/pages/login_page.dart';
@@ -191,6 +192,14 @@ class _HomePageState extends State<HomePage> {
             ),
                 )
             ),
+          actions: <Widget>[
+            // action button
+            IconButton(icon:Icon(Icons.shopping_cart),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart1()));
+              },
+            ),
+          ]
         //leading:new Text("hi"),
 
 
@@ -232,7 +241,7 @@ class _HomePageState extends State<HomePage> {
               child: IconButton(
                 icon: new Icon(Icons.shop),
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart1()));
                 },
               ),
             ),

@@ -1,4 +1,6 @@
-  import 'dart:typed_data';
+  import 'dart:collection';
+import 'dart:convert';
+import 'dart:typed_data';
 
   import 'package:cloud_firestore/cloud_firestore.dart';
   import 'package:firebase_auth/firebase_auth.dart';
@@ -13,11 +15,16 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/directions.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:intl/intl.dart';
+import 'package:progress_dialog/progress_dialog.dart';
+import 'package:project_duckhawk/model/Orders.dart';
+import 'package:project_duckhawk/model/Products.dart';
 import 'package:project_duckhawk/pages/orderconfirm.dart';
 import 'package:project_duckhawk/src/welcomPage.dart';
+  import 'package:http/http.dart' as http;
 
   import '../main.dart';
   import 'cart.dart';
+import 'cart1.dart';
  // String prod_id;
   class item_info extends StatefulWidget {
     String id;
@@ -27,8 +34,9 @@ import 'package:project_duckhawk/src/welcomPage.dart';
     String des;
     String q;
     String curse;
+    String cat;
     item_info(
-      this.curse,this.id,this.image,this.n,this.p,this.des,this.q);
+      this.curse,this.cat,this.id,this.image,this.n,this.p,this.des,this.q);
 
 
     @override
@@ -46,6 +54,7 @@ import 'package:project_duckhawk/src/welcomPage.dart';
   final _text = TextEditingController();
   final _text1 = TextEditingController();
   bool _validate = false;
+  ProgressDialog pr;
 
   List<String> quan=[];
   String _dropDownValue="Quantity";
@@ -94,52 +103,7 @@ getpoint(String s)async{
 
       getuser();
 
-     /* DatabaseReference reference=FirebaseDatabase.instance.reference();
-      reference.child('Products').child('Bhubaneswar').child('Electronics').child(widget.product_id).once().then((DataSnapshot snap){
-        var keys=snap.value.keys;
-        print("The keys are :"+keys.toString());
-        var data=snap.value;
-        print("The data is :"+data.toString());
-        //print(data.toString().split(',')[1]);
-        seller=data.toString().split(',')[0];
-        imgurl=data.toString().split(',')[1];
-        quantity=data.toString().split(',')[2];
-        price=data.toString().split(',')[3];
-        name=data.toString().split(',')[4];
-        description=data.toString().split(',')[5];
-        print(seller+"\n"+imgurl+"\n"+quantity+"\n"+price+"\n"+name+"\n"+description);
-        imgurl=imgurl.split(': ')[1];
-        quantity=quantity.split(': ')[1];
-        print("Quantity");
-        print(quantity);
-        var x = int.parse(quantity);
-        print(x.runtimeType);
-        quan.clear();
 
-        while(x!=0){
-          quan.add((x--).toString());
-
-        }
-
-        //print(users);
-        firestore
-            .collection("users").where("uid", isEqualTo: user.uid)
-            .getDocuments()
-            .then((QuerySnapshot snapshot) {
-
-          snapshot.documents.forEach((f) => uadd = '${f.data}');
-          print("Address is:");
-          print(uadd);
-          //print(uadd.split(',')[2].split(': ')[1]);
-          fadd=uadd.split(',')[2].split(': ')[1];
-          //searchAddr=fadd.replaceAll(' ', '\n');
-          searchAddr=fadd;
-          getpoint(searchAddr);
-
-        });
-
-
-      });*/
 
   }
 
@@ -162,15 +126,7 @@ getpoint(String s)async{
 
       });
 
-      /*pr.show();*/
-      /*var x = int.parse(widget.q);
-      print(x.runtimeType);
-      quan.clear();
 
-      while(x!=0){
-        quan.add((x--).toString());
-      }*/
-      /*pr.hide();*/
   }
     cod(BuildContext context)
     {
@@ -365,23 +321,7 @@ getpoint(String s)async{
 
                   ),
 
-                  /* new TextField(
-                    decoration: InputDecoration(
-                        hintText: fadd.replaceAll(' ', '\n'),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
-                        suffixIcon: IconButton(
-                          icon: Icon(Icons.search),
-                          onPressed: searchandNavigate,
-                          iconSize: 30.0,
-                        )
-                    ),
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                    onChanged: (val) {
-                      searchAddr = val;
-                    },
-                  ),*/
+
                 ),
 
 
@@ -429,6 +369,8 @@ getpoint(String s)async{
     }
     @override
     Widget build(BuildContext context) {
+      pr = new ProgressDialog(context, showLogs: true);
+      pr.style(message: 'Please wait...');
       image();
       var img = imageBytes != null ? Image.memory(
         imageBytes,
@@ -437,7 +379,15 @@ getpoint(String s)async{
 
       return new Scaffold(
           appBar: new AppBar(
+              backgroundColor: Color(0xff104670),
             title: new Text(widget.n),
+              actions: <Widget>[
+          // action button
+          IconButton(icon:Icon(Icons.shopping_cart),
+        onPressed: () {
+        },
+      ),
+            ]
             //title: new Text(name.split(': ')[1]),
           ),
         body:
@@ -528,8 +478,10 @@ getpoint(String s)async{
                     child:new Text("Buy Now"),
                   ),
                 ),
-                new IconButton(icon:Icon(Icons.add_shopping_cart),onPressed: (){
-                  addtocart();
+                new IconButton(icon:Icon(Icons.add_shopping_cart),onPressed: ()async{
+                  pr.show();
+                  await addtocart();
+                  pr.hide();
                   Fluttertoast.showToast(
                       msg: "Added to cart",
                       toastLength: Toast.LENGTH_SHORT,
@@ -538,7 +490,8 @@ getpoint(String s)async{
                       textColor: Colors.white,
                       fontSize: 8.0
                   );
-                 // Navigator.push(context,MaterialPageRoute(builder:(context)=>new cart()));
+
+                  //Navigator.push(context,MaterialPageRoute(builder:(context)=>new cart1()));
                 }),
                 //new IconButton(icon:Icon(Icons.favorite),onPressed: (){}),
               ],
@@ -567,11 +520,14 @@ getpoint(String s)async{
       ref1=ref.collection('cart').document();
       //print(ref.documentID);
 
-      /*ref.collection('cart').document(widget.product_id).setData({
-        'ProductId':widget.product_id,
-        'category':widget.product_id,
-        'quantity':units
-      });*/
+      ref.collection('cart').document(loc).collection(widget.curse).document(widget.id).setData({
+        'ProductId':widget.id,
+        'category':widget.cat,
+        'city':loc,
+        'price':widget.p,
+        'seller':widget.curse,
+        'quantity':units,
+      });
 
     }
 
@@ -615,13 +571,14 @@ getpoint(String s)async{
       }
     }
 
-  placeorder() {
+  placeorder() async {
+      DatabaseReference _database=FirebaseDatabase.instance.reference();
     var now = new DateTime.now();
     //print(now.millisecondsSinceEpoch);
     var d=new DateFormat("dd-MM-yyyy").format(now);
    var t=new DateFormat("H:m:s").format(now);
    String time=d.toString()+" "+t.toString();
-   print(currrentseller);
+   print(currrentseller);/*
     //print(new DateFormat("yyyy/MM/dd", "en_US").parse(DateFormat("dd-MM-yyyy").format(now)));
 
     FirebaseDatabase.instance.reference().child('Orders').child(loc).push().set({
@@ -633,7 +590,29 @@ getpoint(String s)async{
       'seller':widget.curse,
 
 
-    });
+    });*/
+    Orders todo = new Orders(x, user.uid, widget.curse, time, double.parse(widget.p));
+    Products prod = new Products("aagrin", "Fashion", "Bhubaneswar", 57, 1, "rittik");
+    Location loc = new Location(lat, lon);
+    _database.reference().child("Orders").child(x).push().set(todo.toJson());
+    String link = "https://duckhawk-1699a.firebaseio.com/Orders/"+x+".json";
+    final resource = await http.get(link);
+    if (resource.statusCode == 200) {
+      LinkedHashMap<String, dynamic> data = jsonDecode(resource.body);
+      List list = data.keys.toList();
+      length = list.length;
+      print(list);
+      print('Seller list');
+      String y = list[length-1];
+      print(y);
+      _database.reference().child("Orders").child(x).child(x).child("Products").push().set(prod.toJson());
+      _database.reference().child("Orders").child(x).child(x).child("location").set(loc.toJson());
+    }
+//  todo.completed = true;
+//  if (todo != null) {
+//    _database.reference().child("Todo").child("Bhubaneswar").set(todo.toJson());
+//  }
+    print("hello data added in firebase");
 
   }
 

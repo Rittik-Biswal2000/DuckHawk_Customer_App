@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:project_duckhawk/entry.dart';
 import 'package:project_duckhawk/main.dart';
 import 'package:project_duckhawk/src/signup.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:project_duckhawk/src/signup.dart';
+import 'package:project_duckhawk/src/welcomPage.dart';
 
 import 'Widget/bezierContainer.dart';
 
@@ -105,7 +107,7 @@ class _lpState extends State<lp> {
                         );
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => HomePage(null)),
+                          MaterialPageRoute(builder: (context) => MyApp()),
                         );
                       }).catchError((e) {});
                     },
