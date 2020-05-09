@@ -35,7 +35,7 @@ class _eState extends State<e> {
             // action button
             IconButton(icon:Icon(Icons.shopping_cart),
               onPressed: () async{
-              await getCartProducts();
+              await getcartData();
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart1()));
               },
             ),

@@ -14,6 +14,7 @@ import 'package:project_duckhawk/pages/cart1.dart';
 
 import 'package:project_duckhawk/pages/electronics.dart';
 import 'package:project_duckhawk/pages/login_page.dart';
+import 'package:project_duckhawk/pages/item_info.dart';
 
 import 'package:project_duckhawk/pages/cart.dart';
 import 'package:project_duckhawk/pages/location.dart';
@@ -195,7 +196,8 @@ class _HomePageState extends State<HomePage> {
           actions: <Widget>[
             // action button
             IconButton(icon:Icon(Icons.shopping_cart),
-              onPressed: () {
+              onPressed: () async {
+              await getcartData();
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart1()));
               },
             ),

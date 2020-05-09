@@ -21,6 +21,7 @@ import 'package:project_duckhawk/model/Products.dart';
 import 'package:project_duckhawk/model/loc.dart';
 import 'package:project_duckhawk/pages/orderconfirm.dart';
 import 'package:project_duckhawk/src/welcomPage.dart';
+import 'package:cloud_functions/cloud_functions.dart';
   import 'package:http/http.dart' as http;
 
   import '../main.dart';
@@ -385,7 +386,8 @@ getpoint(String s)async{
               actions: <Widget>[
           // action button
           IconButton(icon:Icon(Icons.shopping_cart),
-        onPressed: () {
+        onPressed: () async{
+          await getcartData();
         },
       ),
             ]
@@ -521,7 +523,7 @@ getpoint(String s)async{
       ref1=ref.collection('cart').document();
       //print(ref.documentID);
 
-      ref.collection('cart').document(loc).collection(widget.curse).document(widget.id).setData({
+      await ref.collection('cart').document(loc).collection(widget.curse).document(widget.id).setData({
         'ProductId':widget.id,
         'category':widget.cat,
         'city':loc,
@@ -530,11 +532,9 @@ getpoint(String s)async{
         'quantity':units,
       });
 
-    }
-
-    getData() async{
 
     }
+
 
    getpredictions() async{
      Prediction p = await PlacesAutocomplete.show(
@@ -593,9 +593,9 @@ getpoint(String s)async{
 
     });*/
     Orders todo = new Orders(loc, user.uid, widget.curse, time, double.parse(widget.p));
-    Products prod = new Products("aagrin", "Fashion", "Bhubaneswar", 57, 1, "rittik");
+    Products prod = new Products(widget.id, widget.cat, loc, double.parse(widget.p), double.parse(widget.q), widget.curse);
     locs loc1 = new locs(20.4571, 85.9999);
-    _database.reference().child("Orders").child(loc).push().set(todo.toJson());
+    await _database.reference().child("Orders").child(loc).push().set(todo.toJson());
     String link = "https://duckhawk-1699a.firebaseio.com/Orders/"+loc+".json";
     final resource = await http.get(link);
     if (resource.statusCode == 200) {
@@ -606,7 +606,7 @@ getpoint(String s)async{
       print('Seller list');
       String y = list[length-1];
       print(y);
-      await _database.reference().child("Orders").child(loc).child(y).child("Products").push().set(prod.toJson());
+      await _database.reference().child("Orders").child(loc).child(y).child("Products").child(widget.id).set(prod.toJson());
       await _database.reference().child("Orders").child(loc).child(y).child("location").set(loc1.toJson());
     }
 //  todo.completed = true;
@@ -701,4 +701,47 @@ getpoint(String s)async{
         ));
       });*/
     });
+  }
+  getcartData() async{
+  FirebaseUser user=await FirebaseAuth.instance.currentUser();
+  print("cloud functions");
+    final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
+      functionName: 'getSubCollections',
+    );
+    //dynamic resp = await callable.call();
+    dynamic resp = await callable.call(<String, dynamic>{
+      'docPath': '/users/${user.uid}/cart/${loc}/',
+    });
+    //print(resp.data);
+    //print(resp.data.toString().split(': ')[1].split(', '));
+    List suid=[];
+    //print(resp.data.toString().split(': ')[1].split(', ')[3]);
+    for(var i=0;i<resp.data.toString().split(': ')[1].split(', ').length;i++)
+      {
+        var xs;
+        if(i==0)
+          {
+            var sl=resp.data.toString().split(': ')[1].split(', ')[i].length;
+            xs=resp.data.toString().split(': ')[1].split(', ')[i].substring(1,sl);
+          }
+        else if(i==(resp.data.toString().split(': ')[1].split(', ').length)-1)
+        {
+          var sl=resp.data.toString().split(': ')[1].split(', ')[i].length;
+          xs=resp.data.toString().split(': ')[1].split(', ')[i].substring(0,sl-2);
+        }
+        else
+          xs=resp.data.toString().split(': ')[1].split(', ')[i];
+        //int l=xs.toString().length;
+        
+        suid.add(xs);
+      }
+    print(suid[0]);
+  print(suid[1]);
+  print(suid[2]);
+  print(suid[3]);
+  dynamic resp1 = await callable.call(<String, dynamic>{
+    'docPath': '/users/${user.uid}/cart/${loc}/${suid[2].toString()}/',
+  });
+  print(resp1.data.toString());
+
   }

@@ -151,6 +151,7 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
     getcurrentlocation();
+    getcartData();
     // getseller();
 
     getuser();
