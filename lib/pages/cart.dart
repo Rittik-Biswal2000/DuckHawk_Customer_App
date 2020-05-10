@@ -76,15 +76,15 @@ class _cartState extends State<cart> {
     user = await _auth.currentUser();
 
 
-    QuerySnapshot qn = await firestore.collection('users').document(user.uid)
+   /* QuerySnapshot qn = await firestore.collection('users').document(user.uid)
         .collection('cart').getDocuments()
         .then((snapshot) {
       snapshot.documents.forEach((f) => l.add('${f.data}'));
       u=snapshot.documents;
-    });
+    });*/
 
 
-    print("in cart page");
+   /* print("in cart page");
     //print(l[0].toString());
     print(u[0].data['category']);
     int k;
@@ -92,12 +92,12 @@ class _cartState extends State<cart> {
     for( k=0;k<l.length;k++){
       item_units.add(u[k].data['quantity']);
     }
-    print(item_units);
+    print(item_units);*/
 
     //print(l[0].split(',')[0].split(': ')[1]);
     ref = reference.child('Products').child('Electronics');
     for (int j = 0; j < l.length; j++){
-      reference.child('Products').child('Bhubaneswar').child('Electronics').child(
+      reference.child(' ').child('Bhubaneswar').child('Electronics').child(
           u[j].data['ProductId']).once().then((
           DataSnapshot snap) {
         var data = snap.value;
@@ -139,7 +139,7 @@ class _cartState extends State<cart> {
         total_price=0;
         for(int p=0;p<l.length;p++){
 
-          total_price+=double.parse(item_units[p])*double.parse(prod_price[p]);
+          total_price+=double.parse(cquantity[p])*double.parse(cprice[p]);
           print(total_price);
         }
         firestore
@@ -485,7 +485,7 @@ class _cartState extends State<cart> {
                 ),
                 Expanded(
                     child:new FlatButton(onPressed: (){
-                      createAlertDialog1(context,item_name[0]+" others");
+                      createAlertDialog1(context," others");
                     },
                       child: Text("Check Out",style: TextStyle(color: Colors.white)),
                       color: Colors.redAccent,
@@ -595,21 +595,21 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
     final FirebaseAuth _auth = FirebaseAuth.instance;
     user = await _auth.currentUser();
 
-    QuerySnapshot qn = await firestore.collection('users').document(user.uid)
+   /* QuerySnapshot qn = await firestore.collection('users').document(user.uid)
         .collection('cart').getDocuments()
         .then((snapshot) {
       snapshot.documents.forEach((f) => l.add('${f.data}'));
       u=snapshot.documents;
     });
+*/
 
-
-    print("in cart page");
-    print(l);
+   // print("in cart page");
+    //print(l);
 
     //print(l[1].toString().split(': ')[1].split(',')[0]);
     //print(l.length);
     // l[j].toString().split(': ')[1].split(',')[0]
-    ref = reference.child('Products').child('Bhubaneswar').child('Electronics');
+    ref = reference.child(' ').child('Bhubaneswar').child('Electronics');
     for (int j = 0; j < l.length; j++){
       reference.child('Products').child('Bhubaneswar').child('Electronics').child(
           l[j].toString().split(': ')[1].split(',')[0]).once().then((
@@ -931,12 +931,12 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
               child: SingleChildScrollView(
                   child:ListTile(
 
-                    leading:InkWell(
+                    /*leading:InkWell(
                         onTap: (){
                         },
                         child:
-                        new Image.network(imageurl[index],width:100.0,height:400.0)
-                    ),
+                        //new Image.network(imageurl[index],width:100.0,height:400.0)
+                    )*/
                     title:new Text(item_name[index]),
                     subtitle: new Column(
                       children: <Widget>[
@@ -945,7 +945,7 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
                           child: Padding(
                               padding: EdgeInsets.all(8.0),
 
-                              child:new Text("Price : ₹"+prod_price[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
+                              child:new Text("Price : ₹"+cprice[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
                           ),
                           /*alignment: Alignment.topLeft,
                         child:new Text("Price is : ₹"+prod_price[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)*/
@@ -955,7 +955,7 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
                           child: Padding(
                               padding: EdgeInsets.all(8.0),
 
-                              child:new Text("Quantity : "+item_units[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
+                              child:new Text("Quantity : "+cquantity[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
                           ),
                           //child:new Text("Quantity : "+item_units[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
                         ),
@@ -964,14 +964,14 @@ class _LogoutOverlayState extends State<LogoutOverlay> {
                             new FlatButton(onPressed: (){
                               //createAlertDialog(context, name.split(': ')[1], imgurl, price.split(': ')[1]);
 
-                              createAlertDialog(context,item_name[index],imageurl[index],prod_price[index],item_units[index],u[index].data["ProductId"]);
+                              createAlertDialog(context,ccat[index]," ",cprice[index],cquantity[index],cid[index]);
                             },
                                 child:Text("Place Order")
                             ),
                             new FlatButton(
                                 onPressed: (){
                                   //l[index].toString().split(': ')[1].split(',')[0]
-                                  firestore.collection('users').document(user.uid).collection('cart').document(u[index].data["ProductId"]).delete();
+                                  //firestore.collection('users').document(user.uid).collection('cart').document(u[index].data["ProductId"]).delete();
 
 
                                   //refreshList();

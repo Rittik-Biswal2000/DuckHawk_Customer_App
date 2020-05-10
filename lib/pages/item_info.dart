@@ -57,6 +57,7 @@ import 'cart1.dart';
   final _text1 = TextEditingController();
   bool _validate = false;
   ProgressDialog pr;
+  double ctotal=0;
 
   List<String> quan=[];
   String _dropDownValue="Quantity";
@@ -70,6 +71,17 @@ import 'cart1.dart';
   final Map<String, Marker> _markers = {};
   String searchAddr;
   FirebaseUser user;
+  List l=[];
+  List cseller=[];
+  List cquantity=[];
+  List ccity=[];
+  List cprice=[];
+  List cid=[];
+  List ccat=[];
+  List cname=[];
+  List cimage=[];
+  var u;
+  var clength;
 getpoint(String s)async{
   //final query = fadd;
   var addresses = await Geocoder.local.findAddressesFromQuery(s);
@@ -530,6 +542,8 @@ getpoint(String s)async{
         'price':widget.p,
         'seller':widget.curse,
         'quantity':units,
+        'name':widget.n,
+        'image':widget.image
       });
 
 
@@ -703,6 +717,15 @@ getpoint(String s)async{
     });
   }
   getcartData() async{
+  l.clear();
+  cseller.clear();
+  cquantity.clear();
+  ccity.clear();
+  cprice.clear();
+  cid.clear();
+  ccat.clear();
+  cname.clear();
+  cimage.clear();
   FirebaseUser user=await FirebaseAuth.instance.currentUser();
   print("cloud functions");
     final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
@@ -716,32 +739,53 @@ getpoint(String s)async{
     //print(resp.data.toString().split(': ')[1].split(', '));
     List suid=[];
     //print(resp.data.toString().split(': ')[1].split(', ')[3]);
-    for(var i=0;i<resp.data.toString().split(': ')[1].split(', ').length;i++)
-      {
-        var xs;
-        if(i==0)
-          {
-            var sl=resp.data.toString().split(': ')[1].split(', ')[i].length;
-            xs=resp.data.toString().split(': ')[1].split(', ')[i].substring(1,sl);
-          }
-        else if(i==(resp.data.toString().split(': ')[1].split(', ').length)-1)
-        {
-          var sl=resp.data.toString().split(': ')[1].split(', ')[i].length;
-          xs=resp.data.toString().split(': ')[1].split(', ')[i].substring(0,sl-2);
-        }
-        else
-          xs=resp.data.toString().split(': ')[1].split(', ')[i];
-        //int l=xs.toString().length;
-        
-        suid.add(xs);
+    for(var i=0;i<resp.data.toString().split(': ')[1].split(', ').length;i++) {
+      var xs;
+      if (i == 0) {
+        var sl = resp.data.toString().split(': ')[1].split(', ')[i].length;
+        xs =
+            resp.data.toString().split(': ')[1].split(', ')[i].substring(1, sl);
       }
-    print(suid[0]);
-  print(suid[1]);
-  print(suid[2]);
-  print(suid[3]);
-  dynamic resp1 = await callable.call(<String, dynamic>{
-    'docPath': '/users/${user.uid}/cart/${loc}/${suid[2].toString()}/',
-  });
-  print(resp1.data.toString());
+      else if (i == (resp.data.toString().split(': ')[1]
+          .split(', ')
+          .length) - 1) {
+        var sl = resp.data.toString().split(': ')[1].split(', ')[i].length;
+        xs = resp.data.toString().split(': ')[1].split(', ')[i].substring(
+            0, sl - 2);
+      }
+      else
+        xs = resp.data.toString().split(': ')[1].split(', ')[i];
+      //int l=xs.toString().length;
+
+      suid.add(xs);
+    }
+  for(var j=0;j<suid.length;j++) {
+    QuerySnapshot qn = await firestore.collection('users').document(user.uid)
+        .collection('cart').document(loc).collection(suid[j]).getDocuments()
+        .then((snapshot) {
+      //print(snapshot.documents);
+      snapshot.documents.forEach((f) => l.add(f.data));
+    });
+  }
+  clength=l.length;
+  print(l);
+
+  for(var i=0;i<l.length;i++)
+    {
+      cseller.add(l[i]['seller']);
+      cquantity.add(l[i]['quantity']);
+      ccity.add(l[i]['city']);
+      cprice.add(l[i]['price']);
+      cid.add(l[i]['ProductId']);
+      cname.add(l[i]['name']);
+      cimage.add(l[i]['image']);
+    }
+  for(var i=0;i<l.length;i++)
+    {
+      ctotal+=double.parse(cquantity[i])*double.parse(cprice[i]);
+    }
+
+
+
 
   }

@@ -11,6 +11,7 @@ import 'package:project_duckhawk/components/horizontal_listview.dart';
 import 'package:project_duckhawk/pages/Help.dart';
 import 'package:project_duckhawk/pages/account.dart';
 import 'package:project_duckhawk/pages/cart1.dart';
+import 'package:project_duckhawk/pages/cart2.dart';
 
 import 'package:project_duckhawk/pages/electronics.dart';
 import 'package:project_duckhawk/pages/login_page.dart';
@@ -44,6 +45,8 @@ List prod_id2=[];
 List prod_cat2=[];
 var n;
 int j;
+var stime;
+Stopwatch s = new Stopwatch();
 ProgressDialog pr;
 
 
@@ -197,8 +200,12 @@ class _HomePageState extends State<HomePage> {
             // action button
             IconButton(icon:Icon(Icons.shopping_cart),
               onPressed: () async {
+              pr.show();
               await getcartData();
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart1()));
+              pr.hide();
+              print("Time taken");
+              stime=s.elapsedMilliseconds;
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart2()));
               },
             ),
           ]
@@ -243,7 +250,7 @@ class _HomePageState extends State<HomePage> {
               child: IconButton(
                 icon: new Icon(Icons.shop),
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart1()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart2()));
                 },
               ),
             ),
