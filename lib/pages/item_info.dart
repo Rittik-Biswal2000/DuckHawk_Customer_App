@@ -609,7 +609,10 @@ getpoint(String s)async{
     Orders todo = new Orders(loc, user.uid, widget.curse, time, double.parse(widget.p));
     Products prod = new Products(widget.id, widget.cat, loc, double.parse(widget.p), double.parse(widget.q), widget.curse);
     locs loc1 = new locs(20.4571, 85.9999);
-    await _database.reference().child("Orders").child(loc).push().set(todo.toJson());
+    DatabaseReference rootRef=FirebaseDatabase.instance.reference();
+    String newkey=rootRef.child('Orders').child(loc).push().key;
+    await rootRef.child('Orders').child(loc).child(newkey).set(todo.toJson());
+    //await _database.reference().child("Orders").child(loc).push().set(todo.toJson());
     String link = "https://duckhawk-1699a.firebaseio.com/Orders/"+loc+".json";
     final resource = await http.get(link);
     if (resource.statusCode == 200) {
@@ -622,12 +625,20 @@ getpoint(String s)async{
       print(y);
       await _database.reference().child("Orders").child(loc).child(y).child("Products").child(widget.id).set(prod.toJson());
       await _database.reference().child("Orders").child(loc).child(y).child("location").set(loc1.toJson());
+      await Firestore.instance.collection('users').document(user.uid).collection('orders').document(newkey).setData({
+
+        'city':loc,
+        'time':time,
+        'total':double.parse(widget.p)*double.parse(widget.q),
+
+      });
     }
 //  todo.completed = true;
 //  if (todo != null) {
 //    _database.reference().child("Todo").child("Bhubaneswar").set(todo.toJson());
 //  }
     print("hello data added in firebase");
+    print(newkey);
 
   }
 

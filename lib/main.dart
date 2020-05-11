@@ -2,6 +2,7 @@
 import 'dart:collection';
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
@@ -10,6 +11,7 @@ import 'package:project_duckhawk/components/horizontal_listview.dart';
 
 import 'package:project_duckhawk/pages/Help.dart';
 import 'package:project_duckhawk/pages/account.dart';
+import 'package:project_duckhawk/pages/account1.dart';
 import 'package:project_duckhawk/pages/cart1.dart';
 import 'package:project_duckhawk/pages/cart2.dart';
 
@@ -30,9 +32,11 @@ import 'package:geolocator/geolocator.dart';
 FirebaseUser user;
 String curlat,curlon;
 var len1;
+var ul;
 
 String badd="Loading";
 List se=[];
+List udetails=[];
 var currrentseller;
 List se_name=[];
 List se_phone=[];
@@ -43,6 +47,12 @@ List name1=[];
 List description1=[];
 List prod_id2=[];
 List prod_cat2=[];
+List oid=[];
+List ucat=[];
+List uprice=[];
+List uquantity=[];
+var uname,uemail,uphone;
+var address,t,tot;
 var n;
 int j;
 var stime;
@@ -258,13 +268,20 @@ class _HomePageState extends State<HomePage> {
               flex: 1,
               child: IconButton(
                   icon: new Icon(Icons.search),
-                  onPressed: () => _onClick('Button2')),
+                  onPressed: () async {
+
+                  }),
             ),
             Expanded(
               flex: 1,
-              child: IconButton(
+              child: IconButton (
                   icon: new Icon(Icons.account_box),
-                  onPressed: () => _onClick('Button3')),
+                  onPressed: () async{
+                    pr.show();
+                    await getuac();
+                    pr.hide();
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>new acc1()));
+                  }),
             ),
             Expanded(
               flex: 1,
@@ -613,6 +630,83 @@ class _HomePageState extends State<HomePage> {
 
   }
 
+
+
+
+
+
+}
+getuac() async{
+  udetails.clear();
+  oid.clear();
+  ucat.clear();
+  uquantity.clear();
+  uprice.clear();
+  FirebaseUser user=await FirebaseAuth.instance.currentUser();
+  print("uac");
+ await Firestore.instance
+      .collection("users").where("uid", isEqualTo: user.uid)
+      .getDocuments()
+      .then((QuerySnapshot snapshot) {
+    //snapshot.documents.forEach((f) => print('${f.data}}'));
+    snapshot.documents.forEach((f) => udetails.add(f.data));
+
+    //print(s.length);
+    //print(s.split(',')[0]);
+    //print(s.split(',')[1]);
+    //print(s.split(',')[2]);
+    //print(s.split(',')[3]);
+    //
+
+    //print("s is " + s);
+
+    //g = s.toString();
+  });
+ await Firestore.instance.collection('users').document(user.uid).collection('orders').getDocuments().then((QuerySnapshot snapshot){
+   snapshot.documents.forEach((f)=>oid.add(f.documentID));
+ });
+ print("oid are :");
+for(var i=0;i<oid.length;i++)
+  {
+    String link="https://duckhawk-1699a.firebaseio.com/Orders/"+loc+"/"+oid[i]+".json";
+    //print(link);
+    final r=await http.get(link);
+    if(r.statusCode==200)
+      {
+        LinkedHashMap<String,dynamic>data1=jsonDecode(r.body);
+        address=data1['Address'];
+        t=data1['time'];
+        tot=data1['total'];
+
+        String link1="https://duckhawk-1699a.firebaseio.com/Orders/"+loc+"/"+oid[i]+"/Products"+".json";
+        //print(link1);
+        final re=await http.get(link1);
+        if(re.statusCode==200)
+          {
+            LinkedHashMap<String,dynamic>data2=jsonDecode(re.body);
+            List d=data2.values.toList();
+            List keys=data2.keys.toList();
+            int k=0;
+            int leng=d.length;
+            while(k<leng)
+              {
+                LinkedHashMap<String, dynamic> data3 = jsonDecode(re.body)[keys[k]];
+                ucat.add(data3['category']);
+                uprice.add(data3['price']);
+                uquantity.add(data3['quantity']);
+
+                k++;
+
+              }
+
+          }
+
+
+      }
+  }
+print(ucat);
+print(uprice);
+print(uquantity);
 
 
 
