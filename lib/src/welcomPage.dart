@@ -10,6 +10,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geodesy/geodesy.dart';
 import 'package:geolocator/geolocator.dart';
@@ -17,6 +18,7 @@ import 'package:latlong/latlong.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/main.dart';
 import 'package:project_duckhawk/pages/item_info.dart';
+import 'package:project_duckhawk/pages/location.dart';
 import 'package:project_duckhawk/src/loginPage.dart';
 import 'package:project_duckhawk/src/signup.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -73,6 +75,33 @@ FirebaseAuth _auth;
 int d=0;
 String add="hi";
 class _WelcomePageState extends State<WelcomePage> {
+  Future<bool> _onBackPressed() {
+
+
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Are you sure?'),
+          content: Text('Do you want to exit an App'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            FlatButton(
+              child: Text('Yes'),
+              onPressed: () {
+                SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+              },
+            )
+          ],
+        );
+      },
+    ) ?? false;
+  }
 
   Widget _submitButton() {
     return InkWell(
@@ -178,45 +207,49 @@ class _WelcomePageState extends State<WelcomePage> {
             color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600)
     );
     return Scaffold(
-      body:SingleChildScrollView(
-        child:Container(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(5)),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                    color: Colors.grey.shade200,
-                    offset: Offset(2, 4),
-                    blurRadius: 5,
-                    spreadRadius: 2)
+      body:WillPopScope(
+        onWillPop: _onBackPressed,
+        child: SingleChildScrollView(
+          child:Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(5)),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                      color: Colors.grey.shade200,
+                      offset: Offset(2, 4),
+                      blurRadius: 5,
+                      spreadRadius: 2)
+                ],
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Color(0xff104670), Color(0xff104672)])),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                _title(),
+                SizedBox(
+                  height: 80,
+                ),
+                _submitButton(),
+                SizedBox(
+                  height: 20,
+                ),
+                _signUpButton(),
+                SizedBox(
+                  height: 20,
+                ),
+                //_label()
               ],
-              gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Color(0xff104670), Color(0xff104672)])),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              _title(),
-              SizedBox(
-                height: 80,
-              ),
-              _submitButton(),
-              SizedBox(
-                height: 20,
-              ),
-              _signUpButton(),
-              SizedBox(
-                height: 20,
-              ),
-              //_label()
-            ],
+            ),
           ),
         ),
       ),
     );
+
   }
 
   getuser() async{
@@ -239,6 +272,7 @@ class _WelcomePageState extends State<WelcomePage> {
     loc=await _getCurrentLocation();
     await getData(loc);
     pr.hide();
+    Navigator.pop(context);
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => HomePage(null)),
@@ -323,7 +357,9 @@ Future getData(String x) async {
   distance.clear();
   prod_id.clear();
   List list;
+  //loc
   String link = "https://duckhawk-1699a.firebaseio.com/Seller/"+loc+".json";
+  print(link);
   final resource = await http.get(link);
   if (resource.statusCode == 200) {
     // print(resource.body);

@@ -6,6 +6,7 @@ import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/main.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
@@ -15,7 +16,7 @@ class MyLocation extends StatefulWidget {
   @override
   _MyLocationState createState() => _MyLocationState();
 }
-
+var curloccity;
 class _MyLocationState extends State<MyLocation> {
   Position _currentPosition;
   String lat,lon,v1,v2,add;
@@ -23,10 +24,11 @@ class _MyLocationState extends State<MyLocation> {
   var addresses;
   var first;
   var ab;
+  ProgressDialog pr;
   //List<Marker> allMarkers = [];
   final Map<String, Marker> _markers = {};
 
-  GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: "AIzaSyC52Z3z1WF_y0Q0dbYfexizoexgAnSTov0");
+  GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: "AIzaSyCcH5Qy8dTYdMNvQ8ufSzW9wpHY2qGhFK4");
 
 
   @override
@@ -61,6 +63,20 @@ class _MyLocationState extends State<MyLocation> {
 
   @override
   Widget build(BuildContext context) {
+    pr = new ProgressDialog(context);
+    pr.style(
+        message: 'Please Wait...',
+        borderRadius: 10.0,
+        backgroundColor: Colors.white,
+        progressWidget: CircularProgressIndicator(),
+        elevation: 10.0,
+        insetAnimCurve: Curves.easeInOut,
+        progress: 0.0,
+        progressTextStyle: TextStyle(
+            color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
+        messageTextStyle: TextStyle(
+            color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600)
+    );
     //getpredictions();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -209,7 +225,9 @@ _getAddressFromLatLng(result[0].position.latitude, result[0].position.longitude)
   }
 
   void Confirm() async{
-
+    curloccity=first.locality;
+    loc=curloccity;
+    await getData(loc);
     Navigator.pop(context);
     //await getData(first.locality);
     Navigator.push(context, MaterialPageRoute(builder: (context)=> HomePage(first.locality)));
@@ -218,7 +236,7 @@ _getAddressFromLatLng(result[0].position.latitude, result[0].position.longitude)
 
    getpredictions() async{
      Prediction p = await PlacesAutocomplete.show(
-         context: context, apiKey: "AIzaSyC52Z3z1WF_y0Q0dbYfexizoexgAnSTov0");
+         context: context, apiKey: "AIzaSyCcH5Qy8dTYdMNvQ8ufSzW9wpHY2qGhFK4");
      displayPrediction(p);
 
   }

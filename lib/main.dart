@@ -109,7 +109,6 @@ class _HomePageState extends State<HomePage> {
     //getproducts();
     //getproducts1();
     //getposts();
-    cart();
 
 
     _getCurrentLocation();
@@ -260,7 +259,7 @@ class _HomePageState extends State<HomePage> {
               child: IconButton(
                 icon: new Icon(Icons.shop),
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart2()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart1()));
                 },
               ),
             ),
@@ -424,51 +423,55 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),*/
-      body:Container(
-        child:new ListView.builder(
-          itemCount: length,
-            itemBuilder: (BuildContext context,int index){
-            //currrentseller=sellerlist[index];
-            return new Card(
-              child:SingleChildScrollView(
-                child:InkWell(
-                  onTap: ()async{
-                    pr.show();
-                    await getproductdetails(prod_id[index]);
-                    pr.hide();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => e(sellerlist[index])),
-                    );
-                   // Navigator.pop(context);
+      body:WillPopScope(
+        onWillPop: _onBackPressed,
+
+        child: Container(
+          child:new ListView.builder(
+            itemCount: length,
+              itemBuilder: (BuildContext context,int index){
+              //currrentseller=sellerlist[index];
+              return new Card(
+                child:SingleChildScrollView(
+                  child:InkWell(
+                    onTap: ()async{
+                      pr.show();
+                      await getproductdetails(prod_id[index]);
+                      pr.hide();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => e(sellerlist[index])),
+                      );
+                     // Navigator.pop(context);
 
 
-                  },
-                  child: ListTile(
-                    title: new Text(fowner_name[index]),
-                    subtitle: new Column(
-                      children: <Widget>[
-                        new Container(
-                          alignment: Alignment.topLeft,
-                          child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: new Text("Contact - "+fowner_phone[index]),
+                    },
+                    child: ListTile(
+                      title: new Text(fowner_name[index]),
+                      subtitle: new Column(
+                        children: <Widget>[
+                          new Container(
+                            alignment: Alignment.topLeft,
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: new Text("Contact - "+fowner_phone[index]),
+                            ),
                           ),
-                        ),
-                        new Container(
-                          alignment: Alignment.topLeft,
-                          child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: new Text("Distance - "+distance[index]),
-                          ),
-                        )
-                      ],
+                          new Container(
+                            alignment: Alignment.topLeft,
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: new Text("Distance - "+distance[index]),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
+                  )
                 )
-              )
-            );
-            }),
+              );
+              }),
+        ),
       ),
       /*
       new ListView(
@@ -585,8 +588,37 @@ class _HomePageState extends State<HomePage> {
         ],
       ),*/
     );
+
+
   }
 
+  Future<bool> _onBackPressed() {
+
+
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Are you sure?'),
+          content: Text('Do you want to exit an App'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            FlatButton(
+              child: Text('Yes'),
+              onPressed: () {
+                SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+              },
+            )
+          ],
+        );
+      },
+    ) ?? false;
+  }
   _getCurrentLocation() {
 
     final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
@@ -669,7 +701,7 @@ getuac() async{
 for(var i=0;i<oid.length;i++)
   {
     String link="https://duckhawk-1699a.firebaseio.com/Orders/"+loc+"/"+oid[i]+".json";
-    //print(link);
+    print(link);
     final r=await http.get(link);
     if(r.statusCode==200)
       {
@@ -736,6 +768,7 @@ getproductdetails(String id) async{
       //print(data2["cat"]);
       prod_id2.add(k[h]);
       prod_cat2.add(data2["cat"]);
+      //badd
 
       String link2="https://duckhawk-1699a.firebaseio.com/Products/"+badd+"/"+data2["cat"]+"/"+k[h]+".json";
       print(link2);
@@ -768,6 +801,7 @@ getproductdetails(String id) async{
 
 
 }
+
 
 
 

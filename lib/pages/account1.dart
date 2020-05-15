@@ -6,6 +6,7 @@ import 'package:project_duckhawk/pages/Help.dart';
 import 'package:project_duckhawk/pages/myorders.dart';
 
 import '../main.dart';
+import 'edittable.dart';
 class acc1 extends StatefulWidget {
   @override
   _acc1State createState() => _acc1State();
@@ -24,62 +25,64 @@ class _acc1State extends State<acc1> {
             new Row(
 
               children: <Widget>[
-                new Card(
+                Center(
+                  child: new Card(
 
-                    elevation: 4.0,
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: new Container(
-                        child: new Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: new Row(
+                      elevation: 4.0,
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: new Container(
+                          child: new Column(
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: new Row(
+                                  children: <Widget>[
+                                    new Text("Name : "+udetails[0]["Name"],style: TextStyle(fontSize: 16.0),)
+                                  ],
+                                ),
+                              ),
+                              new Column(
                                 children: <Widget>[
-                                  new Text("Name : "+udetails[0]["Name"],style: TextStyle(fontSize: 16.0),)
+                                  Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: new Row(
+                                      children: <Widget>[
+                                        new Text("Phone Number : "+udetails[0]["Phone Number"],style:TextStyle(fontSize: 16.0))
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: new Row(
+                                      children: <Widget>[
+                                        new Text("Email : "+udetails[0]["Email"],style:TextStyle(fontSize: 16.0))
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: new Row(
+                                      children: <Widget>[
+                                        new Text("Seller : "+udetails[0]["isSeller"].toString(),style:TextStyle(fontSize: 16.0))
+                                      ],
+                                    ),
+                                  ),
+
+
+
+
                                 ],
                               ),
-                            ),
-                            new Column(
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: new Row(
-                                    children: <Widget>[
-                                      new Text("Phone Number : "+udetails[0]["Phone Number"],style:TextStyle(fontSize: 16.0))
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: new Row(
-                                    children: <Widget>[
-                                      new Text("Email : "+udetails[0]["Email"],style:TextStyle(fontSize: 16.0))
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: new Row(
-                                    children: <Widget>[
-                                      new Text("Seller : "+udetails[0]["isSeller"].toString(),style:TextStyle(fontSize: 16.0))
-                                    ],
-                                  ),
-                                ),
 
 
+                            ],
+                          ),
 
 
-                              ],
-                            ),
-
-
-                          ],
                         ),
-
-
-                      ),
-                    )
+                      )
+                  ),
                 ),
 
               ],
@@ -129,6 +132,24 @@ class _acc1State extends State<acc1> {
                         await FirebaseAuth.instance.signOut();
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>new MyApp()));
                       }, child: new Text("Logout",style: TextStyle(fontSize: 32.0,fontWeight: FontWeight.bold,fontStyle: FontStyle.italic),),color: Colors.greenAccent,)
+
+                    ],
+                  ),
+                ),
+
+
+              ],
+            ),
+            new Row(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: new Row(
+                    children: <Widget>[
+                      new RaisedButton(onPressed: ()async{
+                        //await FirebaseAuth.instance.signOut();
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>new edit()));
+                      }, child: new Text("Update user details",style: TextStyle(fontSize: 32.0,fontWeight: FontWeight.bold,fontStyle: FontStyle.italic),),color: Colors.greenAccent,)
 
                     ],
                   ),

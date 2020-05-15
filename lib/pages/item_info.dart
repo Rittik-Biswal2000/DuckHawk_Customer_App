@@ -19,6 +19,8 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/model/Orders.dart';
 import 'package:project_duckhawk/model/Products.dart';
 import 'package:project_duckhawk/model/loc.dart';
+import 'package:project_duckhawk/pages/location.dart';
+import 'package:project_duckhawk/pages/olocation.dart';
 import 'package:project_duckhawk/pages/orderconfirm.dart';
 import 'package:project_duckhawk/src/welcomPage.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -58,6 +60,8 @@ import 'cart1.dart';
   bool _validate = false;
   ProgressDialog pr;
   double ctotal=0;
+  var iadd;
+  var cart_total;
 
   List<String> quan=[];
   String _dropDownValue="Quantity";
@@ -320,7 +324,58 @@ getpoint(String s)async{
                   ],
                 ),
 
-                Container(
+                SizedBox(height: 20.0),
+                new Padding(
+                  padding: const EdgeInsets.only(top: 10.0, bottom: 20.0),
+                  child: new RaisedButton(
+                    onPressed: () async{
+                      /*pr.show();
+                      var loc=await ge();
+                      print("Current Location is : "+loc.toString());*/
+
+                      await Navigator.push(context, MaterialPageRoute(builder: (context) => new olocation()));
+                      print("In Item_info Page");
+                      print(latitude1);
+                      print(longitude1);
+
+
+                    },
+                    child: new Text("Choose Your Location"),
+
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child:  new InkWell(
+                      onTap: () async{
+                        //await Navigator.push(context, MaterialPageRoute(builder: (context) => new MyLocation()));
+                      },
+                      child: ListTile(title: Text("Enter your Address"))
+                    //child: ListTile(title: Text(widget.oloc==null?" ":'${widget.oloc}',maxLines: null,)),
+                  ),
+                ),
+                SizedBox(height: 20.0),
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child:  new InkWell(
+                    onTap: () async{
+                      //await Navigator.push(context, MaterialPageRoute(builder: (context) => new MyLocation()));
+                    },
+                      child: ListTile(title: TextField(
+                        maxLines: null,
+                          decoration: InputDecoration(hintText: 'Enter Address'),
+                          onChanged: (value) {
+                            setState(() {
+                              iadd = value;
+                            });
+                          }),)
+                    //child: ListTile(title: Text(widget.oloc==null?" ":'${widget.oloc}',maxLines: null,)),
+                  ),
+                ),
+                SizedBox(height: 20.0),
+
+
+                /*Container(
                   height: 150.0,
                   child: InkWell(
                     onTap: (){
@@ -329,7 +384,7 @@ getpoint(String s)async{
                     },
                     child:Padding(
                       padding: EdgeInsets.all(16.0),
-                      child: Text('${searchAddr}', maxLines: null,),
+                      child: Text(searchAddr, maxLines: null,),
 
                     ),
 
@@ -345,14 +400,14 @@ getpoint(String s)async{
                 child: GoogleMap(
                   onMapCreated: onMapCreated,
                   initialCameraPosition: CameraPosition(
-                    target: LatLng(21.5007, 83.8995),
+                    target: LatLng(double.parse(curlat), double.parse(curlon)),
                     zoom: 10.0,),
                   markers: _markers.values.toSet(),
 
 
 
                 ),
-              ),
+              ),*/
 
 
               ],
@@ -552,7 +607,7 @@ getpoint(String s)async{
 
    getpredictions() async{
      Prediction p = await PlacesAutocomplete.show(
-         context: context, apiKey: "AIzaSyC52Z3z1WF_y0Q0dbYfexizoexgAnSTov0");
+         context: context, apiKey: "AIzaSyCcH5Qy8dTYdMNvQ8ufSzW9wpHY2qGhFK4");
      displayPrediction(p);
    }
     Future<String> displayPrediction(Prediction p) async {
@@ -606,9 +661,9 @@ getpoint(String s)async{
 
 
     });*/
-    Orders todo = new Orders(loc, user.uid, widget.curse, time, double.parse(widget.p));
+    Orders todo = new Orders(iadd, user.uid, widget.curse, time, double.parse(widget.p));
     Products prod = new Products(widget.id, widget.cat, loc, double.parse(widget.p), double.parse(widget.q), widget.curse);
-    locs loc1 = new locs(20.4571, 85.9999);
+    locs loc1 = new locs(latitude1, longitude1);
     DatabaseReference rootRef=FirebaseDatabase.instance.reference();
     String newkey=rootRef.child('Orders').child(loc).push().key;
     await rootRef.child('Orders').child(loc).child(newkey).set(todo.toJson());
@@ -737,6 +792,7 @@ getpoint(String s)async{
   ccat.clear();
   cname.clear();
   cimage.clear();
+  ctotal=0;
   FirebaseUser user=await FirebaseAuth.instance.currentUser();
   print("cloud functions");
     final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
@@ -790,6 +846,7 @@ getpoint(String s)async{
       cid.add(l[i]['ProductId']);
       cname.add(l[i]['name']);
       cimage.add(l[i]['image']);
+      ccat.add(l[i]['category']);
     }
   for(var i=0;i<l.length;i++)
     {

@@ -72,84 +72,7 @@ GoogleMapController mapController;
 final Map<String, Marker> _markers = {};
 class _DelayedListState extends State<DelayedList> {
   bool isLoading=true;
-  createAlertDialog(BuildContext context,String name,String cat,String pic,String price,String quantity,String id,String seller)
-  {
 
-    total=double.parse(price)*double.parse(quantity);
-    print("in 1st dialog box");
-    TextEditingController customController = TextEditingController();
-    return showDialog(context: context,builder: (context){
-      return SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: AlertDialog(
-
-          title: Text("Items available for checkout"),
-          content: new Column(
-            children: <Widget>[
-              new Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Center(
-                    child: Container(
-                      child: Text(name),
-                    ),
-                  )
-                  //new Text(cart_prod_name,textAlign: TextAlign.center,style: new TextStyle(fontWeight: FontWeight.bold),)
-                ],
-
-              ),
-              new Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Image.network(pic,width:100.0,height:200.0),
-                ],
-              ),
-              new Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  new Text("Quantity: "+quantity),
-                ],
-              ),
-              new Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  new Text("Price: ₹"+price,textAlign: TextAlign.end,),
-                ],
-              ),
-              new Row(
-
-
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: new Text("Total : ₹"+price.toString(),textAlign: TextAlign.end,),
-                  ),
-
-                ],
-              )
-            ],
-          ),
-          actions: <Widget>[
-            MaterialButton(
-              elevation:5.0,
-              child: Text('Submit'),
-              onPressed: (){
-                Navigator.of(context).pop();
-                //createAlertDialog1(context,name,cat,pic,price,quantity,id,seller);
-
-              },
-            )
-          ],
-        ),
-      );
-    });
-  }
 
 
   @override
@@ -336,6 +259,84 @@ class DataList extends StatelessWidget {
       );
     });
   }
+  createAlertDialog(BuildContext context,String name,String cat,String pic,String price,String quantity,String id,String seller)
+  {
+
+    total=double.parse(price)*double.parse(quantity);
+    print("in 1st dialog box");
+    TextEditingController customController = TextEditingController();
+    return showDialog(context: context,builder: (context){
+      return SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: AlertDialog(
+
+          title: Text("Items available for checkout"),
+          content: new Column(
+            children: <Widget>[
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Center(
+                    child: Container(
+                      child: Text(name),
+                    ),
+                  )
+                  //new Text(cart_prod_name,textAlign: TextAlign.center,style: new TextStyle(fontWeight: FontWeight.bold),)
+                ],
+
+              ),
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Image.network(pic,width:100.0,height:200.0),
+                ],
+              ),
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  new Text("Quantity: "+quantity),
+                ],
+              ),
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  new Text("Price: ₹"+price,textAlign: TextAlign.end,),
+                ],
+              ),
+              new Row(
+
+
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: new Text("Total : ₹"+price.toString(),textAlign: TextAlign.end,),
+                  ),
+
+                ],
+              )
+            ],
+          ),
+          actions: <Widget>[
+            MaterialButton(
+              elevation:5.0,
+              child: Text('Submit'),
+              onPressed: (){
+                //Navigator.of(context).pop();
+                createAlertDialog1(context,name,cat,pic,price,quantity,id,seller);
+
+              },
+            )
+          ],
+        ),
+      );
+    });
+  }
   @override
   Widget build(BuildContext context) {
     timer.cancel();
@@ -377,11 +378,11 @@ class DataList extends StatelessWidget {
                       new Row(
                         children: <Widget>[
                           new FlatButton(onPressed: (){
-                            _DelayedListState _myapp = new _DelayedListState();
 
 
 
-                            _myapp.createAlertDialog(context,cname[index],ccat[index],cimage[index],cprice[index],cquantity[index],cid[index],cseller[index]);
+
+                            createAlertDialog(context,cname[index],'Electronics',cimage[index],cprice[index],cquantity[index],cid[index],cseller[index]);
                           },
                               child:Text("Place Order")
                           ),
