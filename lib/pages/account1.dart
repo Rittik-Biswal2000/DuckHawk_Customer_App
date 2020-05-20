@@ -1,9 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/entry.dart';
 import 'package:project_duckhawk/pages/Help.dart';
+import 'package:project_duckhawk/pages/cart2.dart';
+import 'package:project_duckhawk/pages/item_info.dart';
 import 'package:project_duckhawk/pages/myorders.dart';
+import 'package:project_duckhawk/src/welcomPage.dart';
 
 import '../main.dart';
 import 'edittable.dart';
@@ -11,13 +15,88 @@ class acc1 extends StatefulWidget {
   @override
   _acc1State createState() => _acc1State();
 }
-
+ProgressDialog pr;
 class _acc1State extends State<acc1> {
   @override
   Widget build(BuildContext context) {
+    pr = new ProgressDialog(context, showLogs: true);
+    pr.style(message: 'Please wait...');
     return Scaffold(
       appBar: new AppBar(
-        title: Text("Account Details"),
+          backgroundColor: Color(0xff104670),
+          title: Text("My Account"),
+          actions: <Widget>[
+            // action button
+            IconButton(icon:Icon(Icons.shopping_cart),
+              onPressed: () async {
+                pr.show();
+                await getcartData();
+                pr.hide();
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart2()));
+              },
+            ),
+          ]
+        //leading:new Text("hi"),
+
+
+      ),
+      bottomNavigationBar: new Container(
+        padding: EdgeInsets.all(0.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Expanded(
+              flex: 1,
+              child: IconButton(
+                icon: new Icon(Icons.shop),
+                onPressed: () async{
+                  //pr.show();
+                  //await getData(null);
+                  //pr.hide();
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new HomePage(null)));
+                },
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: IconButton(
+                  icon: new Icon(Icons.search),
+                  onPressed: () async {
+
+                  }),
+            ),
+            Expanded(
+              flex: 1,
+              child: IconButton (
+                  icon: new Icon(Icons.account_box),
+                  onPressed: () async{
+                    pr.show();
+                    await getuac();
+                    pr.hide();
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>new acc1()));
+                  }),
+            ),
+            Expanded(
+              flex: 1,
+              child: IconButton(
+                icon: new Icon(Icons.shopping_cart),
+                onPressed: () async {
+                  pr.show();
+                  await getcartData();
+                  pr.hide();
+                  print("Time taken");
+                  stime=s.elapsedMilliseconds;
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart2()));
+                },),
+            ),
+            /*Expanded(
+              flex: 1,
+              child: IconButton(
+                  icon: new Icon(Icons.share),
+                  onPressed: () => _onClick('Button3')),
+            ),*/
+          ],
+        ),
       ),
       body:
         Column(
@@ -48,7 +127,7 @@ class _acc1State extends State<acc1> {
                                     padding: EdgeInsets.all(8.0),
                                     child: new Row(
                                       children: <Widget>[
-                                        new Text("Phone Number : "+udetails[0]["Phone Number"],style:TextStyle(fontSize: 16.0))
+                                        new Text("Phone Number : "+udetails[0]["Phone Number"].toString(),style:TextStyle(fontSize: 16.0))
                                       ],
                                     ),
                                   ),
@@ -94,7 +173,10 @@ class _acc1State extends State<acc1> {
                   padding: EdgeInsets.all(8.0),
                   child: new Row(
                     children: <Widget>[
-                      new FlatButton(onPressed: (){
+                      new FlatButton(onPressed: ()async{
+                        pr.show();
+                        await getorderdetails();
+                        pr.hide();
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>new myorders()));
                       }, child: new Text("My Orders",style: TextStyle(fontSize: 32.0,fontWeight: FontWeight.bold,fontStyle: FontStyle.italic),),color: Colors.amberAccent,)
 

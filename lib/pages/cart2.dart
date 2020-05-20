@@ -27,6 +27,7 @@ class cart2 extends StatefulWidget {
 final _text = TextEditingController();
 final _text1 = TextEditingController();
 bool _validate = false;
+ProgressDialog pr;
 class _cart2State extends State<cart2> {
   GoogleMapController mapController;
   final Map<String, Marker> _markers = {};
@@ -75,7 +76,7 @@ class _cart2State extends State<cart2> {
       );
     });
   }
-  ProgressDialog pr;
+
   cod2(BuildContext context)
   {
     print("current seller ");
@@ -108,16 +109,21 @@ class _cart2State extends State<cart2> {
           MaterialButton(
             elevation:5.0,
             child: Text('Confirm'),
+
             onPressed: ()async {
               //placeorder(n,c,p,pr,q,i,sel);
+              Navigator.of(context).pop();
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>new orderconfirm()));
+              pr.show();
 
               for(var i=0;i<cname.length;i++)
                 {
                   await placeorder(cname[i], ccat[i], cimage[i], cprice[i], cquantity[i],  cid[i], cseller[i]);
                 }
+              pr.hide();
 
-              Navigator.of(context).pop();
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>new orderconfirm()));
+
+
 
 
             },
@@ -290,6 +296,7 @@ class _cart2State extends State<cart2> {
               if(_text.text.isNotEmpty&&_text1.text.isNotEmpty){
                 Navigator.of(context).pop();
                 cod2(context);
+                //Navigator.push(context, MaterialPageRoute(builder: (context) => new oc()));
               }
 
 
@@ -556,10 +563,14 @@ class _cart2State extends State<cart2> {
   }
   @override
   Widget build(BuildContext context) {
+    pr = new ProgressDialog(context, showLogs: true);
+    pr.style(message: 'Please wait...');
+    print("City in Cart page is :"+loc);
 
     return Scaffold(
       appBar: new AppBar(
-        title: Text('Carts'),
+        backgroundColor: Color(0xff104670),
+        title: Text('Cart'),
       ),
       body:Container(
     child:  ListView.builder(

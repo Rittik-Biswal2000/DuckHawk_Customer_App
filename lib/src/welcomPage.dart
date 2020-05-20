@@ -17,6 +17,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong/latlong.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/main.dart';
+import 'package:project_duckhawk/pages/cart2.dart';
 import 'package:project_duckhawk/pages/item_info.dart';
 import 'package:project_duckhawk/pages/location.dart';
 import 'package:project_duckhawk/src/loginPage.dart';
@@ -270,13 +271,16 @@ class _WelcomePageState extends State<WelcomePage> {
 
     pr.show();
     loc=await _getCurrentLocation();
+    loc="Puri";
     await getData(loc);
     pr.hide();
     Navigator.pop(context);
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => HomePage(null)),
-    );
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage(null)),
+      );
+
     //Navigator.pop(context);
 
 
@@ -347,8 +351,9 @@ Future<String>_getCurrentLocation() async{
   return p;
 }
 Future getData(String x) async {
-  var lati,longi;
+  var lati, longi;
   //var x=await _getCurrentLocation();
+  sellerlist.clear();
   owner_name.clear();
   owner_phone.clear();
   fdistance.clear();
@@ -358,13 +363,18 @@ Future getData(String x) async {
   prod_id.clear();
   List list;
   //loc
-  String link = "https://duckhawk-1699a.firebaseio.com/Seller/"+loc+".json";
+  String link = "https://duckhawk-1699a.firebaseio.com/Seller/" + loc + ".json";
   print(link);
   final resource = await http.get(link);
-  if (resource.statusCode == 200) {
-    // print(resource.body);
-    //var data = jsonDecode(resource.body)["Cuttack"];
-    LinkedHashMap<String, dynamic> data = jsonDecode(resource.body);
+  //print(resource.body);
+  if (resource== null) {
+    print("The body is null");
+  }
+  if(resource.body!=null){
+   if (resource.statusCode == 200) {
+     // print(resource.body);
+     //var data = jsonDecode(resource.body)["Cuttack"];
+     LinkedHashMap<String, dynamic> data = jsonDecode(resource.body);
 //    Iterator hmIterator = data.entrySet().iterator();
 //    while (hmIterator.hasNext()) {
 //      Map.Entry mapElement = (Map.Entry)hmIterator.next();
@@ -372,38 +382,46 @@ Future getData(String x) async {
 //      print(mapElement.get)
 //  }
 //    var list = new List<int>.generate(data.length, (i) => i + 1);
-    List list = data.keys.toList();
-    length=list.length;
-    print('Seller list');
-    for(var i=0;i<length;i++)
-      {
-        sellerlist.add(list[i]);
-      }
-    print(sellerlist);
+     print("Seller data is :");
+     print(data);
+     if (data != null){
+       List list = data.keys.toList();
+     length = list.length;
+     print('Seller list');
+     for (var i = 0; i < length; i++) {
+       sellerlist.add(list[i]);
+     }
+     print(sellerlist);
 
-    //  print(data[list[3]]);
+     //  print(data[list[3]]);
 
-    int h=0;
-    while(h<list.length) {
-      LinkedHashMap<String, dynamic> data1 = jsonDecode(resource.body)[list[h]];
-      List list1 = data1.keys.toList();
-      prod_id.add(list[h]);
+     int h = 0;
+     while (h < list.length) {
+       LinkedHashMap<String, dynamic> data1 = jsonDecode(
+           resource.body)[list[h]];
+       List list1 = data1.keys.toList();
+       prod_id.add(list[h]);
 
 
-      double lati=data1["Latitude"];
-      owner_phone.add(data1["Owner_Number"].toString());
-      owner_name.add(data1["Shop_Name"]);
+       double lati = data1["Latitude"];
+       owner_phone.add(data1["Owner_Number"].toString());
+       owner_name.add(data1["Shop_Name"]);
 
-      double longi=data1["Longitude"];
+       double longi = data1["Longitude"];
 
-      LatLng l1=new LatLng(a,b);
-      LatLng l2=new LatLng(lati,longi);
+       LatLng l1 = new LatLng(a, b);
+       LatLng l2 = new LatLng(lati, longi);
 
-      Dio dio = new Dio();
-      final response_distance=await http.get("https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins="+l1.latitude.toString()+","+l1.longitude.toString()+
-          "&destinations="+l2.latitude.toString()+","+l2.longitude.toString()+"&key=AIzaSyCcH5Qy8dTYdMNvQ8ufSzW9wpHY2qGhFK4");
-      print("Received Data is :");
-      LinkedHashMap<String, dynamic> data_distance = jsonDecode(response_distance.body);
+       Dio dio = new Dio();
+       final response_distance = await http.get(
+           "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=" +
+               l1.latitude.toString() + "," + l1.longitude.toString() +
+               "&destinations=" + l2.latitude.toString() + "," +
+               l2.longitude.toString() +
+               "&key=AIzaSyCcH5Qy8dTYdMNvQ8ufSzW9wpHY2qGhFK4");
+       print("Received Data is :");
+       LinkedHashMap<String, dynamic> data_distance = jsonDecode(
+           response_distance.body);
 //      List list_distance = data_distance.keys.toList();
 ////      print(list_distance);
 //      LinkedHashMap<String, dynamic> data_distance1 = jsonDecode(response_distance.body)["rows"][0];
@@ -418,14 +436,16 @@ Future getData(String x) async {
 //      LinkedHashMap<String, dynamic> data_distance4 = jsonDecode(response_distance.body)["rows"][0]["elements"][0]["distance"];
 //      List list_distance4 = data_distance4.keys.toList();
 ////      print(list_distance4);
-      String data_distance5 = jsonDecode(response_distance.body)["rows"][0]["elements"][0]["distance"]["text"];
+       String data_distance5 = jsonDecode(
+           response_distance
+               .body)["rows"][0]["elements"][0]["distance"]["text"];
 
-      //print(data_distance5);
-      distance.add(data_distance5);
+       //print(data_distance5);
+       distance.add(data_distance5);
 //      print(data_distance2.values);
-      //double distanceInMeters = await Geolocator().distanceBetween(a.toDouble(),b.toDouble(),lati.toDouble(),longi.toDouble());
-      //print(distanceInMeters.toString());
-      /*final Distance distance = new Distance();
+       //double distanceInMeters = await Geolocator().distanceBetween(a.toDouble(),b.toDouble(),lati.toDouble(),longi.toDouble());
+       //print(distanceInMeters.toString());
+       /*final Distance distance = new Distance();
       // km = 423
       final int km = distance.as(LengthUnit.Kilometer,
           new LatLng(a,b),new LatLng(lati,longi));
@@ -433,10 +453,8 @@ Future getData(String x) async {
       print(km.toString());*/
 
 
-
-
-      // meter = 422591.551
-      /* final int meter = distance(
+       // meter = 422591.551
+       /* final int meter = distance(
           new LatLng(52.518611,13.408056),
           new LatLng(51.519475,7.46694444)
       );*/
@@ -454,8 +472,12 @@ Future getData(String x) async {
 //          j++;
 //        }
 
-      h++;
-    }
+       h++;
+     }
+   }
+     else{
+
+     }
 
 //  for (i in list1)
 //  print(data[i]);
@@ -471,19 +493,20 @@ Future getData(String x) async {
 
     //list = rest.map<Article>((json) => Article.fromJson(json)).toList();
   }
-print(prod_id);
+}
+  //print(prod_id);
   for(int i=0;i<distance.length;i++)
-    {
-      fdistance.add(distance[i]);
-    }
+  {
+    fdistance.add(distance[i]);
+  }
 
   distance.sort();
   for(int i=0;i<distance.length;i++)
-    {
-      int x=fdistance.indexOf(distance[i]);
-      fowner_name.add(owner_name[x]);
-      fowner_phone.add(owner_phone[x]);
-    }
+  {
+    int x=fdistance.indexOf(distance[i]);
+    fowner_name.add(owner_name[x]);
+    fowner_phone.add(owner_phone[x]);
+  }
 
 
 

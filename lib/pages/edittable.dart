@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/main.dart';
 import 'package:project_duckhawk/pages/account1.dart';
 class edit extends StatefulWidget {
@@ -8,6 +9,7 @@ class edit extends StatefulWidget {
   _editState createState() => _editState();
 }
 String n,p;
+ProgressDialog pr;
 bool _isEditingText = false;
 TextEditingController _editingController;
 String initialText = udetails[0]["Name"].toString();
@@ -29,6 +31,8 @@ class _editState extends State<edit> {
   }
   @override
   Widget build(BuildContext context) {
+    pr = new ProgressDialog(context, showLogs: true);
+    pr.style(message: 'Please wait...');
     return Scaffold(
       appBar: AppBar(
         title: Text("Update User Details"),

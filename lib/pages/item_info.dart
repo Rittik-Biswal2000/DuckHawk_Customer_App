@@ -19,6 +19,8 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/model/Orders.dart';
 import 'package:project_duckhawk/model/Products.dart';
 import 'package:project_duckhawk/model/loc.dart';
+import 'package:project_duckhawk/pages/account1.dart';
+import 'package:project_duckhawk/pages/cart2.dart';
 import 'package:project_duckhawk/pages/location.dart';
 import 'package:project_duckhawk/pages/olocation.dart';
 import 'package:project_duckhawk/pages/orderconfirm.dart';
@@ -454,12 +456,73 @@ getpoint(String s)async{
           // action button
           IconButton(icon:Icon(Icons.shopping_cart),
         onPressed: () async{
+            pr.show();
           await getcartData();
+          pr.hide();
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart2()));
         },
       ),
             ]
             //title: new Text(name.split(': ')[1]),
           ),
+        bottomNavigationBar: new Container(
+          padding: EdgeInsets.all(0.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              Expanded(
+                flex: 1,
+                child: IconButton(
+                  icon: new Icon(Icons.shop),
+                  onPressed: () async{
+                    //pr.show();
+                    //await getData(null);
+                    //pr.hide();
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>new HomePage(null)));
+                  },
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: IconButton(
+                    icon: new Icon(Icons.search),
+                    onPressed: () async {
+
+                    }),
+              ),
+              Expanded(
+                flex: 1,
+                child: IconButton (
+                    icon: new Icon(Icons.account_box),
+                    onPressed: () async{
+                      pr.show();
+                      await getuac();
+                      pr.hide();
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>new acc1()));
+                    }),
+              ),
+              Expanded(
+                flex: 1,
+                child: IconButton(
+                  icon: new Icon(Icons.shopping_cart),
+                  onPressed: () async {
+                    pr.show();
+                    await getcartData();
+                    pr.hide();
+                    print("Time taken");
+                    stime=s.elapsedMilliseconds;
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart2()));
+                  },),
+              ),
+              /*Expanded(
+              flex: 1,
+              child: IconButton(
+                  icon: new Icon(Icons.share),
+                  onPressed: () => _onClick('Button3')),
+            ),*/
+            ],
+          ),
+        ),
         body:
         ListView(
           children: <Widget>[

@@ -226,11 +226,18 @@ _getAddressFromLatLng(result[0].position.latitude, result[0].position.longitude)
 
   void Confirm() async{
     curloccity=first.locality;
+    //Navigator.pop(context);
     loc=curloccity;
+    pr.show();
     await getData(loc);
+    pr.hide();
     Navigator.pop(context);
-    //await getData(first.locality);
+
     Navigator.push(context, MaterialPageRoute(builder: (context)=> HomePage(first.locality)));
+
+    //Navigator.pop(context);
+    //await getData(first.locality);
+    //Navigator.push(context, MaterialPageRoute(builder: (context)=> HomePage(first.locality)));
     //Navigator.pushReplacementNamed(context, MaterialPageRoute(builder: (context)=> HomePage(first.addressLine)));
   }
 

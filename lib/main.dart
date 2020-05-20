@@ -193,7 +193,7 @@ class _HomePageState extends State<HomePage> {
                               child: new FlatButton(onPressed: (){
 
                                 Navigator.push(context, MaterialPageRoute(builder: (context)=>new MyLocation()));
-                              }, child: Text(widget.add==null?badd:"${widget.add}",style: new TextStyle(fontSize: 15.0, color: Colors.white),))),
+                              }, child: Text(widget.add==null?loc:"${widget.add}",style: new TextStyle(fontSize: 15.0, color: Colors.white),))),
                        )
                              //child: new FlatButton(onPre,new Text("${widget.add}",style: new TextStyle(fontSize: 15.0),)))),
 
@@ -258,8 +258,11 @@ class _HomePageState extends State<HomePage> {
               flex: 1,
               child: IconButton(
                 icon: new Icon(Icons.shop),
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart1()));
+                onPressed: ()async {
+                  //pr.show();
+                  //await getData(null);
+                  //pr.hide();
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new HomePage(null)));
                 },
               ),
             ),
@@ -286,7 +289,14 @@ class _HomePageState extends State<HomePage> {
               flex: 1,
               child: IconButton(
                   icon: new Icon(Icons.shopping_cart),
-                  onPressed: () => _onClick('Button3')),
+                onPressed: () async {
+                  pr.show();
+                  await getcartData();
+                  pr.hide();
+                  print("Time taken");
+                  stime=s.elapsedMilliseconds;
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart2()));
+                },),
             ),
             /*Expanded(
               flex: 1,
@@ -426,50 +436,60 @@ class _HomePageState extends State<HomePage> {
       body:WillPopScope(
         onWillPop: _onBackPressed,
 
+
+
         child: Container(
           child:new ListView.builder(
+
             itemCount: length,
               itemBuilder: (BuildContext context,int index){
-              //currrentseller=sellerlist[index];
-              return new Card(
-                child:SingleChildScrollView(
-                  child:InkWell(
-                    onTap: ()async{
-                      pr.show();
-                      await getproductdetails(prod_id[index]);
-                      pr.hide();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => e(sellerlist[index])),
-                      );
-                     // Navigator.pop(context);
+    //currrentseller=sellerlist[index];
+    if(sellerlist.isNotEmpty){
+    return new Card(
+    child:SingleChildScrollView(
+    child:InkWell(
+    onTap: ()async{
+    pr.show();
+    await getproductdetails(prod_id[index]);
+    pr.hide();
+    Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => e(sellerlist[index])),
+    );
+    // Navigator.pop(context);
 
 
-                    },
-                    child: ListTile(
-                      title: new Text(fowner_name[index]),
-                      subtitle: new Column(
-                        children: <Widget>[
-                          new Container(
-                            alignment: Alignment.topLeft,
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: new Text("Contact - "+fowner_phone[index]),
-                            ),
-                          ),
-                          new Container(
-                            alignment: Alignment.topLeft,
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: new Text("Distance - "+distance[index]),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  )
-                )
-              );
+    },
+    child: ListTile(
+    title: new Text(fowner_name[index]),
+    subtitle: new Column(
+    children: <Widget>[
+    new Container(
+    alignment: Alignment.topLeft,
+    child: Padding(
+    padding: EdgeInsets.all(8.0),
+    child: new Text("Contact - "+fowner_phone[index]),
+    ),
+    ),
+    new Container(
+    alignment: Alignment.topLeft,
+    child: Padding(
+    padding: EdgeInsets.all(8.0),
+    child: new Text("Distance - "+distance[index]),
+    ),
+    )
+    ],
+    ),
+    ),
+    )
+    )
+    );
+    }
+    else{
+      return new Container(
+        child:new Text("Hi")
+      );
+    }
               }),
         ),
       ),
@@ -693,7 +713,7 @@ getuac() async{
     //print("s is " + s);
 
     //g = s.toString();
-  });
+  });/*
  await Firestore.instance.collection('users').document(user.uid).collection('orders').getDocuments().then((QuerySnapshot snapshot){
    snapshot.documents.forEach((f)=>oid.add(f.documentID));
  });
@@ -739,8 +759,58 @@ for(var i=0;i<oid.length;i++)
 print(ucat);
 print(uprice);
 print(uquantity);
+*/
 
 
+}
+getorderdetails()async{
+  oid.clear();
+  ucat.clear();
+  uquantity.clear();
+  uprice.clear();
+  FirebaseUser user=await FirebaseAuth.instance.currentUser();
+  await Firestore.instance.collection('users').document(user.uid).collection('orders').getDocuments().then((QuerySnapshot snapshot){
+    snapshot.documents.forEach((f)=>oid.add(f.documentID));
+  });
+  print("oid are :");
+  for(var i=0;i<oid.length;i++)
+  {
+    String link="https://duckhawk-1699a.firebaseio.com/Orders/"+loc+"/"+oid[i]+".json";
+    print(link);
+    final r=await http.get(link);
+    if(r.statusCode==200)
+    {
+      LinkedHashMap<String,dynamic>data1=jsonDecode(r.body);
+      address=data1['Address'];
+      t=data1['time'];
+      tot=data1['total'];
+
+      String link1="https://duckhawk-1699a.firebaseio.com/Orders/"+loc+"/"+oid[i]+"/Products"+".json";
+      //print(link1);
+      final re=await http.get(link1);
+      if(re.statusCode==200)
+      {
+        LinkedHashMap<String,dynamic>data2=jsonDecode(re.body);
+        List d=data2.values.toList();
+        List keys=data2.keys.toList();
+        int k=0;
+        int leng=d.length;
+        while(k<leng)
+        {
+          LinkedHashMap<String, dynamic> data3 = jsonDecode(re.body)[keys[k]];
+          ucat.add(data3['category']);
+          uprice.add(data3['price']);
+          uquantity.add(data3['quantity']);
+
+          k++;
+
+        }
+
+      }
+
+
+    }
+  }
 
 }
 getproductdetails(String id) async{
@@ -751,8 +821,16 @@ getproductdetails(String id) async{
   description1.clear();
   prod_id2.clear();
   prod_cat2.clear();
-  String link="https://duckhawk-1699a.firebaseio.com/Seller/"+badd+"/"+id+"/products.json";
+  String link="https://duckhawk-1699a.firebaseio.com/Seller/"+loc+"/"+id+"/products.json";
   final resource=await http.get(link);
+  print("link is :");
+  print(link);
+  print(resource.body);
+  if(resource.body==null)
+    {
+      return;
+
+    }
   if(resource.statusCode==200)
   {
     LinkedHashMap<String,dynamic>data1=jsonDecode(resource.body);
@@ -771,7 +849,6 @@ getproductdetails(String id) async{
       //badd
 
       String link2="https://duckhawk-1699a.firebaseio.com/Products/"+badd+"/"+data2["cat"]+"/"+k[h]+".json";
-      print(link2);
       final resource3 = await http.get(link2);
       if(resource3.statusCode == 200)
       {
@@ -792,13 +869,6 @@ getproductdetails(String id) async{
 
 
   }
-  print(imgurl1);
-  print(quantity1);
-  print(price1);
-  print(name1);
-  print(prod_id2);
-  print(prod_cat2);
-
 
 }
 

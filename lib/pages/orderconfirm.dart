@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:project_duckhawk/src/welcomPage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:flutter/material.dart';
@@ -52,7 +53,7 @@ class _orderconfirmState extends State<orderconfirm> {
             children: <Widget>[
               FlatButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new HomePage(null)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new WelcomePage()));
                 },
                 child: Text(
                   "Continue Shopping",textAlign: TextAlign.center,style: TextStyle(fontSize: 32.0),
