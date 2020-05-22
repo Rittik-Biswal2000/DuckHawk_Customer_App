@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:project_duckhawk/pages/cart2.dart';
+import 'package:project_duckhawk/pages/location.dart';
 import 'package:project_duckhawk/src/welcomPage.dart';
 import 'package:project_duckhawk/main.dart';
 import 'package:project_duckhawk/src/welcomPage.dart';
 
 
 void main() => runApp(MyApp());
+
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.

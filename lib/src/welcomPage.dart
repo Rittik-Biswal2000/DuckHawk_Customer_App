@@ -271,7 +271,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
     pr.show();
     loc=await _getCurrentLocation();
-    loc="Puri";
+    loc="Cuttack";
     await getData(loc);
     pr.hide();
     Navigator.pop(context);

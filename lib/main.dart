@@ -181,6 +181,7 @@ class _HomePageState extends State<HomePage> {
                         icon: new Icon(Icons.place),
                         onPressed: () {
 
+
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>new MyLocation()));
                           //Navigator.push(context, MaterialPageRoute(builder: (context)=>new HomePage(null)));
                           //_getCurrentLocation();
@@ -854,11 +855,11 @@ getproductdetails(String id) async{
       {
         LinkedHashMap<String,dynamic>data4=jsonDecode(resource3.body);
         // print("city is:");
-        imgurl1.add(data4["imgurl"]);
-        quantity1.add(data4["quantity"]);
+        imgurl1.add(data4["Product_Image"]);
+        quantity1.add(data4["stock"]);
         price1.add(data4["price"]);
-        name1.add(data4["name"]);
-        description1.add(data4["description"]);
+        name1.add(data4["ProductName"]);
+        description1.add(data4["ProductDesc"]);
 
 
 

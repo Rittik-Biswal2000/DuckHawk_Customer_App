@@ -622,10 +622,15 @@ class _cart2State extends State<cart2> {
                               onPressed: ()async{
                                 pr.show();
                                 FirebaseUser user=await FirebaseAuth.instance.currentUser();
+                                /*for(int j=0;j<cseller.length;j++)
+                                  {
+                                    await Firestore.instance.collection('users').document(user.uid).collection('cart').document(loc).collection(cseller[j]).document().delete();
+
+                                  }*/
                                 await Firestore.instance.collection('users').document(user.uid).collection('cart').document(loc).collection(cseller[index]).document(cid[index]).delete();
-                                getcartData();
+                                await getcartData();
                                 pr.hide();
-                                //Navigator.pop(context);
+                                Navigator.pop(context);
                                 Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart2()));
 
 
@@ -718,6 +723,7 @@ placeorder(String name,String cat,String image,String price,String quantity,Stri
 //    _database.reference().child("Todo").child("Bhubaneswar").set(todo.toJson());
 //  }
   print("hello data added in firebase");
+  await Firestore.instance.collection('users').document(user.uid).collection('cart').document(loc).collection(seller).document(id).delete();
   print(newkey);
 
 }

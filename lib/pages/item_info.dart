@@ -846,6 +846,8 @@ getpoint(String s)async{
     });
   }
   getcartData() async{
+  List suid=[];
+  suid.clear();
   l.clear();
   cseller.clear();
   cquantity.clear();
@@ -867,7 +869,7 @@ getpoint(String s)async{
     });
     //print(resp.data);
     //print(resp.data.toString().split(': ')[1].split(', '));
-    List suid=[];
+
     //print(resp.data.toString().split(': ')[1].split(', ')[3]);
     for(var i=0;i<resp.data.toString().split(': ')[1].split(', ').length;i++) {
       var xs;
