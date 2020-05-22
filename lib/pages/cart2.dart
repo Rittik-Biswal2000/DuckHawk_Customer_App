@@ -13,6 +13,7 @@ import 'package:project_duckhawk/main.dart';
 import 'package:project_duckhawk/model/Orders.dart';
 import 'package:project_duckhawk/model/Products.dart';
 import 'package:project_duckhawk/model/loc.dart';
+import 'package:project_duckhawk/pages/account1.dart';
 import 'package:project_duckhawk/pages/edittable.dart';
 import 'package:project_duckhawk/pages/item_info.dart';
 import 'package:project_duckhawk/pages/olocation.dart';
@@ -572,6 +573,133 @@ class _cart2State extends State<cart2> {
         backgroundColor: Color(0xff104670),
         title: Text('Cart'),
       ),
+      endDrawer: new Drawer(
+        child: new ListView(
+          children: <Widget>[
+            /*InkWell(
+              child: new UserAccountsDrawerHeader(
+
+
+                //accountName: Text(name),
+
+
+
+              ),
+              onTap: (){
+                //Navigator.push(context, MaterialPageRoute(builder: (context)=>new LoginPage()));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new account()));
+              },
+            ),*/
+            InkWell(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new HomePage(null)));
+              },
+              child: ListTile(
+                title: Text('Shop'),
+              ),
+            ),
+
+            InkWell(
+              onTap: () {
+                //Navigator.push(context, MaterialPageRoute(builder: (context)=>new category("Fashion")));
+
+              },
+              child: ListTile(
+                title: Text('Search'),
+              ),
+            ),
+            InkWell(
+              onTap: () async{
+                Navigator.pop(context);
+                pr.show();
+                await getuac();
+                pr.hide();
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new acc1()));
+              },
+              child: ListTile(title: Text('Account')),
+            ),
+            InkWell(
+              onTap: () async{
+
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart2()));
+              },
+              child: ListTile(title: Text('Cart')),
+            ),/*
+            InkWell(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new category("Books")));
+              },
+              child: ListTile(title: Text('Books')),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new category("Home & Furniture")));
+              },
+              child: ListTile(title: Text('Home & Furniture')),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>new category("Beauty & Personal Care")));
+              },
+              child: ListTile(title: Text('Beauty & Personal Care')),
+            ),
+            Divider(),
+            Container(
+                color: Color(0xffaaaaaa),
+                child: new Column(
+                  children: <Widget>[
+                    InkWell(
+                      onTap: () {},
+                      child: ListTile(title: Text('My Orders')),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart()));
+                      },
+                      child: ListTile(title: Text('My Cart')),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>new account()));
+                      },
+                      child: ListTile(title: Text('Account')),
+                    ),
+                    /*InkWell(
+                      onTap: () {},
+                      child: ListTile(title: Text('Notifications')),
+                    ),*/
+                    /*InkWell(
+                      onTap: () {},
+                      child: ListTile(title: Text('Budget')),
+                    ),*/
+                    /*InkWell(
+                      onTap: () {},
+                      child: ListTile(title: Text('Share')),
+                    ),*/
+                    /*InkWell(
+                      onTap: () {},
+                      child: ListTile(title: Text('Settings')),
+                    ),*/
+                    InkWell(
+                      onTap: () {
+                        _signOut();
+
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>new WelcomePage()));
+                        name="Login";
+                      },
+                      child: ListTile(title: Text('Logout')),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>new help()));
+                      },
+                      child: ListTile(title: Text('Help')),
+                    )
+                  ],
+                )),*/
+          ],
+        ),
+      ),
       body:Container(
     child:  ListView.builder(
           itemCount: clength,
@@ -610,16 +738,18 @@ class _cart2State extends State<cart2> {
                       ),
                       new Row(
                         children: <Widget>[
-                          new FlatButton(onPressed: (){
+                         /* new FlatButton(onPressed: (){
                             print("in cart2");
                             print(ccat[index]);
                             //Navigator.push(context, MaterialPageRoute(builder: (context)=>new summary(cname[index],ccat[index],cimage[index],cprice[index],cquantity[index],cid[index],cseller[index])));
                             createAlertDialog2(context,cname[index],ccat[index],cimage[index],cprice[index],cquantity[index],cid[index],cseller[index]);
                           },
                               child:Text("Place Order")
-                          ),
+                          ),*/
                           new FlatButton(
+                              color: Colors.red,
                               onPressed: ()async{
+
                                 pr.show();
                                 FirebaseUser user=await FirebaseAuth.instance.currentUser();
                                 /*for(int j=0;j<cseller.length;j++)

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/entry.dart';
 import 'package:project_duckhawk/main.dart';
 import 'package:project_duckhawk/src/signup.dart';
@@ -94,22 +95,47 @@ class _lpState extends State<lp> {
                     color: Colors.blue,
                     textColor: Colors.white,
                     elevation: 7.0,
-                    onPressed: () {
-                      FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password).then((user){
-                        print(user.user.uid);
+                    onPressed: () async{
+                      pr.show();
+                      await FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password).then((user)  {
+                        pr.hide();
+
+                         if(user.user.uid!=null) {
+                           Fluttertoast.showToast(
+                               msg: "Logged in Successfully",
+                               toastLength: Toast.LENGTH_SHORT,
+                               gravity: ToastGravity.BOTTOM,
+                               timeInSecForIosWeb: 1,
+                               textColor: Colors.white,
+                               fontSize: 8.0
+                           );
+                           Navigator.pop(context);
+                           Navigator.push(
+                               context,
+                               MaterialPageRoute(builder: (context) => MyApp()));
+
+                         }
+                       /* Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => MyApp()),
+                        );*/
+                      }).catchError((e) {
+                        pr.hide();
                         Fluttertoast.showToast(
-                            msg: "Logged in Successfully",
+                            msg: e.toString(),
                             toastLength: Toast.LENGTH_SHORT,
                             gravity: ToastGravity.BOTTOM,
                             timeInSecForIosWeb: 1,
                             textColor: Colors.white,
                             fontSize: 8.0
                         );
+                        Navigator.pop(context);
                         Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => MyApp()),
-                        );
-                      }).catchError((e) {});
+                            context,
+                            MaterialPageRoute(builder: (context) => lp()));
+                      });
+
+
                     },
                   ),
 
@@ -303,9 +329,11 @@ class _lpState extends State<lp> {
       ],
     );
   }
-
+ProgressDialog pr;
   @override
   Widget build(BuildContext context) {
+    pr = new ProgressDialog(context, showLogs: true);
+    pr.style(message: 'Please wait...');
     return Scaffold(
         body: SingleChildScrollView(
             child: Container(

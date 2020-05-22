@@ -440,6 +440,7 @@ getpoint(String s)async{
     }
     @override
     Widget build(BuildContext context) {
+      //units=1.toString();
       pr = new ProgressDialog(context, showLogs: true);
       pr.style(message: 'Please wait...');
       image();
@@ -846,6 +847,7 @@ getpoint(String s)async{
     });
   }
   getcartData() async{
+  print('location in getcartdata '+loc);
   List suid=[];
   suid.clear();
   l.clear();
@@ -867,11 +869,17 @@ getpoint(String s)async{
     dynamic resp = await callable.call(<String, dynamic>{
       'docPath': '/users/${user.uid}/cart/${loc}/',
     });
-    //print(resp.data);
+    print((resp.data['collections'] as List));
+    int x=(resp.data['collections'] as List).length;
+    //dynamic rest=resp.data['collections'] as Map;
+    for(var i=0;i<x;i++)
+      {
+        suid.add(resp.data['collections'][i]);
+      }
     //print(resp.data.toString().split(': ')[1].split(', '));
 
     //print(resp.data.toString().split(': ')[1].split(', ')[3]);
-    for(var i=0;i<resp.data.toString().split(': ')[1].split(', ').length;i++) {
+    /*for(var i=0;i<resp.data.toString().split(': ')[1].split(', ').length;i++) {
       var xs;
       if (i == 0) {
         var sl = resp.data.toString().split(': ')[1].split(', ')[i].length;
@@ -890,7 +898,9 @@ getpoint(String s)async{
       //int l=xs.toString().length;
 
       suid.add(xs);
-    }
+    }*/
+    print(suid);
+    print(suid[0]);
   for(var j=0;j<suid.length;j++) {
     QuerySnapshot qn = await firestore.collection('users').document(user.uid)
         .collection('cart').document(loc).collection(suid[j]).getDocuments()

@@ -20,6 +20,7 @@ import 'package:project_duckhawk/main.dart';
 import 'package:project_duckhawk/pages/cart2.dart';
 import 'package:project_duckhawk/pages/item_info.dart';
 import 'package:project_duckhawk/pages/location.dart';
+import 'package:project_duckhawk/pages/olocation.dart';
 import 'package:project_duckhawk/src/loginPage.dart';
 import 'package:project_duckhawk/src/signup.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -48,6 +49,8 @@ List fowner_name=[];
 List fowner_phone=[];
 List imgurl=[];
 List quantity=[];
+List shop_image=[];
+List fshop_image=[];
 List price=[];
 List name=[];
 List description=[];
@@ -358,6 +361,8 @@ Future getData(String x) async {
   //var x=await _getCurrentLocation();
   sellerlist.clear();
   fsellerlist.clear();
+  shop_image.clear();
+  fshop_image.clear();
   owner_name.clear();
   owner_phone.clear();
   fdistance.clear();
@@ -411,6 +416,11 @@ Future getData(String x) async {
        double lati = data1["Latitude"];
        owner_phone.add(data1["Owner_Number"].toString());
        owner_name.add(data1["Shop_Name"]);
+       if(data1["Shop_Image"]==null){
+         shop_image.add("https://duckhawk.in/icon.jpeg");
+       }else {
+         shop_image.add(data1["Shop_Image"]);
+       }
 
        double longi = data1["Longitude"];
 
@@ -513,6 +523,7 @@ Future getData(String x) async {
     fowner_phone.add(owner_phone[x]);
     fsellerlist.add(sellerlist[x]);
     fprod_id.add(prod_id[x]);
+    fshop_image.add(shop_image[x]);
    // fprod_cat.add(prod_cat[x]);
 
   }

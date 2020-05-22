@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/pages/register.dart';
 import 'package:project_duckhawk/src/Widget/bezierContainer.dart';
 import 'package:project_duckhawk/src/loginPage.dart';
@@ -90,39 +91,60 @@ class _SignUpPageState extends State<SignUpPage> {
                     color: Colors.blue,
                     textColor: Colors.white,
                     elevation: 7.0,
-                    onPressed: () {
-                      FirebaseAuth.instance
+                    onPressed: () async{
+                      pr.show();
+                      await FirebaseAuth.instance
                           .createUserWithEmailAndPassword(
                           email: _email, password: _password)
                           .then((signedInUser) {
-
                         //signedInUser.user.displayName=_name;
 
-                        Firestore.instance.collection('/users').document(signedInUser.user.uid).setData({
+                        Firestore.instance.collection('/users').document(
+                            signedInUser.user.uid).setData({
 
-                          'uid':signedInUser.user.uid,
-                          'Email':signedInUser.user.email,
-                          'Name':_name,
-                          'Phone Number':_phone,
-                          'isSeller':_isSeller,
+                          'uid': signedInUser.user.uid,
+                          'Email': signedInUser.user.email,
+                          'Name': _name,
+                          'Phone Number': _phone,
+                          'isSeller': _isSeller,
                         });
+                        pr.hide();
+                        if (signedInUser.user.uid != null){
+                          Fluttertoast.showToast(
+                              msg: "Registered Successfully",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 1,
+                              textColor: Colors.white,
+                              fontSize: 8.0
+                          );
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => lp()),
+                          );
+                      }
+
+
+                      }).catchError((e) {
+                        pr.hide();
                         Fluttertoast.showToast(
-                            msg: "Registered Successfully",
-                            toastLength: Toast.LENGTH_SHORT,
+                            msg: "Sign up failed",
+                            toastLength: Toast.LENGTH_LONG,
                             gravity: ToastGravity.BOTTOM,
                             timeInSecForIosWeb: 1,
                             textColor: Colors.white,
                             fontSize: 8.0
                         );
+                        Navigator.pop(context);
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => lp()),
+                          MaterialPageRoute(builder: (context) => SignUpPage()),
                         );
-
-
-                      }).catchError((e) {
-                        print(e);
                       });
+
+
+
 
                     },
                   ),
@@ -229,9 +251,11 @@ class _SignUpPageState extends State<SignUpPage> {
       ],
     );
   }
-
+ProgressDialog pr;
   @override
   Widget build(BuildContext context) {
+    pr = new ProgressDialog(context, showLogs: true);
+    pr.style(message: 'Please wait...');
     return Scaffold(
         body: SingleChildScrollView(
             child:Container(

@@ -10,23 +10,16 @@ class edit extends StatefulWidget {
 }
 String n,p;
 ProgressDialog pr;
-bool _isEditingText = false;
-TextEditingController _editingController;
-String initialText = udetails[0]["Name"].toString();
-bool _isEditingText1 = false;
-TextEditingController _editingController1;
-String initialText1 = udetails[0]["Phone Number"].toString();
+//udetails[0]["Name"].toString();
+//udetails[0]["Phone Number"].toString()
 class _editState extends State<edit> {
+  final _formKey = GlobalKey<FormState>();
   @override
   void initState() {
     super.initState();
-    _editingController = TextEditingController(text: initialText);
-    _editingController1 = TextEditingController(text: initialText1);
   }
   @override
   void dispose() {
-    _editingController.dispose();
-    _editingController1.dispose();
     super.dispose();
   }
   @override
@@ -37,7 +30,63 @@ class _editState extends State<edit> {
       appBar: AppBar(
         title: Text("Update User Details"),
       ),
-      body: Container(
+      body: Form(
+      key: _formKey,
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+
+            TextFormField(
+              decoration: InputDecoration(
+                hintText: 'Update Name - '+udetails[0]["Name"].toString(),
+              ),
+              textAlign: TextAlign.left,
+              validator: (text) {
+                if (text == null || text.isEmpty) {
+                  return 'Name cannot be empty';
+                }
+                n=text;
+              },
+            ),
+            TextFormField(
+              decoration: InputDecoration(
+
+                hintText: 'Update Phone '+udetails[0]["Phone Number"].toString(),
+              ),
+              keyboardType: TextInputType.number,
+              textAlign: TextAlign.left,
+              validator: (text) {
+                if (text == null || text.isEmpty) {
+                  return 'Phone Number cannot be empty';
+                }
+                p=text;
+              },
+            ),
+            SizedBox(
+
+              height: 20.0,
+            ),
+
+            RaisedButton(
+              onPressed: () async{
+                if (_formKey.currentState.validate()) {
+
+                  pr.show();
+                  await updatedata();
+                  await getuac();
+                  pr.hide();
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new acc1()));
+                }
+              },
+              child: Text('Update'),
+            )
+          ],
+        ),
+      ),
+    ),
+      /*Container(
         child: new Column(
           children: <Widget>[
             new Column(
@@ -51,7 +100,7 @@ class _editState extends State<edit> {
             new Column(
               children: <Widget>[
                 Container(
-                  child: _editTitleTextField(),
+                  child: new Text(udetails[0]["Name"].toString()),
                 ),
               ],
             ),
@@ -65,7 +114,7 @@ class _editState extends State<edit> {
             new Column(
               children: <Widget>[
                 Container(
-                  child: _editTitleTextField2(),
+                  child: new Text(udetails[0]["Phone Number"].toString()),
                 ),
               ],
             ),
@@ -88,126 +137,10 @@ class _editState extends State<edit> {
         ),
 
         //child: _editTitleTextField(),
-      ),
+      ),*/
     );
   }
-  Widget _editTitleTextField() {
-    if (_isEditingText)
-      return Container(
-        child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: TextField(
-            onSubmitted: (newValue){
-              setState(() {
-                initialText = newValue;
-                n=newValue;
-                _isEditingText =false;
-              });
-            },
-            autofocus: true,
-            controller: _editingController,
-          ),
-        ),
-      );
-    return InkWell(
-        onTap: () {
-      setState(() {
-        _isEditingText = true;
-      });
-    },
-    child: Text(
-    initialText,
-    style: TextStyle(
-    color: Colors.black,
-    fontSize: 18.0,
-    ),
-    ));
-  }
-  Widget _editTitleTextField2() {
-    if (_isEditingText1)
-      return Container(
-        child: TextField(
-          onSubmitted: (newValue){
-            setState(() {
-              initialText1 = newValue;
-              p=newValue;
-              _isEditingText1 =false;
-            });
-          },
-          autofocus: true,
-          controller: _editingController1,
-        ),
-      );
-    return InkWell(
-        onTap: () {
-          setState(() {
-            _isEditingText1 = true;
-          });
-        },
-        child: Text(
-          initialText1,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18.0,
-          ),
-        ));
-  }
-  Widget _editTitleTextField3() {
-    if (_isEditingText)
-      return Center(
-        child: TextField(
-          onSubmitted: (newValue){
-            setState(() {
-              initialText = newValue;
-              _isEditingText =false;
-            });
-          },
-          autofocus: true,
-          controller: _editingController,
-        ),
-      );
-    return InkWell(
-        onTap: () {
-          setState(() {
-            _isEditingText = true;
-          });
-        },
-        child: Text(
-          initialText,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18.0,
-          ),
-        ));
-  }
-  Widget _editTitleTextField4() {
-    if (_isEditingText)
-      return Center(
-        child: TextField(
-          onSubmitted: (newValue){
-            setState(() {
-              initialText = newValue;
-              _isEditingText =false;
-            });
-          },
-          autofocus: true,
-          controller: _editingController,
-        ),
-      );
-    return InkWell(
-        onTap: () {
-          setState(() {
-            _isEditingText = true;
-          });
-        },
-        child: Text(
-          initialText,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18.0,
-          ),
-        ));
-  }
+
 
   updatedata() async{
     FirebaseUser user=await FirebaseAuth.instance.currentUser();
