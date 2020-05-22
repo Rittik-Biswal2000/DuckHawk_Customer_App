@@ -42,6 +42,7 @@ ProgressDialog pr;
 var a,b,loc;
 List seller=[];
 List sellerlist=[];
+List fsellerlist=[];
 List fdistance=[];
 List fowner_name=[];
 List fowner_phone=[];
@@ -52,7 +53,9 @@ List name=[];
 List description=[];
 List l=[];
 List prod_id=[];
+List fprod_id=[];
 List prod_cat=[];
+List fprod_cat=[];
 List distance=[];
 var len;
 String badd="Loading";
@@ -354,6 +357,7 @@ Future getData(String x) async {
   var lati, longi;
   //var x=await _getCurrentLocation();
   sellerlist.clear();
+  fsellerlist.clear();
   owner_name.clear();
   owner_phone.clear();
   fdistance.clear();
@@ -361,6 +365,7 @@ Future getData(String x) async {
   fowner_phone.clear();
   distance.clear();
   prod_id.clear();
+  fprod_id.clear();
   List list;
   //loc
   String link = "https://duckhawk-1699a.firebaseio.com/Seller/" + loc + ".json";
@@ -391,7 +396,7 @@ Future getData(String x) async {
      for (var i = 0; i < length; i++) {
        sellerlist.add(list[i]);
      }
-     print(sellerlist);
+     //print(sellerlist);
 
      //  print(data[list[3]]);
 
@@ -506,7 +511,12 @@ Future getData(String x) async {
     int x=fdistance.indexOf(distance[i]);
     fowner_name.add(owner_name[x]);
     fowner_phone.add(owner_phone[x]);
+    fsellerlist.add(sellerlist[x]);
+    fprod_id.add(prod_id[x]);
+   // fprod_cat.add(prod_cat[x]);
+
   }
+  print(fsellerlist);
 
 
 

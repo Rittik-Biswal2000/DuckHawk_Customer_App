@@ -445,17 +445,17 @@ class _HomePageState extends State<HomePage> {
             itemCount: length,
               itemBuilder: (BuildContext context,int index){
     //currrentseller=sellerlist[index];
-    if(sellerlist.isNotEmpty){
+    if(fsellerlist.isNotEmpty){
     return new Card(
     child:SingleChildScrollView(
     child:InkWell(
     onTap: ()async{
     pr.show();
-    await getproductdetails(prod_id[index]);
+    await getproductdetails(fprod_id[index]);
     pr.hide();
     Navigator.push(
     context,
-    MaterialPageRoute(builder: (context) => e(sellerlist[index])),
+    MaterialPageRoute(builder: (context) => e(fsellerlist[index])),
     );
     // Navigator.pop(context);
 
@@ -849,12 +849,14 @@ getproductdetails(String id) async{
       prod_cat2.add(data2["cat"]);
       //badd
 
-      String link2="https://duckhawk-1699a.firebaseio.com/Products/"+badd+"/"+data2["cat"]+"/"+k[h]+".json";
+      String link2="https://duckhawk-1699a.firebaseio.com/Products/"+loc+"/"+data2["cat"]+"/"+k[h]+".json";
+      print(link2);
       final resource3 = await http.get(link2);
+
       if(resource3.statusCode == 200)
       {
         LinkedHashMap<String,dynamic>data4=jsonDecode(resource3.body);
-        // print("city is:");
+        print(resource3.body);
         imgurl1.add(data4["Product_Image"]);
         quantity1.add(data4["stock"]);
         price1.add(data4["price"]);
