@@ -2,9 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:project_duckhawk/components/horizontal_listview.dart';
+import 'package:project_duckhawk/pages/cart2.dart';
 import 'package:project_duckhawk/pages/login_page.dart';
 
-import 'package:project_duckhawk/pages/cart.dart';
+
 import 'package:project_duckhawk/pages/location.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -253,7 +254,7 @@ class _HomePage1State extends State<HomePage1> {
                     ),
                     InkWell(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart2()));
                       },
                       child: ListTile(title: Text('My Cart')),
                     ),

@@ -12,10 +12,11 @@ import 'package:http/http.dart' as http;
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/pages/account1.dart';
 import 'package:project_duckhawk/pages/cart2.dart';
+import 'package:project_duckhawk/pages/categories.dart';
 import 'package:project_duckhawk/pages/electronics.dart';
 import 'package:project_duckhawk/pages/item_info.dart';
 import 'package:project_duckhawk/pages/location.dart';
-import 'package:project_duckhawk/src/welcomPage.dart';
+import 'package:project_duckhawk/src/loginPage.dart';
 
 FirebaseUser user;
 String curlat, curlon;
@@ -109,8 +110,8 @@ class _HomePageState extends State<HomePage> {
   _getCurrentUser() async {
     _auth = FirebaseAuth.instance;
     mCurrentUser = await _auth.currentUser();
-    print("Hello" + mCurrentUser.email.toString());
-    name = mCurrentUser.email.toString();
+    //print("Hello" + mCurrentUser.email.toString());
+    //name = mCurrentUser.email.toString();
   }
 
   _signOut() async {
@@ -241,12 +242,20 @@ class _HomePageState extends State<HomePage> {
               icon: Icon(Icons.shopping_cart),
               onPressed: () async {
                 pr.show();
-                await getcartData();
+                FirebaseUser user=await FirebaseAuth.instance.currentUser();
                 pr.hide();
-                print("Time taken");
-                stime = s.elapsedMilliseconds;
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => new cart2()));
+                if(user==null){
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => new lp()));
+                }
+                else{
+                  pr.show();
+                  await getcartData();
+                  pr.hide();
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => new cart2()));
+                }
+
               },
             ),
           ]
@@ -306,10 +315,24 @@ class _HomePageState extends State<HomePage> {
                   icon: new Icon(Icons.account_box),
                   onPressed: () async {
                     pr.show();
-                    await getuac();
+                    FirebaseUser user=await FirebaseAuth.instance.currentUser();
+                    print(user);
                     pr.hide();
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => new acc1()));
+                    if(user==null){
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => new lp()));
+
+                    }
+                    else{
+                      pr.show();
+                      await getuac();
+                      pr.hide();
+
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => new acc1()));
+                    }
+
+
                   }),
             ),
             Expanded(
@@ -318,12 +341,20 @@ class _HomePageState extends State<HomePage> {
                 icon: new Icon(Icons.shopping_cart),
                 onPressed: () async {
                   pr.show();
-                  await getcartData();
+                  FirebaseUser user=await FirebaseAuth.instance.currentUser();
                   pr.hide();
-                  print("Time taken");
-                  stime = s.elapsedMilliseconds;
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => new cart2()));
+                  if(user==null){
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => new lp()));
+                  }
+                  else{
+                    pr.show();
+                    await getcartData();
+                    pr.hide();
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => new cart2()));
+                  }
+
                 },
               ),
             ),
@@ -463,7 +494,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),*/
       body: WillPopScope(
-          onWillPop: _onBackPressed,
+          //onWillPop: _onBackPressed,
           child: Builder(
               builder: (context){
                 if(fsellerlist.isNotEmpty) {
@@ -480,12 +511,26 @@ class _HomePageState extends State<HomePage> {
                                         pr.show();
                                         await getproductdetails(fprod_id[index]);
                                         pr.hide();
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  e(fsellerlist[index])),
-                                        );
+                                        if(imgurl1.isNotEmpty){
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    e(fsellerlist[index])),
+                                          );
+                                        }
+                                        else{
+                                          Fluttertoast.showToast(
+                                              msg: "Sorry ! No products Available",
+                                              toastLength: Toast.LENGTH_SHORT,
+                                              gravity: ToastGravity.BOTTOM,
+                                              timeInSecForIosWeb: 1,
+                                              //backgroundColor: Colors.red,
+                                              textColor: Colors.white,
+                                              fontSize: 8.0
+                                          );
+                                        }
+
                                         // Navigator.pop(context);
                                       },
                                       child: ListTile(
@@ -878,7 +923,7 @@ getorderdetails() async {
     }
   }
 }
-
+var pro;
 getproductdetails(String id) async {
   imgurl1.clear();
   quantity1.clear();
@@ -896,60 +941,60 @@ getproductdetails(String id) async {
   print("link is :");
   print(link);
   print(resource.body);
-  if (resource.body == null) {
-    Fluttertoast.showToast(
-        msg: "Sorry ! No products Available ..... Please try another shop",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        //backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 8.0
-    );
-
-    return;
+  pro = resource.body;
+  print(pro);
+  if (pro.toString() == null) {
+    print("hi");
   }
-  if (resource.statusCode == 200) {
-    LinkedHashMap<String, dynamic> data1 = jsonDecode(resource.body);
-    List k = data1.keys.toList();
-    //print(k);
-    List d = data1.values.toList();
-    //print(d);
-    int h = 0;
-    len1 = d.length;
-    while (h < d.length) {
-      LinkedHashMap<String, dynamic> data2 = jsonDecode(resource.body)[k[h]];
-      //List x=data2.values.toList();
-      //print(data2["cat"]);
-      prod_id2.add(k[h]);
-      prod_cat2.add(data2["cat"]);
-      //badd
 
-      String link2 = "https://duckhawk-1699a.firebaseio.com/Products/" +
-          loc +
-          "/" +
-          data2["cat"] +
-          "/" +
-          k[h] +
-          ".json";
-      final resource3 = await http.get(link2);
-      if (resource3.statusCode == 200) {
-        LinkedHashMap<String, dynamic> data4 = jsonDecode(resource3.body);
-        // print("city is:");
+  if (resource.body != null) {
+   if (resource.statusCode == 200) {
+     LinkedHashMap<String, dynamic> data1 = jsonDecode(resource.body);
+     //print("length is :");
+     //print(data1.length);
+     if(data1!=null){
+     List k = data1.keys.toList();
+
+     //print(k);
+     List d = data1.values.toList();
+
+     int h = 0;
+     len1 = d.length;
+     while (h < d.length) {
+       LinkedHashMap<String, dynamic> data2 = jsonDecode(resource.body)[k[h]];
+       //List x=data2.values.toList();
+       //print(data2["cat"]);
+       prod_id2.add(k[h]);
+       prod_cat2.add(data2["cat"]);
+       //badd
+
+       String link2 = "https://duckhawk-1699a.firebaseio.com/Products/" +
+           loc +
+           "/" +
+           data2["cat"] +
+           "/" +
+           k[h] +
+           ".json";
+       final resource3 = await http.get(link2);
+       if (resource3.statusCode == 200) {
+         LinkedHashMap<String, dynamic> data4 = jsonDecode(resource3.body);
+         // print("city is:");
 
 
-        quantity1.add(data4["stock"]);
-        price1.add(data4["price"]);
-        name1.add(data4["ProductName"]);
-        description1.add(data4["ProductDesc"]);
-        if(data4["Product_Image"]==null){
-          imgurl1.add("https://duckhawk.in/icon.jpeg");
-        }
-        else{
-          imgurl1.add(data4["Product_Image"]);
-        }
-      }
-      h++;
-    }
+         quantity1.add(data4["stock"]);
+         price1.add(data4["price"]);
+         name1.add(data4["ProductName"]);
+         description1.add(data4["ProductDesc"]);
+         if (data4["Product_Image"] == null) {
+           imgurl1.add("https://duckhawk.in/icon.jpeg");
+         }
+         else {
+           imgurl1.add(data4["Product_Image"]);
+         }
+       }
+       h++;
+     }
+   }
   }
+}
 }

@@ -24,13 +24,13 @@ import 'package:project_duckhawk/pages/cart2.dart';
 import 'package:project_duckhawk/pages/location.dart';
 import 'package:project_duckhawk/pages/olocation.dart';
 import 'package:project_duckhawk/pages/orderconfirm.dart';
-import 'package:project_duckhawk/src/welcomPage.dart';
+import 'package:project_duckhawk/pages/categories.dart';
 import 'package:cloud_functions/cloud_functions.dart';
   import 'package:http/http.dart' as http;
+import 'package:project_duckhawk/src/loginPage.dart';
 
   import '../main.dart';
-  import 'cart.dart';
-import 'cart1.dart';
+
  // String prod_id;
   class item_info extends StatefulWidget {
     String id;
@@ -130,7 +130,7 @@ getpoint(String s)async{
   getuser()async{
       await getquanlist();
       user= await FirebaseAuth.instance.currentUser();
-      firestore
+      Firestore.instance
           .collection("users").where("uid", isEqualTo: user.uid)
           .getDocuments()
           .then((QuerySnapshot snapshot) {
@@ -454,16 +454,28 @@ getpoint(String s)async{
               backgroundColor: Color(0xff104670),
             title: new Text(widget.n),
               actions: <Widget>[
-          // action button
-          IconButton(icon:Icon(Icons.shopping_cart),
-        onPressed: () async{
-            pr.show();
-          await getcartData();
-          pr.hide();
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart2()));
-        },
-      ),
-            ]
+                // action button
+                IconButton(
+                  icon: Icon(Icons.shopping_cart),
+                  onPressed: () async {
+                    pr.show();
+                    FirebaseUser user=await FirebaseAuth.instance.currentUser();
+                    pr.hide();
+                    if(user==null){
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => new lp()));
+                    }
+                    else{
+                      pr.show();
+                      await getcartData();
+                      pr.hide();
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => new cart2()));
+                    }
+
+                  },
+                ),
+              ]
             //title: new Text(name.split(': ')[1]),
           ),
         bottomNavigationBar: new Container(
@@ -493,13 +505,28 @@ getpoint(String s)async{
               ),
               Expanded(
                 flex: 1,
-                child: IconButton (
+                child: IconButton(
                     icon: new Icon(Icons.account_box),
-                    onPressed: () async{
+                    onPressed: () async {
                       pr.show();
-                      await getuac();
+                      FirebaseUser user=await FirebaseAuth.instance.currentUser();
+                      print(user);
                       pr.hide();
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>new acc1()));
+                      if(user==null){
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => new lp()));
+
+                      }
+                      else{
+                        pr.show();
+                        await getuac();
+                        pr.hide();
+
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => new acc1()));
+                      }
+
+
                     }),
               ),
               Expanded(
@@ -508,12 +535,22 @@ getpoint(String s)async{
                   icon: new Icon(Icons.shopping_cart),
                   onPressed: () async {
                     pr.show();
-                    await getcartData();
+                    FirebaseUser user=await FirebaseAuth.instance.currentUser();
                     pr.hide();
-                    print("Time taken");
-                    stime=s.elapsedMilliseconds;
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart2()));
-                  },),
+                    if(user==null){
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => new lp()));
+                    }
+                    else{
+                      pr.show();
+                      await getcartData();
+                      pr.hide();
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => new cart2()));
+                    }
+
+                  },
+                ),
               ),
               /*Expanded(
               flex: 1,
@@ -599,11 +636,16 @@ getpoint(String s)async{
               children: <Widget>[
                 Expanded(
                   child:MaterialButton(
-                    onPressed:(quantity!='0')? (){
+                    onPressed:(quantity!='0')? () async {
                       /*addtocart();
                       Navigator.push(context,MaterialPageRoute(builder:(context)=>new cart()));*/
-
-                      createAlertDialog(context, widget.n, widget.image, widget.p);
+                      FirebaseUser user=await FirebaseAuth.instance.currentUser();
+                      if(user==null){
+                        Navigator.push(context,MaterialPageRoute(builder:(context)=>new lp()));
+                      }else {
+                        createAlertDialog(
+                            context, widget.n, widget.image, widget.p);
+                      }
                       //Navigator.pop(context);
                     }:null,
                     color:Colors.redAccent,
@@ -613,17 +655,25 @@ getpoint(String s)async{
                   ),
                 ),
                 new IconButton(icon:Icon(Icons.add_shopping_cart),onPressed: ()async{
-                  pr.show();
-                  await addtocart();
-                  pr.hide();
-                  Fluttertoast.showToast(
-                      msg: "Added to cart",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 1,
-                      textColor: Colors.white,
-                      fontSize: 8.0
-                  );
+                  FirebaseUser user=await FirebaseAuth.instance.currentUser();
+                  if(user==null)
+                  {
+                    Navigator.push(context,MaterialPageRoute(builder:(context)=>new lp()));
+                  }
+                  else{
+                    pr.show();
+                    await addtocart();
+                    pr.hide();
+                    Fluttertoast.showToast(
+                        msg: "Added to cart",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 1,
+                        textColor: Colors.white,
+                        fontSize: 8.0
+                    );
+                  }
+
 
                   //Navigator.push(context,MaterialPageRoute(builder:(context)=>new cart1()));
                 }),
@@ -846,22 +896,23 @@ getpoint(String s)async{
       });*/
     });
   }
-  getcartData() async{
-  print('location in getcartdata '+loc);
-  List suid=[];
-  suid.clear();
-  l.clear();
-  cseller.clear();
-  cquantity.clear();
-  ccity.clear();
-  cprice.clear();
-  cid.clear();
-  ccat.clear();
-  cname.clear();
-  cimage.clear();
-  ctotal=0;
-  FirebaseUser user=await FirebaseAuth.instance.currentUser();
-  print("cloud functions");
+  List suid = [];
+  getcartData() async {
+    print('location in getcartdata ' + loc);
+
+    suid.clear();
+    l.clear();
+    cseller.clear();
+    cquantity.clear();
+    ccity.clear();
+    cprice.clear();
+    cid.clear();
+    ccat.clear();
+    cname.clear();
+    cimage.clear();
+    ctotal = 0;
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    print("cloud functions");
     final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
       functionName: 'getSubCollections',
     );
@@ -870,12 +921,11 @@ getpoint(String s)async{
       'docPath': '/users/${user.uid}/cart/${loc}/',
     });
     print((resp.data['collections'] as List));
-    int x=(resp.data['collections'] as List).length;
+    int x = (resp.data['collections'] as List).length;
     //dynamic rest=resp.data['collections'] as Map;
-    for(var i=0;i<x;i++)
-      {
-        suid.add(resp.data['collections'][i]);
-      }
+    for (var i = 0; i < x; i++) {
+      suid.add(resp.data['collections'][i]);
+    }
     //print(resp.data.toString().split(': ')[1].split(', '));
 
     //print(resp.data.toString().split(': ')[1].split(', ')[3]);
@@ -900,20 +950,21 @@ getpoint(String s)async{
       suid.add(xs);
     }*/
     print(suid);
-    print(suid[0]);
-  for(var j=0;j<suid.length;j++) {
-    QuerySnapshot qn = await firestore.collection('users').document(user.uid)
-        .collection('cart').document(loc).collection(suid[j]).getDocuments()
-        .then((snapshot) {
-      //print(snapshot.documents);
-      snapshot.documents.forEach((f) => l.add(f.data));
-    });
-  }
-  clength=l.length;
-  print(l);
 
-  for(var i=0;i<l.length;i++)
-    {
+    if (suid.isNotEmpty) {
+    for (var j = 0; j < suid.length; j++) {
+      QuerySnapshot qn = await Firestore.instance.collection('users').document(
+          user.uid)
+          .collection('cart').document(loc).collection(suid[j]).getDocuments()
+          .then((snapshot) {
+        //print(snapshot.documents);
+        snapshot.documents.forEach((f) => l.add(f.data));
+      });
+    }
+    clength = l.length;
+    print(l);
+
+    for (var i = 0; i < l.length; i++) {
       cseller.add(l[i]['seller']);
       cquantity.add(l[i]['quantity']);
       ccity.add(l[i]['city']);
@@ -923,10 +974,10 @@ getpoint(String s)async{
       cimage.add(l[i]['image']);
       ccat.add(l[i]['category']);
     }
-  for(var i=0;i<l.length;i++)
-    {
-      ctotal+=double.parse(cquantity[i])*double.parse(cprice[i]);
+    for (var i = 0; i < l.length; i++) {
+      ctotal += double.parse(cquantity[i]) * double.parse(cprice[i]);
     }
+  }
 
 
 

@@ -109,10 +109,12 @@ class _lpState extends State<lp> {
                                textColor: Colors.white,
                                fontSize: 8.0
                            );
+                           pr.hide();
                            Navigator.pop(context);
-                           Navigator.push(
+
+                           /*Navigator.push(
                                context,
-                               MaterialPageRoute(builder: (context) => MyApp()));
+                               MaterialPageRoute(builder: (context) => MyApp()));*/
 
                          }
                        /* Navigator.push(

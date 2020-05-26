@@ -1,5 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:project_duckhawk/pages/cart.dart';
+import 'package:project_duckhawk/pages/cart2.dart';
 
 class locs {
 

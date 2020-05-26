@@ -10,7 +10,8 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/main.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
-import 'package:project_duckhawk/src/welcomPage.dart';
+import 'package:project_duckhawk/pages/categories.dart';
+
 
 class MyLocation extends StatefulWidget {
   @override
