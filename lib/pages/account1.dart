@@ -24,6 +24,7 @@ class _acc1State extends State<acc1> {
   Widget build(BuildContext context) {
     pr = new ProgressDialog(context, showLogs: true);
     pr.style(message: 'Please wait...');
+    pr.hide();
     return Scaffold(
       appBar: new AppBar(
           backgroundColor: Color(0xff104670),

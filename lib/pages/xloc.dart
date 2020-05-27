@@ -13,12 +13,12 @@ import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:project_duckhawk/pages/categories.dart';
 
 
-class MyLocation extends StatefulWidget {
+class xloc extends StatefulWidget {
   @override
-  _MyLocationState createState() => _MyLocationState();
+  _xlocState createState() => _xlocState();
 }
 var curloccity;
-class _MyLocationState extends State<MyLocation> {
+class _xlocState extends State<xloc> {
   Position _currentPosition;
   String lat,lon,v1,v2,add;
   var v3,v4;
@@ -38,11 +38,11 @@ class _MyLocationState extends State<MyLocation> {
 
     _markers.clear();
     final marker = Marker(
-      draggable: true,
-      markerId: MarkerId("curr_loc"),
-     // position: LatLng(21.5007,83.8994),
+        draggable: true,
+        markerId: MarkerId("curr_loc"),
+        // position: LatLng(21.5007,83.8994),
         position: LatLng(double.parse(curlat),double.parse(curlon)),
-      infoWindow: InfoWindow(title: 'Your Location'),
+        infoWindow: InfoWindow(title: 'Your Location'),
         onDragEnd: ((value) async {
           v3=value.latitude;
           v4=value.longitude;
@@ -94,7 +94,7 @@ class _MyLocationState extends State<MyLocation> {
             GoogleMap(
               onMapCreated: onMapCreated,
               initialCameraPosition: CameraPosition(
-               // target: LatLng(21.5007, 83.8995),
+                // target: LatLng(21.5007, 83.8995),
                 target: LatLng(double.parse(curlat),double.parse(curlon)),
                 zoom: 15.0,),
               markers: _markers.values.toSet(),
@@ -125,24 +125,24 @@ class _MyLocationState extends State<MyLocation> {
                 ),
               ),
             ),
-           Positioned(
-             bottom: 30.0,
-             right: 15.0,
-             left: 15.0,
-             child: new RaisedButton(
-               onPressed: (){
-                 Confirm();
-               },
-               textColor: Colors.white,
-               color: Colors.red,
-               padding: const EdgeInsets.all(8.0),
-               child: new Text(
-                 "Confirm Location and update",
-               ),
-             ),
+            Positioned(
+              bottom: 30.0,
+              right: 15.0,
+              left: 15.0,
+              child: new RaisedButton(
+                onPressed: (){
+                  Confirm();
+                },
+                textColor: Colors.white,
+                color: Colors.red,
+                padding: const EdgeInsets.all(8.0),
+                child: new Text(
+                  "Confirm Location and update",
+                ),
+              ),
 
 
-           )
+            )
 
 
           ],
@@ -162,31 +162,31 @@ class _MyLocationState extends State<MyLocation> {
           LatLng(result[0].position.latitude, result[0].position.longitude),
               zoom: 15)));
 
-_getAddressFromLatLng(result[0].position.latitude, result[0].position.longitude);
+      _getAddressFromLatLng(result[0].position.latitude, result[0].position.longitude);
       setState(() {
 
         _markers.clear();
         final marker = Marker(
-          onTap: (){
-            print('Tapped');
-          },
-          draggable: true,
-          markerId: MarkerId("curr_loc"),
-          position: LatLng(result[0].position.latitude, result[0].position.longitude),
+            onTap: (){
+              print('Tapped');
+            },
+            draggable: true,
+            markerId: MarkerId("curr_loc"),
+            position: LatLng(result[0].position.latitude, result[0].position.longitude),
 
-          infoWindow: InfoWindow(title: 'Your Location'),
-          onDragEnd: ((value) async {
+            infoWindow: InfoWindow(title: 'Your Location'),
+            onDragEnd: ((value) async {
 
-            v3=value.latitude;
-            v4=value.longitude;
-            print(value.latitude);
-            print(value.longitude);
-            final coordinates=new Coordinates(v3,v4);
-             addresses=await Geocoder.local.findAddressesFromCoordinates(coordinates);
-             first=addresses.first;
-             add=first.addressLine;
-            print("${first.featureName}:${first.addressLine}");
-          })
+              v3=value.latitude;
+              v4=value.longitude;
+              print(value.latitude);
+              print(value.longitude);
+              final coordinates=new Coordinates(v3,v4);
+              addresses=await Geocoder.local.findAddressesFromCoordinates(coordinates);
+              first=addresses.first;
+              add=first.addressLine;
+              print("${first.featureName}:${first.addressLine}");
+            })
         );
         _markers["Current Location"] = marker;
         //_getAddressFromLatLng(v3,v4);
@@ -216,11 +216,11 @@ _getAddressFromLatLng(result[0].position.latitude, result[0].position.longitude)
   void Address() {
     _getAddressFromLatLng(v3, v4);
   }
-   _getAddressFromLatLng(v3, v4)  async {
-     final coordinates=new Coordinates(v3,v4);
-     addresses=await Geocoder.local.findAddressesFromCoordinates(coordinates);
-     first=addresses.first;
-     print("${first.featureName}:${first.addressLine}");
+  _getAddressFromLatLng(v3, v4)  async {
+    final coordinates=new Coordinates(v3,v4);
+    addresses=await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    first=addresses.first;
+    print("${first.featureName}:${first.addressLine}");
 
 
   }
@@ -229,12 +229,12 @@ _getAddressFromLatLng(result[0].position.latitude, result[0].position.longitude)
     curloccity=first.locality;
     //Navigator.pop(context);
     loc=curloccity;
-    pr.show();
-    await getData(loc,null);
-    pr.hide();
+    //pr.show();
+    //await getData(loc,null);
+    //pr.hide();
     Navigator.pop(context);
 
-    Navigator.push(context, MaterialPageRoute(builder: (context)=> HomePage(first.locality)));
+    Navigator.push(context, MaterialPageRoute(builder: (context)=> categories(first.locality)));
 
     //Navigator.pop(context);
     //await getData(first.locality);
@@ -242,15 +242,15 @@ _getAddressFromLatLng(result[0].position.latitude, result[0].position.longitude)
     //Navigator.pushReplacementNamed(context, MaterialPageRoute(builder: (context)=> HomePage(first.addressLine)));
   }
 
-   getpredictions() async{
-     Prediction p = await PlacesAutocomplete.show(
-         context: context, apiKey: "AIzaSyCcH5Qy8dTYdMNvQ8ufSzW9wpHY2qGhFK4");
-     displayPrediction(p);
+  getpredictions() async{
+    Prediction p = await PlacesAutocomplete.show(
+        context: context, apiKey: "AIzaSyCcH5Qy8dTYdMNvQ8ufSzW9wpHY2qGhFK4");
+    displayPrediction(p);
 
   }
 
 
- /*Future<Null> displayPrediction(Prediction p) async {
+  /*Future<Null> displayPrediction(Prediction p) async {
     if (p != null) {
       PlacesDetailsResponse detail =
       await _places.getDetailsByPlaceId(p.placeId);

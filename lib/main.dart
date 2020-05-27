@@ -120,11 +120,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+
     print("in Main Page");
     //print(owner_name);
     //print(owner_phone);
     pr = new ProgressDialog(context, showLogs: true);
     pr.style(message: 'Please wait...');
+
 
     /*
     Widget image_carousel = new Container(
@@ -189,6 +191,38 @@ class _HomePageState extends State<HomePage> {
             color: Color(0xff104670),
           ),),
       );
+    }
+    Future<bool> _onBackPressed() {
+
+      return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Are you sure?'),
+            content: Text('Do you want to exit an App'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('No'),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+              FlatButton(
+                child: Text('Yes'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => new categories(null)));
+                  //SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+                },
+              )
+            ],
+          );
+        },
+      ) ??
+          false;
     }
 
     return Scaffold(
@@ -314,6 +348,7 @@ class _HomePageState extends State<HomePage> {
               child: IconButton(
                   icon: new Icon(Icons.account_box),
                   onPressed: () async {
+
                     pr.show();
                     FirebaseUser user=await FirebaseAuth.instance.currentUser();
                     print(user);
@@ -330,6 +365,7 @@ class _HomePageState extends State<HomePage> {
 
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => new acc1()));
+
                     }
 
 
@@ -493,121 +529,124 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),*/
-      body: WillPopScope(
+
           //onWillPop: _onBackPressed,
-          child: Builder(
-              builder: (context){
-                if(fsellerlist.isNotEmpty) {
-                  return Container(
-                    child: new ListView.builder(
-                        itemCount: fsellerlist.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          //currrentseller=sellerlist[index];
-                          if (fsellerlist.isNotEmpty) {
-                            return new Card(
-                                child: SingleChildScrollView(
-                                    child: InkWell(
-                                      onTap: () async {
-                                        pr.show();
-                                        await getproductdetails(fprod_id[index]);
-                                        pr.hide();
-                                        if(imgurl1.isNotEmpty){
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    e(fsellerlist[index])),
-                                          );
-                                        }
-                                        else{
-                                          Fluttertoast.showToast(
-                                              msg: "Sorry ! No products Available",
-                                              toastLength: Toast.LENGTH_SHORT,
-                                              gravity: ToastGravity.BOTTOM,
-                                              timeInSecForIosWeb: 1,
-                                              //backgroundColor: Colors.red,
-                                              textColor: Colors.white,
-                                              fontSize: 8.0
-                                          );
-                                        }
+          body: WillPopScope(
+            onWillPop: _onBackPressed,
+            child: Builder(
+                builder: (context){
+                  if(fsellerlist.isNotEmpty) {
+                    return Container(
+                      child: new ListView.builder(
+                          itemCount: fsellerlist.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            //currrentseller=sellerlist[index];
+                            if (fsellerlist.isNotEmpty) {
+                              return new Card(
+                                  child: SingleChildScrollView(
+                                      child: InkWell(
+                                        onTap: () async {
+                                          pr.show();
+                                          await getproductdetails(fprod_id[index]);
+                                          pr.hide();
+                                          if(imgurl1.isNotEmpty){
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      e(fsellerlist[index])),
+                                            );
+                                          }
+                                          else{
+                                            Fluttertoast.showToast(
+                                                msg: "Sorry ! No products Available",
+                                                toastLength: Toast.LENGTH_SHORT,
+                                                gravity: ToastGravity.BOTTOM,
+                                                timeInSecForIosWeb: 1,
+                                                //backgroundColor: Colors.red,
+                                                textColor: Colors.white,
+                                                fontSize: 8.0
+                                            );
+                                          }
 
-                                        // Navigator.pop(context);
-                                      },
-                                      child: ListTile(
-                                        leading:
-                                        new Image.network(fshop_image[index],width:100.0,height:400.0),
-                                        title: new Text(fowner_name[index]),
-                                        subtitle: new Column(
-                                          children: <Widget>[
-                                            new Container(
-                                              alignment: Alignment.topLeft,
-                                              child: Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child:
-                                                new Text("Contact - " +
-                                                    fowner_phone[index]),
+                                          // Navigator.pop(context);
+                                        },
+                                        child: ListTile(
+                                          leading:
+                                          new Image.network(fshop_image[index],width:100.0,height:400.0),
+                                          title: new Text(fowner_name[index]),
+                                          subtitle: new Column(
+                                            children: <Widget>[
+                                              new Container(
+                                                alignment: Alignment.topLeft,
+                                                child: Padding(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  child:
+                                                  new Text("Contact - " +
+                                                      fowner_phone[index]),
+                                                ),
                                               ),
-                                            ),
-                                            new Container(
-                                              alignment: Alignment.topLeft,
-                                              child: Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: new Text("Distance - " +
-                                                    distance[index]),
-                                              ),
-                                            )
-                                          ],
+                                              new Container(
+                                                alignment: Alignment.topLeft,
+                                                child: Padding(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  child: new Text("Distance - " +
+                                                      distance[index]),
+                                                ),
+                                              )
+                                            ],
+                                          ),
                                         ),
-                                      ),
+                                      )
+                                  ));
+                            }
+                          }),
+                    );
+                  }
+                  else
+                  {
+                    return new Container(
+                      height: MediaQuery.of(context).size.height,
+                      child: Stack(
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    _title(),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 50,
+                                ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                      child: _title1(),
                                     )
-                                ));
-                          }
-                        }),
-                  );
-                }
-                else
-                {
-                  return new Container(
-                    height: MediaQuery.of(context).size.height,
-                    child: Stack(
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  _title(),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 50,
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                    child: _title1(),
-                                  )
-                                ],
-                              ),
-                              //_facebookButton(),
-                            ],
+                                  ],
+                                ),
+                                //_facebookButton(),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-              })
+                        ],
+                      ),
+                    );
+                  }
+                }),
+          ),
 
 
-      ),
+
       /*
       new ListView(
         children: <Widget>[

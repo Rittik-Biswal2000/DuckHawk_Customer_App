@@ -1,5 +1,6 @@
 import 'package:android_intent/android_intent.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,6 +12,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong/latlong.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:http/http.dart' as http;
+import 'package:project_duckhawk/entry.dart';
+import 'package:project_duckhawk/pages/location.dart';
+import 'package:project_duckhawk/pages/xloc.dart';
+import 'package:project_duckhawk/src/loginPage.dart';
 
 
 import '../main.dart';
@@ -18,13 +23,16 @@ import 'cart2.dart';
 import 'item_info.dart';
 
 class  categories extends StatefulWidget {
+  String add;
+
+  categories(this.add);
   @override
   _categoriesState createState() => _categoriesState();
 
 
 }
 
-var a,b,loc;
+var a,b,loc,xl,catloc;
 List seller=[];
 List sellerlist=[];
 List fsellerlist=[];
@@ -61,7 +69,9 @@ Position _currentPosition;
 String _currentAddress ;
 String na="Login/SignUp";
 
-Future getData(String x) async {
+Future getData(String x,String cate) async {
+  print("Category is:");
+  print(cate);
   var lati, longi;
   //var x=await _getCurrentLocation();
   sellerlist.clear();
@@ -77,8 +87,9 @@ Future getData(String x) async {
   prod_id.clear();
   fprod_id.clear();
   List list;
+  var xl=" ";
   //loc
-  String link = "https://duckhawk-1699a.firebaseio.com/Seller/" + loc + ".json";
+  String link = "https://duckhawk-1699a.firebaseio.com/Seller/" + loc +".json";
   print(link);
   final resource = await http.get(link);
   //print(resource.body);
@@ -98,7 +109,7 @@ Future getData(String x) async {
 //  }
 //    var list = new List<int>.generate(data.length, (i) => i + 1);
       print("Seller data is :");
-      print(data);
+      //print(data.keys);
       if (data != null){
         List list = data.keys.toList();
         length = list.length;
@@ -106,7 +117,6 @@ Future getData(String x) async {
         for (var i = 0; i < length; i++) {
           sellerlist.add(list[i]);
         }
-        print(sellerlist);
 
         //  print(data[list[3]]);
 
@@ -115,33 +125,40 @@ Future getData(String x) async {
           LinkedHashMap<String, dynamic> data1 = jsonDecode(
               resource.body)[list[h]];
           List list1 = data1.keys.toList();
-          prod_id.add(list[h]);
-
-
-          double lati = data1["Latitude"];
-          owner_phone.add(data1["Owner_Number"].toString());
-          owner_name.add(data1["Shop_Name"]);
-          if(data1["Shop_Image"]==null){
-            shop_image.add("https://duckhawk.in/icon.jpeg");
-          }else {
-            shop_image.add(data1["Shop_Image"]);
+          print("hi");
+          if(data1["Category"].toString()==cate){
+            print(cate);
           }
+          if(data1["Category"].toString()==cate) {
+            print(data1["Category"]);
+            prod_id.add(list[h]);
 
-          double longi = data1["Longitude"];
 
-          LatLng l1 = new LatLng(a, b);
-          LatLng l2 = new LatLng(lati, longi);
+            double lati = data1["Latitude"];
+            owner_phone.add(data1["Owner_Number"].toString());
+            owner_name.add(data1["Shop_Name"]);
 
-          Dio dio = new Dio();
-          final response_distance = await http.get(
-              "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=" +
-                  l1.latitude.toString() + "," + l1.longitude.toString() +
-                  "&destinations=" + l2.latitude.toString() + "," +
-                  l2.longitude.toString() +
-                  "&key=AIzaSyCcH5Qy8dTYdMNvQ8ufSzW9wpHY2qGhFK4");
-          print("Received Data is :");
-          LinkedHashMap<String, dynamic> data_distance = jsonDecode(
-              response_distance.body);
+            if (data1["Shop_Image"] == null) {
+              shop_image.add("https://duckhawk.in/icon.jpeg");
+            } else {
+              shop_image.add(data1["Shop_Image"]);
+            }
+
+            double longi = data1["Longitude"];
+
+            LatLng l1 = new LatLng(a, b);
+            LatLng l2 = new LatLng(lati, longi);
+
+            Dio dio = new Dio();
+            final response_distance = await http.get(
+                "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=" +
+                    l1.latitude.toString() + "," + l1.longitude.toString() +
+                    "&destinations=" + l2.latitude.toString() + "," +
+                    l2.longitude.toString() +
+                    "&key=AIzaSyCcH5Qy8dTYdMNvQ8ufSzW9wpHY2qGhFK4");
+            //print("Received Data is :");
+            LinkedHashMap<String, dynamic> data_distance = jsonDecode(
+                response_distance.body);
 //      List list_distance = data_distance.keys.toList();
 ////      print(list_distance);
 //      LinkedHashMap<String, dynamic> data_distance1 = jsonDecode(response_distance.body)["rows"][0];
@@ -156,16 +173,16 @@ Future getData(String x) async {
 //      LinkedHashMap<String, dynamic> data_distance4 = jsonDecode(response_distance.body)["rows"][0]["elements"][0]["distance"];
 //      List list_distance4 = data_distance4.keys.toList();
 ////      print(list_distance4);
-          String data_distance5 = jsonDecode(
-              response_distance
-                  .body)["rows"][0]["elements"][0]["distance"]["text"];
+            String data_distance5 = jsonDecode(
+                response_distance
+                    .body)["rows"][0]["elements"][0]["distance"]["text"];
 
-          //print(data_distance5);
-          distance.add(data_distance5);
+            //print(data_distance5);
+            distance.add(data_distance5);
 //      print(data_distance2.values);
-          //double distanceInMeters = await Geolocator().distanceBetween(a.toDouble(),b.toDouble(),lati.toDouble(),longi.toDouble());
-          //print(distanceInMeters.toString());
-          /*final Distance distance = new Distance();
+            //double distanceInMeters = await Geolocator().distanceBetween(a.toDouble(),b.toDouble(),lati.toDouble(),longi.toDouble());
+            //print(distanceInMeters.toString());
+            /*final Distance distance = new Distance();
       // km = 423
       final int km = distance.as(LengthUnit.Kilometer,
           new LatLng(a,b),new LatLng(lati,longi));
@@ -173,8 +190,8 @@ Future getData(String x) async {
       print(km.toString());*/
 
 
-          // meter = 422591.551
-          /* final int meter = distance(
+            // meter = 422591.551
+            /* final int meter = distance(
           new LatLng(52.518611,13.408056),
           new LatLng(51.519475,7.46694444)
       );*/
@@ -191,8 +208,93 @@ Future getData(String x) async {
 //          print("Cat: " + data4[list4[2]]);
 //          j++;
 //        }
+          }
+          else if(cate=="All") {
+            print(data1["Category"]);
+            prod_id.add(list[h]);
 
-          h++;
+
+            double lati = data1["Latitude"];
+            owner_phone.add(data1["Owner_Number"].toString());
+            owner_name.add(data1["Shop_Name"]);
+
+            if (data1["Shop_Image"] == null) {
+              shop_image.add("https://duckhawk.in/icon.jpeg");
+            } else {
+              shop_image.add(data1["Shop_Image"]);
+            }
+
+            double longi = data1["Longitude"];
+
+            LatLng l1 = new LatLng(a, b);
+            LatLng l2 = new LatLng(lati, longi);
+
+            Dio dio = new Dio();
+            final response_distance = await http.get(
+                "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=" +
+                    l1.latitude.toString() + "," + l1.longitude.toString() +
+                    "&destinations=" + l2.latitude.toString() + "," +
+                    l2.longitude.toString() +
+                    "&key=AIzaSyCcH5Qy8dTYdMNvQ8ufSzW9wpHY2qGhFK4");
+            //print("Received Data is :");
+            LinkedHashMap<String, dynamic> data_distance = jsonDecode(
+                response_distance.body);
+//      List list_distance = data_distance.keys.toList();
+////      print(list_distance);
+//      LinkedHashMap<String, dynamic> data_distance1 = jsonDecode(response_distance.body)["rows"][0];
+//      List list_distance1 = data_distance1.keys.toList();
+////      print(list_distance1);
+//      List< dynamic> data_distance2 = jsonDecode(response_distance.body)["rows"][0]["elements"];
+////      List list_distance2 = data_distance2.keys.toList();
+////      print(data_distance2);
+//      LinkedHashMap<String, dynamic> data_distance3 = jsonDecode(response_distance.body)["rows"][0]["elements"][0];
+//      List list_distance3 = data_distance3.keys.toList();
+////      print(list_distance3);
+//      LinkedHashMap<String, dynamic> data_distance4 = jsonDecode(response_distance.body)["rows"][0]["elements"][0]["distance"];
+//      List list_distance4 = data_distance4.keys.toList();
+////      print(list_distance4);
+            String data_distance5 = jsonDecode(
+                response_distance
+                    .body)["rows"][0]["elements"][0]["distance"]["text"];
+
+            //print(data_distance5);
+            distance.add(data_distance5);
+//      print(data_distance2.values);
+            //double distanceInMeters = await Geolocator().distanceBetween(a.toDouble(),b.toDouble(),lati.toDouble(),longi.toDouble());
+            //print(distanceInMeters.toString());
+            /*final Distance distance = new Distance();
+      // km = 423
+      final int km = distance.as(LengthUnit.Kilometer,
+          new LatLng(a,b),new LatLng(lati,longi));
+      print("Distance is :");
+      print(km.toString());*/
+
+
+            // meter = 422591.551
+            /* final int meter = distance(
+          new LatLng(52.518611,13.408056),
+          new LatLng(51.519475,7.46694444)
+      );*/
+//
+//        LinkedHashMap<String, dynamic> data3 = jsonDecode(resource.body)[list[h]]["Products"];
+//        List list3 = data3.keys.toList();
+//        int j = 0;
+//        while (j < list3.length) {
+//          LinkedHashMap<String, dynamic> data4 = jsonDecode(
+//              resource.body)[list[h]]["Products"][list3[j]];
+//          List list4 = data4.keys.toList();
+//          print("City: " + data4[list4[0]].toString());
+//          print("Cat: " + data4[list4[1]]);
+//          print("Cat: " + data4[list4[2]]);
+//          j++;
+//        }
+          }
+            print(owner_phone);
+            print(owner_name);
+
+            h++;
+
+
         }
       }
       else{
@@ -293,6 +395,7 @@ Future<String>_getAddressFromLatLng() async {
   }
 
   var x=badd;
+  xl=x;
   // print("location is : "+x);
   return x;
 }
@@ -301,7 +404,7 @@ class _categoriesState extends State<categories> {
     return RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
-          text: 'DuckHawk',
+          text: 'Duckhawk',
           style: GoogleFonts.portLligatSans(
             textStyle: Theme.of(context).textTheme.display1,
             fontSize: 30,
@@ -319,6 +422,12 @@ class _categoriesState extends State<categories> {
             ),
          */ ]),
     );
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    _getCurrentLocation();
+    super.initState();
   }
   @override
   Widget build(BuildContext context) {
@@ -366,22 +475,157 @@ class _categoriesState extends State<categories> {
     );
     return Scaffold(
       appBar: new AppBar(
-        automaticallyImplyLeading: false,
           backgroundColor: Color(0xff104670),
-          title: Text("Duckhawk"),
-          /*actions: <Widget>[
+          automaticallyImplyLeading: false,
+          title: Container(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        new IconButton(
+                          icon: new Icon(Icons.place),
+                            onPressed: () async{
+
+                              var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
+                              print("current state of gps");
+                              print(isGpsEnabled);
+                              if(isGpsEnabled==true) {
+
+                                //loc = await _getCurrentLocation();
+                                //loc=bl;
+
+                                //Navigator.pop(context);
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => xloc()),
+                                );
+
+                              }
+                              else{
+                                if (Theme.of(context).platform == TargetPlatform.android) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text("Can't get current location"),
+                                        content:
+                                        const Text('Please make sure you enable GPS and try again'),
+                                        actions: <Widget>[
+                                          FlatButton(
+                                            child: Text('Ok'),
+                                            onPressed: () async {
+                                              final AndroidIntent intent = AndroidIntent(
+                                                  action: 'android.settings.LOCATION_SOURCE_SETTINGS');
+                                              Navigator.of(context, rootNavigator: true).pop();
+
+                                              await intent.launch();
+                                              print(isGpsEnabled);
+                                              await _getCurrentLocation();
+
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) => new xloc()));
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
+                              }
+                            },
+                        ),
+                        SingleChildScrollView(
+                          child: Container(
+                              child: new FlatButton(
+                                  onPressed: () async{
+
+                                    var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
+                                    print("current state of gps");
+                                    print(isGpsEnabled);
+                                    if(isGpsEnabled==true) {
+
+                                      Navigator.pop(context);
+
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => xloc()),
+                                      );
+
+                                    }
+                                    else{
+                                      if (Theme.of(context).platform == TargetPlatform.android) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Text("Can't get current location"),
+                                              content:
+                                              const Text('Please make sure you enable GPS and try again'),
+                                              actions: <Widget>[
+                                                FlatButton(
+                                                  child: Text('Ok'),
+                                                  onPressed: () async {
+                                                    final AndroidIntent intent = AndroidIntent(
+                                                        action: 'android.settings.LOCATION_SOURCE_SETTINGS');
+                                                    Navigator.of(context, rootNavigator: true).pop();
+
+                                                    await intent.launch();
+                                                    print(isGpsEnabled);
+                                                    await _getCurrentLocation();
+
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) => new xloc()));
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      }
+                                    }
+                                  },
+                                  child: Text(
+                                    widget.add == null ?"${loc}": "${widget.add}",
+                                    style: new TextStyle(
+                                        fontSize: 15.0, color: Colors.white),
+                                  ))),
+                        )
+                        //child: new FlatButton(onPre,new Text("${widget.add}",style: new TextStyle(fontSize: 15.0),)))),
+                      ],
+                    ),
+                  ],
+                ),
+              )),
+          actions: <Widget>[
             // action button
             IconButton(
               icon: Icon(Icons.shopping_cart),
               onPressed: () async {
                 pr.show();
-                await getcartData();
+                FirebaseUser user=await FirebaseAuth.instance.currentUser();
                 pr.hide();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => new cart2()));
+                if(user==null){
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => new lp()));
+                }
+                else{
+                  pr.show();
+                  await getcartData();
+                  pr.hide();
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => new cart2()));
+                }
+
               },
             ),
-          ]*/
+          ]
         //leading:new Text("hi"),
 
       ),
@@ -394,196 +638,7 @@ class _categoriesState extends State<categories> {
           crossAxisCount: 2,
                   children: <Widget>[
                     RaisedButton(
-                        onPressed: () {
-                          Fluttertoast.showToast(
-                              msg: "Coming Soon....Check All Categories for more",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              //backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              fontSize: 8.0
-                          );
-                        },
-                        textColor: Colors.white,
-                        padding: const EdgeInsets.all(0.0),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: <Color>[
-                                Color(0xFF0D47A1),
-                                Color(0xFF1976D2),
-                                Color(0xFF42A5F5),
-                              ],
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(15.0),
-                          child:
-                          const Text('Electronics', style: TextStyle(fontSize: 20)),)),
-                    RaisedButton(
-                        onPressed: () {
-                          Fluttertoast.showToast(
-                              msg: "Coming Soon....Check All Categories for more",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              //backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              fontSize: 8.0
-                          );
-                        },
-                        textColor: Colors.white,
-                        padding: const EdgeInsets.all(0.0),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: <Color>[
-                                Color(0xFF0D47A1),
-                                Color(0xFF1976D2),
-                                Color(0xFF42A5F5),
-                              ],
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(15.0),
-                          child:
-                          const Text('Grocery', style: TextStyle(fontSize: 20)),)),
-                    RaisedButton(
-                        onPressed: () {
-                          Fluttertoast.showToast(
-                              msg: "Coming Soon....Check All Categories for more",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              //backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              fontSize: 8.0
-                          );
-                        },
-                        textColor: Colors.white,
-                        padding: const EdgeInsets.all(0.0),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: <Color>[
-                                Color(0xFF0D47A1),
-                                Color(0xFF1976D2),
-                                Color(0xFF42A5F5),
-                              ],
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(15.0),
-                          child:
-                          const Text('Vegetables', style: TextStyle(fontSize: 20)),)),
-                    RaisedButton(
-                        onPressed: () {
-                          Fluttertoast.showToast(
-                              msg: "Coming Soon....Check All Categories for more",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              //backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              fontSize: 8.0
-                          );
-                        },
-                        textColor: Colors.white,
-                        padding: const EdgeInsets.all(0.0),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: <Color>[
-                                Color(0xFF0D47A1),
-                                Color(0xFF1976D2),
-                                Color(0xFF42A5F5),
-                              ],
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(15.0),
-                          child:
-                          const Text('Non Veg', style: TextStyle(fontSize: 20)),)),
-                    RaisedButton(
-                        onPressed: () {
-                          Fluttertoast.showToast(
-                              msg: "Coming Soon....Check All Categories for more",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              //backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              fontSize: 8.0
-                          );
-                        },
-                        textColor: Colors.white,
-                        padding: const EdgeInsets.all(0.0),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: <Color>[
-                                Color(0xFF0D47A1),
-                                Color(0xFF1976D2),
-                                Color(0xFF42A5F5),
-                              ],
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(15.0),
-                          child:
-                          const Text('Furnitures', style: TextStyle(fontSize: 20)),)),
-                    RaisedButton(
-                        onPressed: () {
-                          Fluttertoast.showToast(
-                              msg: "Coming Soon....Check All Categories for more",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              //backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              fontSize: 8.0
-                          );
-                        },
-                        textColor: Colors.white,
-                        padding: const EdgeInsets.all(0.0),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: <Color>[
-                                Color(0xFF0D47A1),
-                                Color(0xFF1976D2),
-                                Color(0xFF42A5F5),
-                              ],
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(15.0),
-                          child:
-                          const Text('Clothing', style: TextStyle(fontSize: 20)),)),
-                    RaisedButton(
-                        onPressed: () {
-                          Fluttertoast.showToast(
-                              msg: "Coming Soon....Check All Categories for more",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              //backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              fontSize: 8.0
-                          );
-                        },
-                        textColor: Colors.white,
-                        padding: const EdgeInsets.all(0.0),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: <Color>[
-                                Color(0xFF0D47A1),
-                                Color(0xFF1976D2),
-                                Color(0xFF42A5F5),
-                              ],
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(15.0),
-                          child:
-                          const Text('Study Materials', style: TextStyle(fontSize: 20)),)),
-                    RaisedButton(
-                        onPressed: () async {
+                        onPressed: () async{
 
 
 
@@ -592,10 +647,15 @@ class _categoriesState extends State<categories> {
                           print(isGpsEnabled);
                           if(isGpsEnabled==true) {
                             pr.show();
-                            loc = await _getCurrentLocation();
-                            await getData(loc);
+                            //loc = await _getCurrentLocation();
+                            //loc=bl;
+                            if(loc==null){
+                              loc=await _getCurrentLocation();
+                            }
+
+                            await getData(loc,"Electronics");
                             pr.hide();
-                            Navigator.pop(context);
+                            // Navigator.pop(context);
 
                             Navigator.push(
                               context,
@@ -626,7 +686,546 @@ class _categoriesState extends State<categories> {
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                  builder: (context) => new categories()));
+                                                  builder: (context) => new categories(null)));
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          }
+
+
+
+                        },
+                        textColor: Colors.white,
+                        padding: const EdgeInsets.all(0.0),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: <Color>[
+                                Color(0xFF0D47A1),
+                                Color(0xFF1976D2),
+                                Color(0xFF42A5F5),
+                              ],
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(15.0),
+                          child:
+                          const Text('Electronics', style: TextStyle(fontSize: 20)),)),
+                    RaisedButton(
+                        onPressed: ()async{
+
+
+
+                          var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
+                          print("current state of gps");
+                          print(isGpsEnabled);
+                          if(isGpsEnabled==true) {
+                            pr.show();
+                            //loc = await _getCurrentLocation();
+                            //loc=bl;
+                            if(loc==null){
+                              loc=await _getCurrentLocation();
+                            }
+
+                            await getData(loc,"Grocery");
+                            pr.hide();
+                            // Navigator.pop(context);
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => HomePage(null)),
+                            );
+
+                          }
+                          else{
+                            if (Theme.of(context).platform == TargetPlatform.android) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("Can't get current location"),
+                                    content:
+                                    const Text('Please make sure you enable GPS and try again'),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text('Ok'),
+                                        onPressed: () async {
+                                          final AndroidIntent intent = AndroidIntent(
+                                              action: 'android.settings.LOCATION_SOURCE_SETTINGS');
+                                          Navigator.of(context, rootNavigator: true).pop();
+
+                                          await intent.launch();
+                                          print(isGpsEnabled);
+
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => new categories(null)));
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          }
+
+
+
+                        },
+                        textColor: Colors.white,
+                        padding: const EdgeInsets.all(0.0),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: <Color>[
+                                Color(0xFF0D47A1),
+                                Color(0xFF1976D2),
+                                Color(0xFF42A5F5),
+                              ],
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(15.0),
+                          child:
+                          const Text('Grocery', style: TextStyle(fontSize: 20)),)),
+                    RaisedButton(
+                        onPressed: () async{
+
+
+
+                          var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
+                          print("current state of gps");
+                          print(isGpsEnabled);
+                          if(isGpsEnabled==true) {
+                            pr.show();
+                            //loc = await _getCurrentLocation();
+                            //loc=bl;
+                            if(loc==null){
+                              loc=await _getCurrentLocation();
+                            }
+
+                            await getData(loc,"Vegetables");
+                            pr.hide();
+                            // Navigator.pop(context);
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => HomePage(null)),
+                            );
+
+                          }
+                          else{
+                            if (Theme.of(context).platform == TargetPlatform.android) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("Can't get current location"),
+                                    content:
+                                    const Text('Please make sure you enable GPS and try again'),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text('Ok'),
+                                        onPressed: () async {
+                                          final AndroidIntent intent = AndroidIntent(
+                                              action: 'android.settings.LOCATION_SOURCE_SETTINGS');
+                                          Navigator.of(context, rootNavigator: true).pop();
+
+                                          await intent.launch();
+                                          print(isGpsEnabled);
+
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => new categories(null)));
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          }
+
+
+
+                        },
+                        textColor: Colors.white,
+                        padding: const EdgeInsets.all(0.0),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: <Color>[
+                                Color(0xFF0D47A1),
+                                Color(0xFF1976D2),
+                                Color(0xFF42A5F5),
+                              ],
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(15.0),
+                          child:
+                          const Text('Vegetables', style: TextStyle(fontSize: 20)),)),
+                    RaisedButton(
+                        onPressed: () async{
+
+
+
+                          var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
+                          print("current state of gps");
+                          print(isGpsEnabled);
+                          if(isGpsEnabled==true) {
+                            pr.show();
+                            //loc = await _getCurrentLocation();
+                            //loc=bl;
+                            if(loc==null){
+                              loc=await _getCurrentLocation();
+                            }
+
+                            await getData(loc,"Non Veg");
+                            pr.hide();
+                            // Navigator.pop(context);
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => HomePage(null)),
+                            );
+
+                          }
+                          else{
+                            if (Theme.of(context).platform == TargetPlatform.android) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("Can't get current location"),
+                                    content:
+                                    const Text('Please make sure you enable GPS and try again'),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text('Ok'),
+                                        onPressed: () async {
+                                          final AndroidIntent intent = AndroidIntent(
+                                              action: 'android.settings.LOCATION_SOURCE_SETTINGS');
+                                          Navigator.of(context, rootNavigator: true).pop();
+
+                                          await intent.launch();
+                                          print(isGpsEnabled);
+
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => new categories(null)));
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          }
+
+
+
+                        },
+                        textColor: Colors.white,
+                        padding: const EdgeInsets.all(0.0),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: <Color>[
+                                Color(0xFF0D47A1),
+                                Color(0xFF1976D2),
+                                Color(0xFF42A5F5),
+                              ],
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(15.0),
+                          child:
+                          const Text('Non Veg', style: TextStyle(fontSize: 20)),)),
+                    RaisedButton(
+                        onPressed: () async{
+
+
+
+                          var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
+                          print("current state of gps");
+                          print(isGpsEnabled);
+                          if(isGpsEnabled==true) {
+                            pr.show();
+                            //loc = await _getCurrentLocation();
+                            //loc=bl;
+                            if(loc==null){
+                              loc=await _getCurrentLocation();
+                            }
+
+                            await getData(loc,"Furnitures");
+                            pr.hide();
+                            // Navigator.pop(context);
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => HomePage(null)),
+                            );
+
+                          }
+                          else{
+                            if (Theme.of(context).platform == TargetPlatform.android) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("Can't get current location"),
+                                    content:
+                                    const Text('Please make sure you enable GPS and try again'),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text('Ok'),
+                                        onPressed: () async {
+                                          final AndroidIntent intent = AndroidIntent(
+                                              action: 'android.settings.LOCATION_SOURCE_SETTINGS');
+                                          Navigator.of(context, rootNavigator: true).pop();
+
+                                          await intent.launch();
+                                          print(isGpsEnabled);
+
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => new categories(null)));
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          }
+
+
+
+                        },
+                        textColor: Colors.white,
+                        padding: const EdgeInsets.all(0.0),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: <Color>[
+                                Color(0xFF0D47A1),
+                                Color(0xFF1976D2),
+                                Color(0xFF42A5F5),
+                              ],
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(15.0),
+                          child:
+                          const Text('Furnitures', style: TextStyle(fontSize: 20)),)),
+                    RaisedButton(
+                        onPressed: () async{
+
+
+
+                          var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
+                          print("current state of gps");
+                          print(isGpsEnabled);
+                          if(isGpsEnabled==true) {
+                            pr.show();
+                            //loc = await _getCurrentLocation();
+                            //loc=bl;
+                            if(loc==null){
+                              loc=await _getCurrentLocation();
+                            }
+
+                            await getData(loc,"Clothing");
+                            pr.hide();
+                            // Navigator.pop(context);
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => HomePage(null)),
+                            );
+
+                          }
+                          else{
+                            if (Theme.of(context).platform == TargetPlatform.android) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("Can't get current location"),
+                                    content:
+                                    const Text('Please make sure you enable GPS and try again'),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text('Ok'),
+                                        onPressed: () async {
+                                          final AndroidIntent intent = AndroidIntent(
+                                              action: 'android.settings.LOCATION_SOURCE_SETTINGS');
+                                          Navigator.of(context, rootNavigator: true).pop();
+
+                                          await intent.launch();
+                                          print(isGpsEnabled);
+
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => new categories(null)));
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          }
+
+
+
+                        },
+                        textColor: Colors.white,
+                        padding: const EdgeInsets.all(0.0),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: <Color>[
+                                Color(0xFF0D47A1),
+                                Color(0xFF1976D2),
+                                Color(0xFF42A5F5),
+                              ],
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(15.0),
+                          child:
+                          const Text('Clothing', style: TextStyle(fontSize: 20)),)),
+                    RaisedButton(
+                        onPressed: () async{
+
+
+
+                          var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
+                          print("current state of gps");
+                          print(isGpsEnabled);
+                          if(isGpsEnabled==true) {
+                            pr.show();
+                            //loc = await _getCurrentLocation();
+                            //loc=bl;
+                            if(loc==null){
+                              loc=await _getCurrentLocation();
+                            }
+
+                            await getData(loc,"Study Materials");
+                            pr.hide();
+                            // Navigator.pop(context);
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => HomePage(null)),
+                            );
+
+                          }
+                          else{
+                            if (Theme.of(context).platform == TargetPlatform.android) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("Can't get current location"),
+                                    content:
+                                    const Text('Please make sure you enable GPS and try again'),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text('Ok'),
+                                        onPressed: () async {
+                                          final AndroidIntent intent = AndroidIntent(
+                                              action: 'android.settings.LOCATION_SOURCE_SETTINGS');
+                                          Navigator.of(context, rootNavigator: true).pop();
+
+                                          await intent.launch();
+                                          print(isGpsEnabled);
+
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => new categories(null)));
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          }
+
+
+
+                        },
+                        textColor: Colors.white,
+                        padding: const EdgeInsets.all(0.0),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: <Color>[
+                                Color(0xFF0D47A1),
+                                Color(0xFF1976D2),
+                                Color(0xFF42A5F5),
+                              ],
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(15.0),
+                          child:
+                          const Text('Study Materials', style: TextStyle(fontSize: 20)),)),
+                    RaisedButton(
+                        onPressed: () async {
+
+
+
+                          var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
+                          print("current state of gps");
+                          print(isGpsEnabled);
+                          if(isGpsEnabled==true) {
+                            pr.show();
+                            //loc = await _getCurrentLocation();
+                            //loc=bl;
+                            if(loc==null){
+                              loc=await _getCurrentLocation();
+                            }
+
+                            await getData(loc,"All");
+                            pr.hide();
+                           // Navigator.pop(context);
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => HomePage(null)),
+                            );
+
+                          }
+                          else{
+                            if (Theme.of(context).platform == TargetPlatform.android) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("Can't get current location"),
+                                    content:
+                                    const Text('Please make sure you enable GPS and try again'),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text('Ok'),
+                                        onPressed: () async {
+                                          final AndroidIntent intent = AndroidIntent(
+                                              action: 'android.settings.LOCATION_SOURCE_SETTINGS');
+                                          Navigator.of(context, rootNavigator: true).pop();
+
+                                          await intent.launch();
+                                          print(isGpsEnabled);
+
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => new categories(null)));
                                         },
                                       ),
                                     ],
