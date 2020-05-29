@@ -864,6 +864,7 @@ placeorder(String name,String cat,String image,String price,String quantity,Stri
 import 'dart:collection';
 import 'dart:convert';
 
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -878,11 +879,11 @@ import 'package:project_duckhawk/model/Orders.dart';
 import 'package:project_duckhawk/model/Products.dart';
 import 'package:project_duckhawk/model/loc.dart';
 import 'package:project_duckhawk/pages/account1.dart';
+
 import 'package:project_duckhawk/pages/edittable.dart';
 import 'package:project_duckhawk/pages/item_info.dart';
 import 'package:project_duckhawk/pages/olocation.dart';
 import 'package:project_duckhawk/pages/orderconfirm.dart';
-import 'package:project_duckhawk/pages/summary.dart';
 import 'package:project_duckhawk/pages/categories.dart';
 import 'package:http/http.dart' as http;
 

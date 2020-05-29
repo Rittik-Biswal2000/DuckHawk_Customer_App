@@ -12,12 +12,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/pages/account1.dart';
+
 import 'package:project_duckhawk/pages/ageverify.dart';
 import 'package:project_duckhawk/pages/cart2.dart';
 import 'package:project_duckhawk/pages/categories.dart';
 import 'package:project_duckhawk/pages/electronics.dart';
 import 'package:project_duckhawk/pages/item_info.dart';
 import 'package:project_duckhawk/pages/location.dart';
+import 'package:project_duckhawk/pages/account1.dart';
 import 'package:project_duckhawk/src/loginPage.dart';
 
 FirebaseUser user;

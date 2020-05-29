@@ -8,11 +8,15 @@ import 'package:geolocator/geolocator.dart';
 import 'dart:collection';
 import 'dart:convert';
 
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong/latlong.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:http/http.dart' as http;
 import 'package:project_duckhawk/entry.dart';
+import 'package:project_duckhawk/pages/cat.dart';
+import 'package:project_duckhawk/pages/cat.dart';
+import 'package:project_duckhawk/pages/cat.dart';
 import 'package:project_duckhawk/pages/location.dart';
 import 'package:project_duckhawk/pages/xloc.dart';
 import 'package:project_duckhawk/src/loginPage.dart';
@@ -71,7 +75,7 @@ Position _currentPosition;
 String _currentAddress ;
 String na="Login/SignUp";
 
-Future getData(String x,String cate) async {
+Future<void> getData(String x,String cate) async {
   print("Category is:");
   print(cate);
   var lati, longi;
@@ -1206,7 +1210,7 @@ class _categoriesState extends State<categories> {
 
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => HomePage(null)),
+                              MaterialPageRoute(builder: (context) => new ca()),
                             );
 
                           }
