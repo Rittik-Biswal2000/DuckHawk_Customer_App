@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/pages/account1.dart';
+import 'package:project_duckhawk/pages/ageverify.dart';
 
 import 'package:project_duckhawk/pages/cart2.dart';
 
@@ -266,6 +267,7 @@ class _eState extends State<e> {
 
                               ),
                               onTap: (){
+
                                 Navigator.push(
                                     context, MaterialPageRoute(builder: (context) => new item_info(widget.s,prod_cat2[index],prod_id2[index],imgurl1[index],name1[index],price1[index],description1[index],quantity1[index])));
                                 //Navigator.pop(context);

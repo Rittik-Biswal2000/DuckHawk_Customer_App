@@ -50,6 +50,12 @@ dependencies:
   firebase_storage: ^3.0.8
   flutter_spinkit: ^4.1.2
   splashscreen: ^1.2.0
+  file_picker:
+  image_picker:
+  camera:
+  path_provider:
+  path:
+
 
 
 

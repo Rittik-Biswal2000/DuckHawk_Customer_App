@@ -42,6 +42,8 @@ List fowner_phone=[];
 List imgurl=[];
 List quantity=[];
 List shop_image=[];
+List shop_cat=[];
+List fshop_cat=[];
 List fshop_image=[];
 List price=[];
 List name=[];
@@ -84,6 +86,8 @@ Future getData(String x,String cate) async {
   fowner_name.clear();
   fowner_phone.clear();
   distance.clear();
+  shop_cat.clear();
+  fshop_cat.clear();
   prod_id.clear();
   fprod_id.clear();
   List list;
@@ -137,6 +141,7 @@ Future getData(String x,String cate) async {
             double lati = data1["Latitude"];
             owner_phone.add(data1["Owner_Number"].toString());
             owner_name.add(data1["Shop_Name"]);
+            shop_cat.add(data1["Category"]);
 
             if (data1["Shop_Image"] == null) {
               shop_image.add("https://duckhawk.in/icon.jpeg");
@@ -217,6 +222,7 @@ Future getData(String x,String cate) async {
             double lati = data1["Latitude"];
             owner_phone.add(data1["Owner_Number"].toString());
             owner_name.add(data1["Shop_Name"]);
+            shop_cat.add(data1["Category"]);
 
             if (data1["Shop_Image"] == null) {
               shop_image.add("https://duckhawk.in/icon.jpeg");
@@ -291,6 +297,7 @@ Future getData(String x,String cate) async {
           }
             print(owner_phone);
             print(owner_name);
+            print(fshop_cat);
 
             h++;
 
@@ -330,6 +337,7 @@ Future getData(String x,String cate) async {
     fowner_phone.add(owner_phone[x]);
     fsellerlist.add(sellerlist[x]);
     fprod_id.add(prod_id[x]);
+    fshop_cat.add(shop_cat[x]);
     fshop_image.add(shop_image[x]);
   }
 
@@ -1115,7 +1123,7 @@ class _categoriesState extends State<categories> {
                               loc=await _getCurrentLocation();
                             }
 
-                            await getData(loc,"Study Materials");
+                            await getData(loc,"Wine");
                             pr.hide();
                             // Navigator.pop(context);
 
@@ -1175,7 +1183,7 @@ class _categoriesState extends State<categories> {
                           ),
                           padding: const EdgeInsets.all(15.0),
                           child:
-                          const Text('Study Materials', style: TextStyle(fontSize: 20)),)),
+                          const Text('Wine', style: TextStyle(fontSize: 20)),)),
                     RaisedButton(
                         onPressed: () async {
 
@@ -1192,7 +1200,7 @@ class _categoriesState extends State<categories> {
                               loc=await _getCurrentLocation();
                             }
 
-                            await getData(loc,"All");
+                            // getData(loc,"All");
                             pr.hide();
                            // Navigator.pop(context);
 

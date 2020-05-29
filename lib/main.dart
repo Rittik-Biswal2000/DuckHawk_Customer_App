@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,6 +12,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/pages/account1.dart';
+import 'package:project_duckhawk/pages/ageverify.dart';
 import 'package:project_duckhawk/pages/cart2.dart';
 import 'package:project_duckhawk/pages/categories.dart';
 import 'package:project_duckhawk/pages/electronics.dart';
@@ -530,120 +532,191 @@ class _HomePageState extends State<HomePage> {
         ),
       ),*/
 
-          //onWillPop: _onBackPressed,
-          body: WillPopScope(
-            onWillPop: _onBackPressed,
-            child: Builder(
-                builder: (context){
-                  if(fsellerlist.isNotEmpty) {
-                    return Container(
-                      child: new ListView.builder(
-                          itemCount: fsellerlist.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            //currrentseller=sellerlist[index];
-                            if (fsellerlist.isNotEmpty) {
-                              return new Card(
-                                  child: SingleChildScrollView(
-                                      child: InkWell(
-                                        onTap: () async {
+      //onWillPop: _onBackPressed,
+      body: WillPopScope(
+        onWillPop: _onBackPressed,
+        child: Builder(
+            builder: (context){
+              if(fsellerlist.isNotEmpty) {
+                return Container(
+                  child: new ListView.builder(
+                      itemCount: fsellerlist.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        //currrentseller=sellerlist[index];
+                        if (fsellerlist.isNotEmpty) {
+                          return new Card(
+                              child: SingleChildScrollView(
+                                  child: InkWell(
+                                    onTap: () async {
+                                      pr.show();
+                                      await getproductdetails(fprod_id[index]);
+                                      pr.hide();
+                                      if(imgurl1.isNotEmpty){
+                                        print("category is "+fshop_cat[index].toString());
+                                        if(fshop_cat[index].toString()=="Electronics"){
                                           pr.show();
-                                          await getproductdetails(fprod_id[index]);
+                                          FirebaseUser user=await FirebaseAuth.instance.currentUser();
                                           pr.hide();
-                                          if(imgurl1.isNotEmpty){
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      e(fsellerlist[index])),
-                                            );
+                                          if(user==null){
+                                            Navigator.push(context,
+                                                MaterialPageRoute(builder: (context) => new lp()));
                                           }
                                           else{
-                                            Fluttertoast.showToast(
-                                                msg: "Sorry ! No products Available",
-                                                toastLength: Toast.LENGTH_SHORT,
-                                                gravity: ToastGravity.BOTTOM,
-                                                timeInSecForIosWeb: 1,
-                                                //backgroundColor: Colors.red,
-                                                textColor: Colors.white,
-                                                fontSize: 8.0
-                                            );
+                                            String s;
+                                            //pr.show();
+                                            //await getcartData();
+                                            //pr.hide();
+                                            pr.show();
+                                            await FirebaseDatabase.instance.reference().child("AgeVerify").child(user.uid).once().then((DataSnapshot data){
+                                              //print(data.value);
+                                              print("data is");
+                                              print(data.key);
+                                              if(data.value!=null){
+                                                print(data.value['state']);
+                                                s=data.value['state'];
+                                              }
+
+
+
+                                            });
+                                            /* getStatus().then((val){
+                                                  print(val);
+                                                });*/
+                                            pr.hide();
+                                            if(s=="applied")
+                                              Fluttertoast.showToast(
+                                                  msg: "Your Application is under review . Please wait....",
+                                                  toastLength: Toast.LENGTH_SHORT,
+                                                  gravity: ToastGravity.BOTTOM,
+                                                  timeInSecForIosWeb: 1,
+                                                  //backgroundColor: Colors.red,
+                                                  textColor: Colors.white,
+                                                  fontSize: 8.0
+                                              );
+                                            else if(s=="verified"){
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        e(fsellerlist[index])),
+                                              );
+                                            }
+                                            else {
+                                              Fluttertoast.showToast(
+                                                  msg: "Kindly verify your age",
+                                                  toastLength: Toast.LENGTH_SHORT,
+                                                  gravity: ToastGravity.BOTTOM,
+                                                  timeInSecForIosWeb: 1,
+                                                  //backgroundColor: Colors.red,
+                                                  textColor: Colors.white,
+                                                  fontSize: 8.0
+                                              );
+                                              Navigator.push(
+                                                  context, MaterialPageRoute(builder: (context) => new ageverify("")));
+                                            }
+
+                                            /*Navigator.push(
+                                                    context, MaterialPageRoute(builder: (context) => new ageverify("")));*/
                                           }
 
-                                          // Navigator.pop(context);
-                                        },
-                                        child: ListTile(
-                                          leading:
-                                          new Image.network(fshop_image[index],width:100.0,height:400.0),
-                                          title: new Text(fowner_name[index]),
-                                          subtitle: new Column(
-                                            children: <Widget>[
-                                              new Container(
-                                                alignment: Alignment.topLeft,
-                                                child: Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child:
-                                                  new Text("Contact - " +
-                                                      fowner_phone[index]),
-                                                ),
-                                              ),
-                                              new Container(
-                                                alignment: Alignment.topLeft,
-                                                child: Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: new Text("Distance - " +
-                                                      distance[index]),
-                                                ),
-                                              )
-                                            ],
+
+                                        }
+                                        else {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    e(fsellerlist[index])),
+                                          );
+                                        }
+                                      }
+                                      else{
+                                        Fluttertoast.showToast(
+                                            msg: "Sorry ! No products Available",
+                                            toastLength: Toast.LENGTH_SHORT,
+                                            gravity: ToastGravity.BOTTOM,
+                                            timeInSecForIosWeb: 1,
+                                            //backgroundColor: Colors.red,
+                                            textColor: Colors.white,
+                                            fontSize: 8.0
+                                        );
+                                      }
+
+                                      // Navigator.pop(context);
+                                    },
+                                    child: ListTile(
+                                      leading:
+                                      new Image.network(fshop_image[index],width:100.0,height:400.0),
+                                      title: new Text(fowner_name[index]),
+                                      subtitle: new Column(
+                                        children: <Widget>[
+                                          new Container(
+                                            alignment: Alignment.topLeft,
+                                            child: Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child:
+                                              new Text("Contact - " +
+                                                  fowner_phone[index]),
+                                            ),
                                           ),
-                                        ),
-                                      )
-                                  ));
-                            }
-                          }),
-                    );
-                  }
-                  else
-                  {
-                    return new Container(
-                      height: MediaQuery.of(context).size.height,
-                      child: Stack(
-                        children: <Widget>[
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            child: Column(
+                                          new Container(
+                                            alignment: Alignment.topLeft,
+                                            child: Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child: new Text("Distance - " +
+                                                  distance[index]),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                              ));
+                        }
+                      }),
+                );
+              }
+              else
+              {
+                return new Container(
+                  height: MediaQuery.of(context).size.height,
+                  child: Stack(
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    _title(),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 50,
-                                ),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Container(
-                                      child: _title1(),
-                                    )
-                                  ],
-                                ),
-                                //_facebookButton(),
+                                _title(),
                               ],
                             ),
-                          ),
-                        ],
+                            SizedBox(
+                              height: 50,
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  child: _title1(),
+                                )
+                              ],
+                            ),
+                            //_facebookButton(),
+                          ],
+                        ),
                       ),
-                    );
-                  }
-                }),
-          ),
+                    ],
+                  ),
+                );
+              }
+            }),
+      ),
 
 
 
@@ -829,6 +902,13 @@ class _HomePageState extends State<HomePage> {
       print(e);
     }
   }
+
+  getStatus() async{
+    final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    print("in func");
+
+    return await FirebaseDatabase.instance.reference().child('AgeVerify').equalTo(user.uid).reference();
+  }
 }
 
 getuac() async {
@@ -987,53 +1067,53 @@ getproductdetails(String id) async {
   }
 
   if (resource.body != null) {
-   if (resource.statusCode == 200) {
-     LinkedHashMap<String, dynamic> data1 = jsonDecode(resource.body);
-     //print("length is :");
-     //print(data1.length);
-     if(data1!=null){
-     List k = data1.keys.toList();
+    if (resource.statusCode == 200) {
+      LinkedHashMap<String, dynamic> data1 = jsonDecode(resource.body);
+      //print("length is :");
+      //print(data1.length);
+      if(data1!=null){
+        List k = data1.keys.toList();
 
-     //print(k);
-     List d = data1.values.toList();
+        //print(k);
+        List d = data1.values.toList();
 
-     int h = 0;
-     len1 = d.length;
-     while (h < d.length) {
-       LinkedHashMap<String, dynamic> data2 = jsonDecode(resource.body)[k[h]];
-       //List x=data2.values.toList();
-       //print(data2["cat"]);
-       prod_id2.add(k[h]);
-       prod_cat2.add(data2["cat"]);
-       //badd
+        int h = 0;
+        len1 = d.length;
+        while (h < d.length) {
+          LinkedHashMap<String, dynamic> data2 = jsonDecode(resource.body)[k[h]];
+          //List x=data2.values.toList();
+          //print(data2["cat"]);
+          prod_id2.add(k[h]);
+          prod_cat2.add(data2["cat"]);
+          //badd
 
-       String link2 = "https://duckhawk-1699a.firebaseio.com/Products/" +
-           loc +
-           "/" +
-           data2["cat"] +
-           "/" +
-           k[h] +
-           ".json";
-       final resource3 = await http.get(link2);
-       if (resource3.statusCode == 200) {
-         LinkedHashMap<String, dynamic> data4 = jsonDecode(resource3.body);
-         // print("city is:");
+          String link2 = "https://duckhawk-1699a.firebaseio.com/Products/" +
+              loc +
+              "/" +
+              data2["cat"] +
+              "/" +
+              k[h] +
+              ".json";
+          final resource3 = await http.get(link2);
+          if (resource3.statusCode == 200) {
+            LinkedHashMap<String, dynamic> data4 = jsonDecode(resource3.body);
+            // print("city is:");
 
 
-         quantity1.add(data4["stock"]);
-         price1.add(data4["price"]);
-         name1.add(data4["ProductName"]);
-         description1.add(data4["ProductDesc"]);
-         if (data4["Product_Image"] == null) {
-           imgurl1.add("https://duckhawk.in/icon.jpeg");
-         }
-         else {
-           imgurl1.add(data4["Product_Image"]);
-         }
-       }
-       h++;
-     }
-   }
+            quantity1.add(data4["stock"]);
+            price1.add(data4["price"]);
+            name1.add(data4["ProductName"]);
+            description1.add(data4["ProductDesc"]);
+            if (data4["Product_Image"] == null) {
+              imgurl1.add("https://duckhawk.in/icon.jpeg");
+            }
+            else {
+              imgurl1.add(data4["Product_Image"]);
+            }
+          }
+          h++;
+        }
+      }
+    }
   }
-}
 }
