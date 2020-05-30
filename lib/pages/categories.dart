@@ -36,7 +36,7 @@ class  categories extends StatefulWidget {
 
 }
 
-var a,b,loc,xl,catloc;
+var a,b,loc,xl,catloc,response;
 List seller=[];
 List sellerlist=[];
 List fsellerlist=[];
@@ -1205,7 +1205,11 @@ class _categoriesState extends State<categories> {
                             }
 
                             // getData(loc,"All");
+                             response=await http.get("https://duckhawk-1699a.firebaseio.com/Seller/Bhubaneswar/T7n6FiUoxsbQ4JWWqFneaUXCKLZ2/products.json");
+                            await  getcountries();
+
                             pr.hide();
+                            moregetcountries();
                            // Navigator.pop(context);
 
                             Navigator.push(
