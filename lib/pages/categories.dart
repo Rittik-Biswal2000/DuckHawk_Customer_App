@@ -1197,7 +1197,7 @@ class _categoriesState extends State<categories> {
                           print("current state of gps");
                           print(isGpsEnabled);
                           if(isGpsEnabled==true) {
-                            pr.show();
+
                             //loc = await _getCurrentLocation();
                             //loc=bl;
                             if(loc==null){
@@ -1205,11 +1205,11 @@ class _categoriesState extends State<categories> {
                             }
 
                             // getData(loc,"All");
-                             response=await http.get("https://duckhawk-1699a.firebaseio.com/Seller/Bhubaneswar/T7n6FiUoxsbQ4JWWqFneaUXCKLZ2/products.json");
-                            await  getcountries();
+                             //response=await http.get("https://duckhawk-1699a.firebaseio.com/Seller/Bhubaneswar/T7n6FiUoxsbQ4JWWqFneaUXCKLZ2/products.json");
+                            //await  getcountries();
 
-                            pr.hide();
-                            moregetcountries();
+
+
                            // Navigator.pop(context);
 
                             Navigator.push(

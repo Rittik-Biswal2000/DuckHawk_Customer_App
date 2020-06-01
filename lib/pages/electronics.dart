@@ -192,13 +192,13 @@ class _eState extends State<e> {
           builder: (context){
             if(pro.toString()!=null) {
               return Container(
-                  child: new ListView.builder(
-                    itemCount: len1,
+                  child:  ListView.builder(
+                    itemCount: quantity1.length,
                     itemBuilder: (BuildContext context,int index){
                       //qu=quantity[index];
                       //total_price+=double.parse(prod_price[index])*double.parse(units[index]);
                       //return new Text(item_name[index]);
-                      return new Card(
+                      return  new Card(
                         child: SingleChildScrollView(
                             child:InkWell(
                               child: ListTile(

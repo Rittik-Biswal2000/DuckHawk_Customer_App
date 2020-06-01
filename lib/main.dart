@@ -541,7 +541,7 @@ class _HomePageState extends State<HomePage> {
             builder: (context){
               if(fsellerlist.isNotEmpty) {
                 return Container(
-                  child: new ListView.builder(
+                  child:  ListView.builder(
                       itemCount: fsellerlist.length,
                       itemBuilder: (BuildContext context, int index) {
                         //currrentseller=sellerlist[index];
@@ -552,7 +552,9 @@ class _HomePageState extends State<HomePage> {
                                     onTap: () async {
                                       pr.show();
                                       await getproductdetails(fprod_id[index]);
+
                                       pr.hide();
+                                      getmproductdetails(fprod_id[index]);
                                       if(imgurl1.isNotEmpty){
                                         print("category is "+fshop_cat[index].toString());
                                         if(fshop_cat[index].toString()=="Electronics"){
@@ -1063,7 +1065,7 @@ getproductdetails(String id) async {
   print(link);
   print(resource.body);
   pro = resource.body;
-  print(pro);
+  //print(pro);
   if (pro.toString() == null) {
     print("hi");
   }
@@ -1076,12 +1078,79 @@ getproductdetails(String id) async {
       if(data1!=null){
         List k = data1.keys.toList();
 
-        //print(k);
+        print(k);
         List d = data1.values.toList();
 
         int h = 0;
         len1 = d.length;
-        while (h < d.length) {
+        while (h < 5) {
+          LinkedHashMap<String, dynamic> data2 = jsonDecode(resource.body)[k[h]];
+          //List x=data2.values.toList();
+          //print(data2["cat"]);
+          prod_id2.add(k[h]);
+          prod_cat2.add(data2["cat"]);
+          //badd
+
+          String link2 = "https://duckhawk-1699a.firebaseio.com/Products/" +
+              loc +
+              "/" +
+              data2["cat"] +
+              "/" +
+              k[h] +
+              ".json";
+          final resource3 = await http.get(link2);
+          if (resource3.statusCode == 200) {
+            LinkedHashMap<String, dynamic> data4 = jsonDecode(resource3.body);
+            // print("city is:");
+
+
+            quantity1.add(data4["stock"]);
+            price1.add(data4["price"]);
+            name1.add(data4["ProductName"]);
+            description1.add(data4["ProductDesc"]);
+            if (data4["Product_Image"] == null) {
+              imgurl1.add("https://duckhawk.in/icon.jpeg");
+            }
+            else {
+              imgurl1.add(data4["Product_Image"]);
+            }
+          }
+          h++;
+        }
+      }
+    }
+  }
+}
+getmproductdetails(String id) async {
+  String link = "https://duckhawk-1699a.firebaseio.com/Seller/" +
+      loc +
+      "/" +
+      id +
+      "/products.json";
+  final resource = await http.get(link);
+  print("link is :");
+  print(link);
+  print(resource.body);
+  pro = resource.body;
+  //print(pro);
+  if (pro.toString() == null) {
+    print("hi");
+  }
+
+  if (resource.body != null) {
+    if (resource.statusCode == 200) {
+      LinkedHashMap<String, dynamic> data1 = jsonDecode(resource.body);
+      //print("length is :");
+      //print(data1.length);
+      if(data1!=null){
+        List k = data1.keys.toList();
+
+        print(k);
+        List d = data1.values.toList();
+
+        int h = 6;
+        len1 = 10;
+        while (h < len1) {
           LinkedHashMap<String, dynamic> data2 = jsonDecode(resource.body)[k[h]];
           //List x=data2.values.toList();
           //print(data2["cat"]);
