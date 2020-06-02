@@ -18,19 +18,18 @@ import 'package:project_duckhawk/pages/categories.dart';
 import 'package:project_duckhawk/src/loginPage.dart';
 //import 'package:project_duckhawk/src/welcomPage.dart';
 
-
-
 class e extends StatefulWidget {
   String s;
 
-  e(
-      this.s);
+  e(this.s);
   @override
   _eState createState() => _eState();
 }
-String a,b,c,d,f,g;
-List li=[];
+
+String a, b, c, d, f, g;
+List li = [];
 ProgressDialog pr;
+
 class _eState extends State<e> {
   @override
   Widget build(BuildContext context) {
@@ -48,7 +47,8 @@ class _eState extends State<e> {
               fontWeight: FontWeight.w700,
               color: Color(0xff104670),
             ),
-            children: [/*
+            children: [
+              /*
             TextSpan(
               text: 'ev',
               style: TextStyle(color: Colors.black, fontSize: 30),
@@ -57,9 +57,11 @@ class _eState extends State<e> {
               text: 'rnz',
               style: TextStyle(color: Color(0xff104670), fontSize: 30),
             ),
-         */ ]),
+         */
+            ]),
       );
     }
+
     Widget _title1() {
       return RichText(
         textAlign: TextAlign.center,
@@ -70,7 +72,8 @@ class _eState extends State<e> {
             fontSize: 20,
             fontWeight: FontWeight.w700,
             color: Color(0xff104670),
-          ),),
+          ),
+        ),
       );
     }
 
@@ -84,27 +87,24 @@ class _eState extends State<e> {
               icon: Icon(Icons.shopping_cart),
               onPressed: () async {
                 pr.show();
-                FirebaseUser user=await FirebaseAuth.instance.currentUser();
+                FirebaseUser user = await FirebaseAuth.instance.currentUser();
                 pr.hide();
-                if(user==null){
+                if (user == null) {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => new lp()));
-                }
-                else{
+                } else {
                   pr.show();
                   await getcartData();
                   pr.hide();
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => new cart2()));
                 }
-
               },
             ),
           ]
-        //leading:new Text("hi"),
+          //leading:new Text("hi"),
 
-
-      ),
+          ),
       bottomNavigationBar: new Container(
         padding: EdgeInsets.all(0.0),
         child: Row(
@@ -114,21 +114,21 @@ class _eState extends State<e> {
               flex: 1,
               child: IconButton(
                 icon: new Icon(Icons.shop),
-                onPressed: () async{
+                onPressed: () async {
                   //pr.show();
                   //await getData(null);
                   //pr.hide();
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new HomePage(null)));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => new HomePage(null)));
                 },
               ),
             ),
             Expanded(
               flex: 1,
               child: IconButton(
-                  icon: new Icon(Icons.search),
-                  onPressed: () async {
-
-                  }),
+                  icon: new Icon(Icons.search), onPressed: () async {}),
             ),
             Expanded(
               flex: 1,
@@ -136,15 +136,14 @@ class _eState extends State<e> {
                   icon: new Icon(Icons.account_box),
                   onPressed: () async {
                     pr.show();
-                    FirebaseUser user=await FirebaseAuth.instance.currentUser();
+                    FirebaseUser user =
+                        await FirebaseAuth.instance.currentUser();
                     print(user);
                     pr.hide();
-                    if(user==null){
+                    if (user == null) {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => new lp()));
-
-                    }
-                    else{
+                    } else {
                       pr.show();
                       await getuac();
                       pr.hide();
@@ -152,8 +151,6 @@ class _eState extends State<e> {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => new acc1()));
                     }
-
-
                   }),
             ),
             Expanded(
@@ -162,21 +159,20 @@ class _eState extends State<e> {
                 icon: new Icon(Icons.shopping_cart),
                 onPressed: () async {
                   pr.show();
-                  FirebaseUser user=await FirebaseAuth.instance.currentUser();
+                  FirebaseUser user = await FirebaseAuth.instance.currentUser();
                   pr.hide();
-                  if(user==null){
+                  if (user == null) {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => new lp()));
-                  }
-                  else{
+                  } else {
                     pr.show();
                     await getcartData();
                     pr.hide();
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => new cart2()));
                   }
-
-                },),
+                },
+              ),
             ),
             /*Expanded(
               flex: 1,
@@ -187,50 +183,50 @@ class _eState extends State<e> {
           ],
         ),
       ),
-      body: Builder(
-
-          builder: (context){
-            if(pro.toString()!=null) {
-              return Container(
-                  child:  ListView.builder(
-                    itemCount: quantity1.length,
-                    itemBuilder: (BuildContext context,int index){
-                      //qu=quantity[index];
-                      //total_price+=double.parse(prod_price[index])*double.parse(units[index]);
-                      //return new Text(item_name[index]);
-                      return  new Card(
-                        child: SingleChildScrollView(
-                            child:InkWell(
-                              child: ListTile(
-
-                                leading:
-                                new Image.network(imgurl1[index],width:100.0,height:400.0),
-
-                                title:new Text(name1[index]),
-                                subtitle: new Column(
-                                  children: <Widget>[
-                                    new Container(
-                                      alignment: Alignment.topLeft,
-                                      child: Padding(
-                                          padding: EdgeInsets.all(8.0),
-
-                                          child:new Text("Price : ₹"+price1[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
-                                      ),
-                                      /*alignment: Alignment.topLeft,
+      body: Builder(builder: (context) {
+        if (pro.toString() != null) {
+          return Container(
+              child: ListView.builder(
+            itemCount: quantity1.length,
+            itemBuilder: (BuildContext context, int index) {
+              //qu=quantity[index];
+              //total_price+=double.parse(prod_price[index])*double.parse(units[index]);
+              //return new Text(item_name[index]);
+              return new Card(
+                child: SingleChildScrollView(
+                    child: InkWell(
+                  child: ListTile(
+                    leading: new Image.network(imgurl1[index],
+                        width: 100.0, height: 400.0),
+                    title: new Text(name1[index]),
+                    subtitle: new Column(
+                      children: <Widget>[
+                        new Container(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: new Text(
+                                "Price : ₹" + price1[index],
+                                style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.bold),
+                              )),
+                          /*alignment: Alignment.topLeft,
                           child:new Text("Price is : ₹"+prod_price[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)*/
-                                    ),
-                                    new Container(
-                                      alignment: Alignment.topLeft,
-                                      child: Padding(
-                                          padding: EdgeInsets.all(8.0),
-
-
-
-                                          child:new Text("Quantity : "+quantity1[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
-                                      ),
-                                      //child:new Text("Quantity : "+item_units[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
-                                    ),
-                                    /*new Row(
+                        ),
+                        new Container(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: new Text(
+                                "Quantity : " + quantity1[index],
+                                style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.bold),
+                              )),
+                          //child:new Text("Quantity : "+item_units[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
+                        ),
+                        /*new Row(
                             children: <Widget>[
                               new FlatButton(onPressed: (){
                                 //createAlertDialog(context, name.split(': ')[1], imgurl, price.split(': ')[1]);
@@ -261,76 +257,75 @@ class _eState extends State<e> {
 
                             ],
                           ),*/
-
-                                  ],
-                                ),
-
-                              ),
-                              onTap: (){
-
-                                Navigator.push(
-                                    context, MaterialPageRoute(builder: (context) => new item_info(widget.s,prod_cat2[index],prod_id2[index],imgurl1[index],name1[index],price1[index],description1[index],quantity1[index])));
-                                //Navigator.pop(context);
-                                /*print(prod_id[index]);
+                      ],
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => new item_info(
+                                widget.s,
+                                prod_cat2[index],
+                                prod_id2[index],
+                                imgurl1[index],
+                                name1[index],
+                                price1[index],
+                                description1[index],
+                                quantity1[index])));
+                    //Navigator.pop(context);
+                    /*print(prod_id[index]);
                       print(imgurl1[index]);
                       print(name1[index]);
                       print(price1[index]);
                       print(description1[index]);
                       print(quantity1[index]);*/
-
-
-                              },
-                            )
-                        ),
-                      );
-                    },
-
-
-
-                  ));}
-            else
-            {
-
-              return new Container(
-                height: MediaQuery.of(context).size.height,
-                child: Stack(
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
+                  },
+                )),
+              );
+            },
+          ));
+        } else {
+          return new Container(
+            height: MediaQuery.of(context).size.height,
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              _title(),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 50,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                child: _title1(),
-                              )
-                            ],
-                          ),
-                          //_facebookButton(),
+                          _title(),
                         ],
                       ),
-                    ),
-                  ],
+                      SizedBox(
+                        height: 50,
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                            child: _title1(),
+                          )
+                        ],
+                      ),
+                      //_facebookButton(),
+                    ],
+                  ),
                 ),
-              );
+              ],
+            ),
+          );
+        }
+      }),
 
-            }}),
-
-     /* body: Container(
+      /* body: Container(
         child: new ListView.builder(
           itemCount: len1,
           itemBuilder: (BuildContext context,int index){
@@ -432,7 +427,6 @@ class _eState extends State<e> {
   }
 }
 
-
 getCartProducts() async {
   li.clear();
   dynamic data;
@@ -441,12 +435,15 @@ getCartProducts() async {
   DatabaseReference reference = FirebaseDatabase.instance.reference();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseUser user = await _auth.currentUser();
-  Future<DocumentSnapshot> s=Firestore.instance.collection('users').document(user.uid).collection('cart').document(loc).get();
-  s.then((snapshot){
+  Future<DocumentSnapshot> s = Firestore.instance
+      .collection('users')
+      .document(user.uid)
+      .collection('cart')
+      .document(loc)
+      .get();
+  s.then((snapshot) {
     print(snapshot);
   });
-
-
 
   /*QuerySnapshot qn = await firestore.collection('users').document(user.uid).collection('cart').document(loc).
       .then((snapshot) {
@@ -460,11 +457,7 @@ getCartProducts() async {
       }*/
   });*/
 
-
-
   print("in cart page");
   print(data);
   //print(l[0].toString());
-
 }
-

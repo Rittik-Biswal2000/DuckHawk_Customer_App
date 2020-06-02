@@ -100,7 +100,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     //getd();
-    c=0;
+    c = 0;
     super.initState();
     //getproducts();
     //getproducts1();
@@ -124,13 +124,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     print("in Main Page");
     //print(owner_name);
     //print(owner_phone);
     pr = new ProgressDialog(context, showLogs: true);
     pr.style(message: 'Please wait...');
-
 
     /*
     Widget image_carousel = new Container(
@@ -171,7 +169,8 @@ class _HomePageState extends State<HomePage> {
               fontWeight: FontWeight.w700,
               color: Color(0xff104670),
             ),
-            children: [/*
+            children: [
+              /*
             TextSpan(
               text: 'ev',
               style: TextStyle(color: Colors.black, fontSize: 30),
@@ -180,9 +179,11 @@ class _HomePageState extends State<HomePage> {
               text: 'rnz',
               style: TextStyle(color: Color(0xff104670), fontSize: 30),
             ),
-         */ ]),
+         */
+            ]),
       );
     }
+
     Widget _title1() {
       return RichText(
         textAlign: TextAlign.center,
@@ -193,39 +194,40 @@ class _HomePageState extends State<HomePage> {
             fontSize: 20,
             fontWeight: FontWeight.w700,
             color: Color(0xff104670),
-          ),),
+          ),
+        ),
       );
     }
-    Future<bool> _onBackPressed() {
 
+    Future<bool> _onBackPressed() {
       return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Are you sure?'),
-            content: Text('Do you want to exit an App'),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('No'),
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-              ),
-              FlatButton(
-                child: Text('Yes'),
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => new categories(null)));
-                  //SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-                },
-              )
-            ],
-          );
-        },
-      ) ??
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('Are you sure?'),
+                content: Text('Do you want to exit an App'),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('No'),
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                  FlatButton(
+                    child: Text('Yes'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => new categories(null)));
+                      //SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+                    },
+                  )
+                ],
+              );
+            },
+          ) ??
           false;
     }
 
@@ -235,71 +237,69 @@ class _HomePageState extends State<HomePage> {
           automaticallyImplyLeading: false,
           title: Container(
               child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Column(
+            scrollDirection: Axis.horizontal,
+            child: Column(
+              children: <Widget>[
+                Row(
                   children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        new IconButton(
-                          icon: new Icon(Icons.place),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => new MyLocation()));
-                            //Navigator.push(context, MaterialPageRoute(builder: (context)=>new HomePage(null)));
-                            //_getCurrentLocation();
-                            currentUser();
-                          },
-                        ),
-                        SingleChildScrollView(
-                          child: Container(
-                              child: new FlatButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                            new MyLocation()));
-                                  },
-                                  child: Text(
-                                    widget.add == null ? loc : "${widget.add}",
-                                    style: new TextStyle(
-                                        fontSize: 15.0, color: Colors.white),
-                                  ))),
-                        )
-                        //child: new FlatButton(onPre,new Text("${widget.add}",style: new TextStyle(fontSize: 15.0),)))),
-                      ],
+                    new IconButton(
+                      icon: new Icon(Icons.place),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => new MyLocation()));
+                        //Navigator.push(context, MaterialPageRoute(builder: (context)=>new HomePage(null)));
+                        //_getCurrentLocation();
+                        currentUser();
+                      },
                     ),
+                    SingleChildScrollView(
+                      child: Container(
+                          child: new FlatButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            new MyLocation()));
+                              },
+                              child: Text(
+                                widget.add == null ? loc : "${widget.add}",
+                                style: new TextStyle(
+                                    fontSize: 15.0, color: Colors.white),
+                              ))),
+                    )
+                    //child: new FlatButton(onPre,new Text("${widget.add}",style: new TextStyle(fontSize: 15.0),)))),
                   ],
                 ),
-              )),
+              ],
+            ),
+          )),
           actions: <Widget>[
             // action button
             IconButton(
               icon: Icon(Icons.shopping_cart),
               onPressed: () async {
                 pr.show();
-                FirebaseUser user=await FirebaseAuth.instance.currentUser();
+                FirebaseUser user = await FirebaseAuth.instance.currentUser();
                 pr.hide();
-                if(user==null){
+                if (user == null) {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => new lp()));
-                }
-                else{
+                } else {
                   pr.show();
                   await getcartData();
                   pr.hide();
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => new cart2()));
                 }
-
               },
             ),
           ]
-        //leading:new Text("hi"),
+          //leading:new Text("hi"),
 
-      ),
+          ),
 
       /* persistentFooterButtons: <Widget>[
         new IconButton(icon: new Icon(Icons.shop), onPressed: () => _onClick('Button1')),
@@ -352,27 +352,22 @@ class _HomePageState extends State<HomePage> {
               child: IconButton(
                   icon: new Icon(Icons.account_box),
                   onPressed: () async {
-
                     pr.show();
-                    FirebaseUser user=await FirebaseAuth.instance.currentUser();
+                    FirebaseUser user =
+                        await FirebaseAuth.instance.currentUser();
                     print(user);
                     pr.hide();
-                    if(user==null){
+                    if (user == null) {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => new lp()));
-
-                    }
-                    else{
+                    } else {
                       pr.show();
                       await getuac();
                       pr.hide();
 
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => new acc1()));
-
                     }
-
-
                   }),
             ),
             Expanded(
@@ -381,20 +376,18 @@ class _HomePageState extends State<HomePage> {
                 icon: new Icon(Icons.shopping_cart),
                 onPressed: () async {
                   pr.show();
-                  FirebaseUser user=await FirebaseAuth.instance.currentUser();
+                  FirebaseUser user = await FirebaseAuth.instance.currentUser();
                   pr.hide();
-                  if(user==null){
+                  if (user == null) {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => new lp()));
-                  }
-                  else{
+                  } else {
                     pr.show();
                     await getcartData();
                     pr.hide();
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => new cart2()));
                   }
-
                 },
               ),
             ),
@@ -537,192 +530,191 @@ class _HomePageState extends State<HomePage> {
       //onWillPop: _onBackPressed,
       body: WillPopScope(
         onWillPop: _onBackPressed,
-        child: Builder(
-            builder: (context){
-              if(fsellerlist.isNotEmpty) {
-                return Container(
-                  child:  ListView.builder(
-                      itemCount: fsellerlist.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        //currrentseller=sellerlist[index];
-                        if (fsellerlist.isNotEmpty) {
-                          return new Card(
-                              child: SingleChildScrollView(
-                                  child: InkWell(
-                                    onTap: () async {
-                                      pr.show();
-                                      await getproductdetails(fprod_id[index]);
-
-                                      pr.hide();
-                                      getmproductdetails(fprod_id[index]);
-                                      if(imgurl1.isNotEmpty){
-                                        print("category is "+fshop_cat[index].toString());
-                                        if(fshop_cat[index].toString()=="Electronics"){
-                                          pr.show();
-                                          FirebaseUser user=await FirebaseAuth.instance.currentUser();
-                                          pr.hide();
-                                          if(user==null){
-                                            Navigator.push(context,
-                                                MaterialPageRoute(builder: (context) => new lp()));
-                                          }
-                                          else{
-                                            String s;
-                                            //pr.show();
-                                            //await getcartData();
-                                            //pr.hide();
-                                            pr.show();
-                                            await FirebaseDatabase.instance.reference().child("AgeVerify").child(user.uid).once().then((DataSnapshot data){
-                                              //print(data.value);
-                                              print("data is");
-                                              print(data.key);
-                                              if(data.value!=null){
-                                                print(data.value['state']);
-                                                s=data.value['state'];
-                                              }
-
-
-
-                                            });
-                                            /* getStatus().then((val){
+        child: Builder(builder: (context) {
+          if (fsellerlist.isNotEmpty) {
+            return Container(
+              child: ListView.builder(
+                  itemCount: fsellerlist.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    //currrentseller=sellerlist[index];
+                    if (fsellerlist.isNotEmpty) {
+                      return new Card(
+                          child: SingleChildScrollView(
+                              child: InkWell(
+                        onTap: () async {
+                          // pr.show();
+                          // await getproductdetails(fprod_id[index]);
+                          // pr.hide();
+                          // getmproductdetails(fprod_id[index]);
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //       builder: (context) =>
+                          //           ProductPage(fsellerlist[index])),
+                          // );
+                          if (imgurl1.isNotEmpty) {
+                            print("category is " + fshop_cat[index].toString());
+                            if (fshop_cat[index].toString() == "Electronics") {
+                              pr.show();
+                              FirebaseUser user =
+                                  await FirebaseAuth.instance.currentUser();
+                              pr.hide();
+                              if (user == null) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => new lp()));
+                              } else {
+                                String s;
+                                //pr.show();
+                                //await getcartData();
+                                //pr.hide();
+                                pr.show();
+                                await FirebaseDatabase.instance
+                                    .reference()
+                                    .child("AgeVerify")
+                                    .child(user.uid)
+                                    .once()
+                                    .then((DataSnapshot data) {
+                                  //print(data.value);
+                                  print("data is");
+                                  print(data.key);
+                                  if (data.value != null) {
+                                    print(data.value['state']);
+                                    s = data.value['state'];
+                                  }
+                                });
+                                /* getStatus().then((val){
                                                   print(val);
                                                 });*/
-                                            pr.hide();
-                                            if(s=="applied")
-                                              Fluttertoast.showToast(
-                                                  msg: "Your Application is under review . Please wait....",
-                                                  toastLength: Toast.LENGTH_SHORT,
-                                                  gravity: ToastGravity.BOTTOM,
-                                                  timeInSecForIosWeb: 1,
-                                                  //backgroundColor: Colors.red,
-                                                  textColor: Colors.white,
-                                                  fontSize: 8.0
-                                              );
-                                            else if(s=="verified"){
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        e(fsellerlist[index])),
-                                              );
-                                            }
-                                            else {
-                                              Fluttertoast.showToast(
-                                                  msg: "Kindly verify your age",
-                                                  toastLength: Toast.LENGTH_SHORT,
-                                                  gravity: ToastGravity.BOTTOM,
-                                                  timeInSecForIosWeb: 1,
-                                                  //backgroundColor: Colors.red,
-                                                  textColor: Colors.white,
-                                                  fontSize: 8.0
-                                              );
-                                              Navigator.push(
-                                                  context, MaterialPageRoute(builder: (context) => new ageverify("")));
-                                            }
+                                pr.hide();
+                                if (s == "applied")
+                                  Fluttertoast.showToast(
+                                      msg:
+                                          "Your Application is under review . Please wait....",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      //backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      fontSize: 8.0);
+                                else if (s == "verified") {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            // e(fsellerlist[index])
+                                            ProductPage(fsellerlist[index])),
+                                  );
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg: "Kindly verify your age",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      //backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      fontSize: 8.0);
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              new ageverify("")));
+                                }
 
-                                            /*Navigator.push(
+                                /*Navigator.push(
                                                     context, MaterialPageRoute(builder: (context) => new ageverify("")));*/
-                                          }
+                              }
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ProductPage(fsellerlist[index])),
+                              );
+                            }
+                          } else {
+                            Fluttertoast.showToast(
+                                msg: "Sorry ! No products Available",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 1,
+                                //backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 8.0);
+                          }
 
-
-                                        }
-                                        else {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    e(fsellerlist[index])),
-                                          );
-                                        }
-                                      }
-                                      else{
-                                        Fluttertoast.showToast(
-                                            msg: "Sorry ! No products Available",
-                                            toastLength: Toast.LENGTH_SHORT,
-                                            gravity: ToastGravity.BOTTOM,
-                                            timeInSecForIosWeb: 1,
-                                            //backgroundColor: Colors.red,
-                                            textColor: Colors.white,
-                                            fontSize: 8.0
-                                        );
-                                      }
-
-                                      // Navigator.pop(context);
-                                    },
-                                    child: ListTile(
-                                      leading:
-                                      new Image.network(fshop_image[index],width:100.0,height:400.0),
-                                      title: new Text(fowner_name[index]),
-                                      subtitle: new Column(
-                                        children: <Widget>[
-                                          new Container(
-                                            alignment: Alignment.topLeft,
-                                            child: Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child:
-                                              new Text("Contact - " +
-                                                  fowner_phone[index]),
-                                            ),
-                                          ),
-                                          new Container(
-                                            alignment: Alignment.topLeft,
-                                            child: Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: new Text("Distance - " +
-                                                  distance[index]),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                              ));
-                        }
-                      }),
-                );
-              }
-              else
-              {
-                return new Container(
-                  height: MediaQuery.of(context).size.height,
-                  child: Stack(
-                    children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: Column(
+                          // Navigator.pop(context);
+                        },
+                        child: ListTile(
+                          leading: new Image.network(fshop_image[index],
+                              width: 100.0, height: 400.0),
+                          title: new Text(fowner_name[index]),
+                          subtitle: new Column(
+                            children: <Widget>[
+                              new Container(
+                                alignment: Alignment.topLeft,
+                                child: Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: new Text(
+                                      "Contact - " + fowner_phone[index]),
+                                ),
+                              ),
+                              new Container(
+                                alignment: Alignment.topLeft,
+                                child: Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child:
+                                      new Text("Distance - " + distance[index]),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      )));
+                    }
+                  }),
+            );
+          } else {
+            return new Container(
+              height: MediaQuery.of(context).size.height,
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                _title(),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 50,
-                            ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Container(
-                                  child: _title1(),
-                                )
-                              ],
-                            ),
-                            //_facebookButton(),
+                            _title(),
                           ],
                         ),
-                      ),
-                    ],
+                        SizedBox(
+                          height: 50,
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              child: _title1(),
+                            )
+                          ],
+                        ),
+                        //_facebookButton(),
+                      ],
+                    ),
                   ),
-                );
-              }
-            }),
+                ],
+              ),
+            );
+          }
+        }),
       ),
-
-
 
       /*
       new ListView(
@@ -843,28 +835,28 @@ class _HomePageState extends State<HomePage> {
 
   Future<bool> _onBackPressed() {
     return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Are you sure?'),
-          content: Text('Do you want to exit an App'),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('No'),
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-            ),
-            FlatButton(
-              child: Text('Yes'),
-              onPressed: () {
-                SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-              },
-            )
-          ],
-        );
-      },
-    ) ??
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Are you sure?'),
+              content: Text('Do you want to exit an App'),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('No'),
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                ),
+                FlatButton(
+                  child: Text('Yes'),
+                  onPressed: () {
+                    SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+                  },
+                )
+              ],
+            );
+          },
+        ) ??
         false;
   }
 
@@ -907,11 +899,15 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  getStatus() async{
+  getStatus() async {
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     print("in func");
 
-    return await FirebaseDatabase.instance.reference().child('AgeVerify').equalTo(user.uid).reference();
+    return await FirebaseDatabase.instance
+        .reference()
+        .child('AgeVerify')
+        .equalTo(user.uid)
+        .reference();
   }
 }
 
@@ -1046,6 +1042,7 @@ getorderdetails() async {
     }
   }
 }
+
 var pro;
 getproductdetails(String id) async {
   imgurl1.clear();
@@ -1075,7 +1072,7 @@ getproductdetails(String id) async {
       LinkedHashMap<String, dynamic> data1 = jsonDecode(resource.body);
       //print("length is :");
       //print(data1.length);
-      if(data1!=null){
+      if (data1 != null) {
         List k = data1.keys.toList();
 
         print(k);
@@ -1084,7 +1081,8 @@ getproductdetails(String id) async {
         int h = 0;
         len1 = d.length;
         while (h < 5) {
-          LinkedHashMap<String, dynamic> data2 = jsonDecode(resource.body)[k[h]];
+          LinkedHashMap<String, dynamic> data2 =
+              jsonDecode(resource.body)[k[h]];
           //List x=data2.values.toList();
           //print(data2["cat"]);
           prod_id2.add(k[h]);
@@ -1110,8 +1108,7 @@ getproductdetails(String id) async {
             description1.add(data4["ProductDesc"]);
             if (data4["Product_Image"] == null) {
               imgurl1.add("https://duckhawk.in/icon.jpeg");
-            }
-            else {
+            } else {
               imgurl1.add(data4["Product_Image"]);
             }
           }
@@ -1121,6 +1118,7 @@ getproductdetails(String id) async {
     }
   }
 }
+
 getmproductdetails(String id) async {
   String link = "https://duckhawk-1699a.firebaseio.com/Seller/" +
       loc +
@@ -1142,7 +1140,7 @@ getmproductdetails(String id) async {
       LinkedHashMap<String, dynamic> data1 = jsonDecode(resource.body);
       //print("length is :");
       //print(data1.length);
-      if(data1!=null){
+      if (data1 != null) {
         List k = data1.keys.toList();
 
         print(k);
@@ -1151,7 +1149,8 @@ getmproductdetails(String id) async {
         int h = 6;
         len1 = 10;
         while (h < len1) {
-          LinkedHashMap<String, dynamic> data2 = jsonDecode(resource.body)[k[h]];
+          LinkedHashMap<String, dynamic> data2 =
+              jsonDecode(resource.body)[k[h]];
           //List x=data2.values.toList();
           //print(data2["cat"]);
           prod_id2.add(k[h]);
@@ -1170,19 +1169,164 @@ getmproductdetails(String id) async {
             LinkedHashMap<String, dynamic> data4 = jsonDecode(resource3.body);
             // print("city is:");
 
-
             quantity1.add(data4["stock"]);
             price1.add(data4["price"]);
             name1.add(data4["ProductName"]);
             description1.add(data4["ProductDesc"]);
             if (data4["Product_Image"] == null) {
               imgurl1.add("https://duckhawk.in/icon.jpeg");
-            }
-            else {
+            } else {
               imgurl1.add(data4["Product_Image"]);
             }
           }
           h++;
+        }
+      }
+    }
+  }
+}
+
+class EachProduct {
+  String name, des, q, img, p, id;
+  EachProduct(this.name, this.des, this.q, this.img, this.p, this.id);
+}
+
+// Trail ...
+
+class ProductPage extends StatefulWidget {
+  String _id;
+  ProductPage(this._id);
+
+  @override
+  _ProductPageState createState() => _ProductPageState();
+}
+
+class _ProductPageState extends State<ProductPage> {
+  
+  List<EachProduct> allProduct = [];
+  
+  @override
+  void initState() {
+    getproductdetailsNew(widget._id);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print('In the demo Product Page');
+
+    return Scaffold(
+      body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          physics: ScrollPhysics(),
+          child: Column(
+              children: allProduct
+                  .map(
+                    (p) => Card(
+                      elevation: 10,
+                      borderOnForeground: true,
+                      child: Column(
+                        mainAxisAlignment:MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Image.network(p.img),
+                          Text("Sl NO . " +
+                              (allProduct.indexOf(p)+1).toString() +
+                              " "),
+                          Text(p.name),
+                          Text(p.des),
+                          Text(p.p),
+                          Text(p.q),
+                          Text(p.id)
+                        ],
+                      ),
+                    ),
+                  )
+                  .toList())),
+    );
+  }
+
+  getproductdetailsNew(String id) async {
+    imgurl1.clear();
+    quantity1.clear();
+    price1.clear();
+    name1.clear();
+    description1.clear();
+    prod_id2.clear();
+    prod_cat2.clear();
+    String link = "https://duckhawk-1699a.firebaseio.com/Seller/" +
+        loc +
+        "/" +
+        id +
+        "/products.json";
+    final resource = await http.get(link);
+    print("link is :");
+    print(link);
+    print(resource.body);
+    pro = resource.body;
+    //print(pro);
+    if (pro.toString() == null) {
+      print("hi");
+    }
+
+    if (resource.body != null) {
+      if (resource.statusCode == 200) {
+        LinkedHashMap<String, dynamic> data1 = jsonDecode(resource.body);
+        //print("length is :");
+        //print(data1.length);
+        if (data1 != null) {
+          List k = data1.keys.toList();
+
+          print(k);
+          List d = data1.values.toList();
+
+          int h = 0;
+          len1 = d.length;
+          while (h < d.length) {
+            LinkedHashMap<String, dynamic> data2 =
+                jsonDecode(resource.body)[k[h]];
+            //List x=data2.values.toList();
+            //print(data2["cat"]);
+            prod_id2.add(k[h]);
+            prod_cat2.add(data2["cat"]);
+            //badd
+
+            String link2 = "https://duckhawk-1699a.firebaseio.com/Products/" +
+                loc +
+                "/" +
+                data2["cat"] +
+                "/" +
+                k[h] +
+                ".json";
+            final resource3 = await http.get(link2);
+            if (resource3.statusCode == 200) {
+              LinkedHashMap<String, dynamic> data4 = jsonDecode(resource3.body);
+              // print("city is:");
+
+              EachProduct eachProduct = new EachProduct(
+                  data4["ProductName"],
+                  data4["ProductDesc"],
+                  data4["stock"],
+                  "https://duckhawk.in/icon.jpeg",
+                  data4["price"],
+                  k[h]);
+
+              setState(() {
+                allProduct.add(eachProduct);
+              });
+
+              quantity1.add(data4["stock"]);
+              price1.add(data4["price"]);
+              name1.add(data4["ProductName"]);
+              description1.add(data4["ProductDesc"]);
+              if (data4["Product_Image"] == null) {
+                imgurl1.add("https://duckhawk.in/icon.jpeg");
+              } else {
+                imgurl1.add(data4["Product_Image"]);
+              }
+            }
+            h++;
+          }
         }
       }
     }
