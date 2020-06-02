@@ -1,3 +1,5 @@
+import 'dart:collection';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,6 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/pages/account1.dart';
 import 'package:project_duckhawk/pages/ageverify.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:project_duckhawk/pages/cart2.dart';
 
@@ -29,8 +32,99 @@ class e extends StatefulWidget {
 String a, b, c, d, f, g;
 List li = [];
 ProgressDialog pr;
+class EachProduct {
+  String name, des, q, img, p, id;
+  EachProduct(this.name, this.des, this.q, this.img, this.p, this.id);
+}
 
 class _eState extends State<e> {
+  List<EachProduct> allProduct = [];
+  @override
+  void initState() {
+    getproductdetailsNew(widget.s);
+    super.initState();
+  }
+  getproductdetailsNew(String id) async {
+    print(id);
+    imgurl1.clear();
+    quantity1.clear();
+    price1.clear();
+    name1.clear();
+    description1.clear();
+    prod_id2.clear();
+    prod_cat2.clear();
+    String link = "https://duckhawk-1699a.firebaseio.com/Seller/" +
+        loc +
+        "/" +
+        id +
+        "/products.json";
+    final resource = await http.get(link);
+    print("link is :");
+    print(link);
+    print(resource.body);
+    pro = resource.body;
+    //print(pro);
+    if (pro.toString() == null) {
+      print("hi");
+    }
+
+    if (resource.body != null) {
+      if (resource.statusCode == 200) {
+        LinkedHashMap<String, dynamic> data1 = jsonDecode(resource.body);
+        //print("length is :");
+        //print(data1.length);
+        if (data1 != null) {
+          List k = data1.keys.toList();
+
+          print(k);
+          List d = data1.values.toList();
+
+          int h = 0;
+          len1 = d.length;
+          while (h < d.length) {
+            LinkedHashMap<String, dynamic> data2 =
+            jsonDecode(resource.body)[k[h]];
+            //List x=data2.values.toList();
+            //print(data2["cat"]);
+            prod_id2.add(k[h]);
+            prod_cat2.add(data2["cat"]);
+            //badd
+
+
+            String link2 = "https://duckhawk-1699a.firebaseio.com/Products/" + loc + "/" + data2["cat"] + "/" + k[h] + ".json";
+            final resource3 = await http.get(link2);
+            if (resource3.statusCode == 200) {
+              LinkedHashMap<String, dynamic> data4 = jsonDecode(resource3.body);
+              // print("city is:");
+
+              EachProduct eachProduct = new EachProduct(
+                  data4["ProductName"],
+                  data4["ProductDesc"],
+                  data4["stock"],
+                  "https://duckhawk.in/icon.jpeg",
+                  data4["price"],
+                  k[h]);
+
+              setState(() {
+                allProduct.add(eachProduct);
+              });
+
+              quantity1.add(data4["stock"]);
+              price1.add(data4["price"]);
+              name1.add(data4["ProductName"]);
+              description1.add(data4["ProductDesc"]);
+              if (data4["Product_Image"] == null) {
+                imgurl1.add("https://duckhawk.in/icon.jpeg");
+              } else {
+                imgurl1.add(data4["Product_Image"]);
+              }
+            }
+            h++;
+          }
+        }
+      }
+    }
+  }
   @override
   Widget build(BuildContext context) {
     pr = new ProgressDialog(context, showLogs: true);
@@ -183,7 +277,35 @@ class _eState extends State<e> {
           ],
         ),
       ),
-      body: Builder(builder: (context) {
+      body:
+      SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          physics: ScrollPhysics(),
+          child: Column(
+              children: allProduct
+                  .map(
+                    (p) => Card(
+                  elevation: 10,
+                  borderOnForeground: true,
+                  child: Column(
+                    mainAxisAlignment:MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Image.network(p.img),
+                      Text("Sl NO . " +
+                          (allProduct.indexOf(p)+1).toString() +
+                          " "),
+                      Text(p.name),
+                      Text(p.des),
+                      Text(p.p),
+                      Text(p.q),
+                      Text(p.id)
+                    ],
+                  ),
+                ),
+              )
+                  .toList())),
+      /*Builder(builder: (context) {
         if (pro.toString() != null) {
           return Container(
               child: ListView.builder(
@@ -323,7 +445,7 @@ class _eState extends State<e> {
             ),
           );
         }
-      }),
+      }),*/
 
       /* body: Container(
         child: new ListView.builder(

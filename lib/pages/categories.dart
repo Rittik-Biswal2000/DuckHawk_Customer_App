@@ -302,6 +302,7 @@ Future<void> getData(String x,String cate) async {
             print(owner_phone);
             print(owner_name);
             print(fshop_cat);
+            print(fsellerlist);
 
             h++;
 
@@ -1203,18 +1204,20 @@ class _categoriesState extends State<categories> {
                             if(loc==null){
                               loc=await _getCurrentLocation();
                             }
+                            pr.show();
 
-                            // getData(loc,"All");
+                             getData(loc,"All");
+                             pr.hide();
                              //response=await http.get("https://duckhawk-1699a.firebaseio.com/Seller/Bhubaneswar/T7n6FiUoxsbQ4JWWqFneaUXCKLZ2/products.json");
                             //await  getcountries();
 
 
 
-                           // Navigator.pop(context);
+                            Navigator.pop(context);
 
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => new ca()),
+                              MaterialPageRoute(builder: (context) => new HomePage(null)),
                             );
 
                           }

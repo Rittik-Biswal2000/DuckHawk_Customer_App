@@ -546,13 +546,13 @@ class _HomePageState extends State<HomePage> {
                           // await getproductdetails(fprod_id[index]);
                           // pr.hide();
                           // getmproductdetails(fprod_id[index]);
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //       builder: (context) =>
-                          //           ProductPage(fsellerlist[index])),
-                          // );
-                          if (imgurl1.isNotEmpty) {
+                           /*Navigator.push(
+                             context,
+                             MaterialPageRoute(
+                                 builder: (context) =>
+                                     ProductPage(fsellerlist[index])),
+                           );*/
+                          /*if (imgurl1.isNotEmpty) {*/
                             print("category is " + fshop_cat[index].toString());
                             if (fshop_cat[index].toString() == "Electronics") {
                               pr.show();
@@ -599,12 +599,14 @@ class _HomePageState extends State<HomePage> {
                                       textColor: Colors.white,
                                       fontSize: 8.0);
                                 else if (s == "verified") {
+                                  print("seller id :");
+                                  print(fsellerlist[index]);
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
                                             // e(fsellerlist[index])
-                                            ProductPage(fsellerlist[index])),
+                                            e(fsellerlist[index])),
                                   );
                                 } else {
                                   Fluttertoast.showToast(
@@ -626,14 +628,15 @@ class _HomePageState extends State<HomePage> {
                                                     context, MaterialPageRoute(builder: (context) => new ageverify("")));*/
                               }
                             } else {
+                              print(fsellerlist[index]);
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        ProductPage(fsellerlist[index])),
+                                        e(fsellerlist[index])),
                               );
                             }
-                          } else {
+                         /* } else {
                             Fluttertoast.showToast(
                                 msg: "Sorry ! No products Available",
                                 toastLength: Toast.LENGTH_SHORT,
@@ -642,7 +645,7 @@ class _HomePageState extends State<HomePage> {
                                 //backgroundColor: Colors.red,
                                 textColor: Colors.white,
                                 fontSize: 8.0);
-                          }
+                          }*/
 
                           // Navigator.pop(context);
                         },
@@ -1247,6 +1250,7 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   getproductdetailsNew(String id) async {
+    print(id);
     imgurl1.clear();
     quantity1.clear();
     price1.clear();
@@ -1290,6 +1294,7 @@ class _ProductPageState extends State<ProductPage> {
             prod_id2.add(k[h]);
             prod_cat2.add(data2["cat"]);
             //badd
+
 
             String link2 = "https://duckhawk-1699a.firebaseio.com/Products/" +
                 loc +
