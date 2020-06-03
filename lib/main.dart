@@ -554,7 +554,7 @@ class _HomePageState extends State<HomePage> {
                            );*/
                           /*if (imgurl1.isNotEmpty) {*/
                             print("category is " + fshop_cat[index].toString());
-                            if (fshop_cat[index].toString() == "Electronics") {
+                            if (fshop_cat[index].toString() == "Wine") {
                               pr.show();
                               FirebaseUser user =
                                   await FirebaseAuth.instance.currentUser();
@@ -606,7 +606,7 @@ class _HomePageState extends State<HomePage> {
                                     MaterialPageRoute(
                                         builder: (context) =>
                                             // e(fsellerlist[index])
-                                            e(fsellerlist[index])),
+                                            e(fsellerlist[index],fprod_id[index])),
                                   );
                                 } else {
                                   Fluttertoast.showToast(
@@ -628,12 +628,13 @@ class _HomePageState extends State<HomePage> {
                                                     context, MaterialPageRoute(builder: (context) => new ageverify("")));*/
                               }
                             } else {
+                              print("jhgkhkjhkhjhjknjknkljkljkljklmkl");
                               print(fsellerlist[index]);
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        e(fsellerlist[index])),
+                                        e(fsellerlist[index],fprod_id[index])),
                               );
                             }
                          /* } else {

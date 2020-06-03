@@ -441,6 +441,8 @@ getpoint(String s)async{
     @override
     Widget build(BuildContext context) {
       //units=1.toString();
+      print("in item_info page seller is :");
+      print(widget.curse);
       pr = new ProgressDialog(context, showLogs: true);
       pr.style(message: 'Please wait...');
       image();

@@ -125,6 +125,7 @@ Future<void> getData(String x,String cate) async {
         for (var i = 0; i < length; i++) {
           sellerlist.add(list[i]);
         }
+        //print(sellerlist);
 
         //  print(data[list[3]]);
 
@@ -223,7 +224,7 @@ Future<void> getData(String x,String cate) async {
             prod_id.add(list[h]);
 
 
-            double lati = data1["Latitude"];
+            double lati = (data1["Latitude"])==null?0.000:data1["Latitude"];
             owner_phone.add(data1["Owner_Number"].toString());
             owner_name.add(data1["Shop_Name"]);
             shop_cat.add(data1["Category"]);
@@ -234,7 +235,7 @@ Future<void> getData(String x,String cate) async {
               shop_image.add(data1["Shop_Image"]);
             }
 
-            double longi = data1["Longitude"];
+            double longi = (data1["Longitude"])==null?0.000:data1["Longitude"];
 
             LatLng l1 = new LatLng(a, b);
             LatLng l2 = new LatLng(lati, longi);
@@ -299,10 +300,10 @@ Future<void> getData(String x,String cate) async {
 //          j++;
 //        }
           }
-            print(owner_phone);
+            /*print(owner_phone);
             print(owner_name);
             print(fshop_cat);
-            print(fsellerlist);
+            print(fsellerlist);*/
 
             h++;
 
@@ -345,6 +346,8 @@ Future<void> getData(String x,String cate) async {
     fshop_cat.add(shop_cat[x]);
     fshop_image.add(shop_image[x]);
   }
+  print("In Category page :");
+  print(fsellerlist);
 
 
 
@@ -1190,7 +1193,7 @@ class _categoriesState extends State<categories> {
                           child:
                           const Text('Wine', style: TextStyle(fontSize: 20)),)),
                     RaisedButton(
-                        onPressed: () async {
+                        onPressed: () async{
 
 
 
@@ -1198,26 +1201,20 @@ class _categoriesState extends State<categories> {
                           print("current state of gps");
                           print(isGpsEnabled);
                           if(isGpsEnabled==true) {
-
+                            pr.show();
                             //loc = await _getCurrentLocation();
                             //loc=bl;
                             if(loc==null){
                               loc=await _getCurrentLocation();
                             }
-                            pr.show();
 
-                             getData(loc,"All");
-                             pr.hide();
-                             //response=await http.get("https://duckhawk-1699a.firebaseio.com/Seller/Bhubaneswar/T7n6FiUoxsbQ4JWWqFneaUXCKLZ2/products.json");
-                            //await  getcountries();
-
-
-
-                            Navigator.pop(context);
+                            await getData(loc,"All");
+                            pr.hide();
+                            // Navigator.pop(context);
 
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => new HomePage(null)),
+                              MaterialPageRoute(builder: (context) => HomePage(null)),
                             );
 
                           }

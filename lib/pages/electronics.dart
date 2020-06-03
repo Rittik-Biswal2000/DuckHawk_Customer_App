@@ -23,8 +23,9 @@ import 'package:project_duckhawk/src/loginPage.dart';
 
 class e extends StatefulWidget {
   String s;
+  String pi;
 
-  e(this.s);
+  e(this.s,this.pi);
   @override
   _eState createState() => _eState();
 }
@@ -33,15 +34,15 @@ String a, b, c, d, f, g;
 List li = [];
 ProgressDialog pr;
 class EachProduct {
-  String name, des, q, img, p, id;
-  EachProduct(this.name, this.des, this.q, this.img, this.p, this.id);
+  String name, des, q, img, p, id,cat;
+  EachProduct(this.name, this.des, this.q, this.img, this.p, this.id, this.cat);
 }
 
 class _eState extends State<e> {
   List<EachProduct> allProduct = [];
   @override
   void initState() {
-    getproductdetailsNew(widget.s);
+    getproductdetailsNew(widget.pi);
     super.initState();
   }
   getproductdetailsNew(String id) async {
@@ -60,6 +61,7 @@ class _eState extends State<e> {
         "/products.json";
     final resource = await http.get(link);
     print("link is :");
+    print(id);
     print(link);
     print(resource.body);
     pro = resource.body;
@@ -101,9 +103,10 @@ class _eState extends State<e> {
                   data4["ProductName"],
                   data4["ProductDesc"],
                   data4["stock"],
-                  "https://duckhawk.in/icon.jpeg",
+                  data4["Product_Image"],
                   data4["price"],
-                  k[h]);
+                  k[h],
+              data2["cat"]);
 
               setState(() {
                 allProduct.add(eachProduct);
@@ -284,7 +287,92 @@ class _eState extends State<e> {
           child: Column(
               children: allProduct
                   .map(
-                    (p) => Card(
+                    (p) =>
+                   new Card(
+              child: SingleChildScrollView(
+              child:InkWell(
+              child: ListTile(
+
+              leading:
+              new Image.network((p.img==null)?"https://duckhawk.in/icon.jpeg":p.img,width:100.0,height:400.0),
+
+            title:new Text(p.name),
+            subtitle: new Column(
+              children: <Widget>[
+                new Container(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                      padding: EdgeInsets.all(8.0),
+
+                      child:new Text("Price : ₹"+p.p,style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
+                  ),
+                  /*alignment: Alignment.topLeft,
+                          child:new Text("Price is : ₹"+prod_price[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)*/
+                ),
+                new Container(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                      padding: EdgeInsets.all(8.0),
+
+
+
+                      child:new Text("Quantity : "+p.q,style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
+                  ),
+                  //child:new Text("Quantity : "+item_units[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
+                ),
+                /*new Row(
+                            children: <Widget>[
+                              new FlatButton(onPressed: (){
+                                //createAlertDialog(context, name.split(': ')[1], imgurl, price.split(': ')[1]);
+
+
+
+
+
+                                Navigator.push(
+                                    context, MaterialPageRoute(builder: (context) => new item_info(prod_id2[index],imgurl1[index],name1[index],price1[index],description1[index],quantity1[index])));
+
+                                // createAlertDialog(context,item_name[index],imageurl[index],prod_price[index],item_units[index],u[index].data["ProductId"]);
+                              },
+                                  child:Text("Update")
+                              ),
+                              new FlatButton(
+                                  onPressed: (){
+
+                                    //l[index].toString().split(': ')[1].split(',')[0]
+                                    // firestore.collection('users').document(user.uid).collection('cart').document(u[index].data["ProductId"]).delete();
+
+
+                                    //refreshList();
+                                    //Navigator.pop(context, MaterialPageRoute(builder: (context)=>new LogoutOverlay()));
+                                    //Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart()));
+
+                                  }, child: Text("Remove")),
+
+                            ],
+                          ),*/
+
+              ],
+            ),
+
+          ),
+        onTap: (){
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => new item_info(widget.pi,p.cat,p.id,(p.img==null)?"https://duckhawk.in/icon.jpeg":p.img,p.name,p.p,p.des,p.q)));
+          //Navigator.pop(context);
+          /*print(prod_id[index]);
+                      print(imgurl1[index]);
+                      print(name1[index]);
+                      print(price1[index]);
+                      print(description1[index]);
+                      print(quantity1[index]);*/
+
+
+        },
+      )
+    ),
+    ),
+                /*Card(
                   elevation: 10,
                   borderOnForeground: true,
                   child: Column(
@@ -302,7 +390,7 @@ class _eState extends State<e> {
                       Text(p.id)
                     ],
                   ),
-                ),
+                ),*/
               )
                   .toList())),
       /*Builder(builder: (context) {
