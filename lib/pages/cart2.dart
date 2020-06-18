@@ -1795,7 +1795,7 @@ placeorder(String name,String cat,String image,String price,String quantity,Stri
   String time=d.toString()+" "+t.toString();
   print(currrentseller);
 
-  Orders todo = new Orders(iadd, user.uid, seller, time, double.parse(price));
+  Orders todo = new Orders(iadd, user.uid, seller, time, double.parse(price)," ");
   Products prod = new Products(id, cat, loc, double.parse(price), double.parse(quantity), seller);
   locs loc1 = new locs(latitude1, longitude1);
   DatabaseReference rootRef=FirebaseDatabase.instance.reference();

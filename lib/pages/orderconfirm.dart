@@ -6,6 +6,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:flutter/material.dart';
 import 'package:project_duckhawk/main.dart';
+
+import 'myorders.dart';
 class orderconfirm extends StatefulWidget {
   @override
   _orderconfirmState createState() => _orderconfirmState();
@@ -66,9 +68,10 @@ class _orderconfirmState extends State<orderconfirm> {
             children: <Widget>[
               FlatButton(
                 onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new myorders()));
                 },
                 child: Text(
-                  "View Order Summary",textAlign: TextAlign.center,style: TextStyle(fontSize: 32.0),
+                  "View Orders",textAlign: TextAlign.center,style: TextStyle(fontSize: 32.0),
                 ),
               )
             ],

@@ -25,6 +25,7 @@ dependencies:
   cloud_firestore: ^0.13.4
   google_sign_in: ^4.1.4
   shared_preferences: ^0.5.6+2
+  razorpay_flutter: ^1.1.4
   fluttertoast: ^4.0.1
   pull_to_refresh: ^1.5.7
   url_launcher: ^5.4.2

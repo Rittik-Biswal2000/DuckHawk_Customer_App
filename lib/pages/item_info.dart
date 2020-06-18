@@ -27,7 +27,9 @@ import 'package:project_duckhawk/pages/orderconfirm.dart';
 import 'package:project_duckhawk/pages/categories.dart';
 import 'package:cloud_functions/cloud_functions.dart';
   import 'package:http/http.dart' as http;
+import 'package:project_duckhawk/pages/payment.dart';
 import 'package:project_duckhawk/src/loginPage.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
   import '../main.dart';
 
@@ -119,13 +121,55 @@ getpoint(String s)async{
     }
   void initState(){
       super.initState();
-
-
       getuser();
+      razorpay=new Razorpay();
+      razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS,handlerPaymentSuccess);
+      razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET,handlerExternalWallet);
+      razorpay.on(Razorpay.EVENT_PAYMENT_ERROR,handlerErrorFailure);
 
 
 
   }
+    @override
+    void dispose() {
+      super.dispose();
+      razorpay.clear();
+    }
+    void handlerPaymentSuccess(PaymentSuccessResponse response){
+      print(response.paymentId);
+      placeorder(response.paymentId);
+      Navigator.of(context).pop();
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>new orderconfirm()));
+
+
+          }
+    void handlerErrorFailure(PaymentFailureResponse response){
+      print(response.message);
+    }
+    void handlerExternalWallet(ExternalWalletResponse response){
+      print("Ext Wallet");
+    }
+    void openCheckout(){
+      var options={
+        "key":"rzp_test_dZOanZeg9WqGIe",
+        "amount":(double.parse(widget.p)/40)*100,
+        "name":"Sample App",
+        "description":"Payment......",
+        "prefill":{
+          "contact":"",
+          "email":""
+        },
+        "external":{
+          "wallets":["paytm"],
+        }
+      };
+      try{
+        razorpay.open(options);
+
+      }catch(e){
+        print(e.toString());
+      }
+    }
 
   getuser()async{
       await getquanlist();
@@ -154,7 +198,7 @@ getpoint(String s)async{
       print(currrentseller);
       return showDialog(context: context,builder: (context){
         return AlertDialog(
-          title: Text("We only accept Cash on Delivery as a mode of payment"),
+          title: Text("We also accept Cash on Delivery as a mode of payment"),
           content: new Column(
             children: <Widget>[
               new Row(
@@ -172,11 +216,35 @@ getpoint(String s)async{
                   new Text("Pay only after you get the product in hand\nNo risk of loss of your hard earned money\nNo dependent on credit or debit cards"),
                 ],
               ),
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  new RaisedButton(onPressed: (){
+                    openCheckout();
+                  },
+                  child: new Text("Pay Online"),)
+                ],
+              ),
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  new RaisedButton(onPressed: (){
+        placeorder("COD");
+        Navigator.of(context).pop();
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>new orderconfirm()));
+
+
+        },
+                    child: new Text("COD"),)
+                ],
+              ),
 
 
             ],
           ),
-          actions: <Widget>[
+          /*actions: <Widget>[
             MaterialButton(
               elevation:5.0,
               child: Text('Conform'),
@@ -188,7 +256,7 @@ getpoint(String s)async{
 
               },
             )
-          ],
+          ],*/
         );
       });
     }
@@ -682,6 +750,27 @@ getpoint(String s)async{
                 //new IconButton(icon:Icon(Icons.favorite),onPressed: (){}),
               ],
             ),
+            /*Row(
+              children: <Widget>[
+                Expanded(
+                  child:MaterialButton(
+                    onPressed:(quantity!='0')? () async {
+                      /*addtocart();
+                      Navigator.push(context,MaterialPageRoute(builder:(context)=>new cart()));*/
+                      Navigator.push(context,MaterialPageRoute(builder:(context)=>new pay(widget.p,units)));
+
+                      //Navigator.pop(context);
+                    }:null,
+                    color:Colors.redAccent,
+                    textColor: Colors.white,
+                    elevation: 0.2,
+                    child:new Text("Pay Online"),
+                  ),
+                ),
+
+                //new IconButton(icon:Icon(Icons.favorite),onPressed: (){}),
+              ],
+            ),*/
             Divider(),
             new ListTile(
               title:new Text("Product Details"),
@@ -757,7 +846,7 @@ getpoint(String s)async{
       }
     }
 
-  placeorder() async {
+  placeorder(String payid) async {
       DatabaseReference _database=FirebaseDatabase.instance.reference();
     var now = new DateTime.now();
     //print(now.millisecondsSinceEpoch);
@@ -777,7 +866,7 @@ getpoint(String s)async{
 
 
     });*/
-    Orders todo = new Orders(iadd, user.uid, widget.curse, time, double.parse(widget.p));
+    Orders todo = new Orders(iadd, user.uid, widget.curse, time, double.parse(widget.p),payid);
     Products prod = new Products(widget.id, widget.cat, loc, double.parse(widget.p), double.parse(widget.q), widget.curse);
     locs loc1 = new locs(latitude1, longitude1);
     DatabaseReference rootRef=FirebaseDatabase.instance.reference();

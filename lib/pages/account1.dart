@@ -182,9 +182,10 @@ class _acc1State extends State<acc1> {
                 children: <Widget>[
                   new RaisedButton(
                       onPressed: () async {
-                        pr.show();
-                        await getorderdetails();
-                        pr.hide();
+                        //pr.show();
+                        //await getorderdetails();
+
+                        //pr.hide();
                         Navigator.push(
                             context,
                             MaterialPageRoute(

@@ -8,8 +8,9 @@ class Orders {
   String seller;
   String time;
   double total;
+  String payid;
 
-  Orders(this.Address,this.buyer, this.seller, this.time,this.total);
+  Orders(this.Address,this.buyer, this.seller, this.time,this.total, this.payid);
 
   Orders.fromSnapshot(DataSnapshot snapshot) :
         key = snapshot.value["key"],
@@ -17,7 +18,9 @@ class Orders {
         buyer = snapshot.value["buyer"],
         seller = snapshot.value["seller"],
         time = snapshot.value["time"],
+        payid=snapshot.value["payid"],
         total = snapshot.value["total"];
+
 
 
 
@@ -28,6 +31,7 @@ class Orders {
       "buyer": buyer,
       "seller": seller,
       "time": time,
+      "transaction":payid,
       "total": total
     };
   }
