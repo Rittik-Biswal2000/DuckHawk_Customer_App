@@ -864,7 +864,9 @@ placeorder(String name,String cat,String image,String price,String quantity,Stri
 import 'dart:collection';
 import 'dart:convert';
 
-
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:project_duckhawk/pages/payment.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -896,6 +898,64 @@ final _text1 = TextEditingController();
 bool _validate = false;
 ProgressDialog pr;
 class _cart2State extends State<cart2> {
+  void initState(){
+    super.initState();
+    razorpay=new Razorpay();
+    razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS,handlerPaymentSuccess);
+    razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET,handlerExternalWallet);
+    razorpay.on(Razorpay.EVENT_PAYMENT_ERROR,handlerErrorFailure);
+
+
+
+  }
+  @override
+  void dispose() {
+    super.dispose();
+    razorpay.clear();
+  }
+  void handlerPaymentSuccess(PaymentSuccessResponse response)async{
+    print(response.paymentId);
+    //placeorder(response.paymentId);
+
+    Navigator.of(context).pop();
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>new orderconfirm()));
+    pr.show();
+    for(var i=0;i<cname.length;i++)
+    {
+      print("in place order");
+      await placeorder(cname[i], ccat[i], cimage[i], cprice[i], cquantity[i],  cid[i], cseller[i],response.paymentId);
+    }
+    pr.hide();
+
+
+  }
+  void handlerErrorFailure(PaymentFailureResponse response){
+    print(response.message);
+  }
+  void handlerExternalWallet(ExternalWalletResponse response){
+    print("Ext Wallet");
+  }
+  void openCheckout1(){
+    var options={
+      "key":"rzp_test_dZOanZeg9WqGIe",
+      "amount":(double.parse(ctotal.toString()))*100,
+      "name":"Duckhawk",
+      "description":"Payment......",
+      "prefill":{
+        "contact":"",
+        "email":""
+      },
+      "external":{
+        "wallets":["paytm"],
+      }
+    };
+    try{
+      razorpay.open(options);
+
+    }catch(e){
+      print(e.toString());
+    }
+  }
   GoogleMapController mapController;
   final Map<String, Marker> _markers = {};
   String searchAddr;
@@ -905,7 +965,7 @@ class _cart2State extends State<cart2> {
     print(currrentseller);
     return showDialog(context: context,builder: (context){
       return AlertDialog(
-        title: Text("We only accept Cash on Delivery as a mode of payment"),
+        title: Text("We only both Cash on Delivery & Online Payment"),
         content: new Column(
           children: <Widget>[
             new Row(
@@ -923,6 +983,21 @@ class _cart2State extends State<cart2> {
                 new Text("Pay only after you get the product in hand\nNo risk of loss of your hard earned money\nNo dependent on credit or debit cards"),
               ],
             ),
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                new FlatButton.icon(onPressed: (){}, icon: Icon(MdiIcons.cash), label: new Text("COD"))
+              ],
+            ),
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                new FlatButton.icon(onPressed: (){}, icon: Icon(MdiIcons.creditCard), label: new Text("Pay Online"))
+              ],
+            ),
+
 
 
           ],
@@ -932,7 +1007,7 @@ class _cart2State extends State<cart2> {
             elevation:5.0,
             child: Text('Confirm'),
             onPressed: (){
-              placeorder(n,c,p,pr,q,i,sel);
+              //placeorder(n,c,p,pr,q,i,sel);
               Navigator.of(context).pop();
               Navigator.push(context, MaterialPageRoute(builder: (context)=>new orderconfirm()));
 
@@ -950,7 +1025,7 @@ class _cart2State extends State<cart2> {
     print(currrentseller);
     return showDialog(context: context,builder: (context){
       return AlertDialog(
-        title: Text("We only accept Cash on Delivery as a mode of payment"),
+        title: Text("We accept both Cash on Delivery & Online Payment"),
         content: new Column(
           children: <Widget>[
             new Row(
@@ -965,14 +1040,62 @@ class _cart2State extends State<cart2> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                new Text("Pay only after you get the product in hand\nNo risk of loss of your hard earned money\nNo dependent on credit or debit cards"),
+                new FlatButton.icon(onPressed: () async{
+                  //placeorder(n,c,p,pr,q,i,sel);
+                  Navigator.of(context).pop();
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>new orderconfirm()));
+                  pr.show();
+                  for(var i=0;i<cname.length;i++)
+                  {
+                    print("in place order");
+                    await placeorder(cname[i], ccat[i], cimage[i], cprice[i], cquantity[i],  cid[i], cseller[i],"COD");
+                  }
+                  pr.hide();
+
+
+
+
+
+
+
+
+
+                }, icon: Icon(MdiIcons.cash), label: new Text("COD"))
+              ],
+            ),
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                new FlatButton.icon(onPressed: () async{
+                  openCheckout1();
+                  /*
+      //placeorder(n,c,p,pr,q,i,sel);
+      Navigator.of(context).pop();
+      pr.show();
+      for(var i=0;i<cname.length;i++)
+      {
+        print("in place order");
+        await placeorder(cname[i], ccat[i], cimage[i], cprice[i], cquantity[i],  cid[i], cseller[i]);
+      }
+      pr.hide();
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>new orderconfirm()));
+
+
+
+
+
+
+
+
+      */}, icon: Icon(MdiIcons.creditCard), label: new Text("Pay Online"))
               ],
             ),
 
 
           ],
         ),
-        actions: <Widget>[
+        /*actions: <Widget>[
           MaterialButton(
             elevation:5.0,
             child: Text('Confirm'),
@@ -995,7 +1118,7 @@ class _cart2State extends State<cart2> {
 
             },
           )
-        ],
+        ],*/
       );
     });
   }
@@ -1643,9 +1766,9 @@ class _cart2State extends State<cart2> {
                                     onTap: (){
                                     },
                                     child:
-                                    new Image.network(cimage[index],width:100.0,height:400.0)
+                                    new Image.network(cimage[index]==null?"https://duckhawk.in/icon.jpeg":cimage[index],width:100.0,height:400.0)
                                 ),
-                                title:new Text(cname[index]),
+                                title:new Text(cname[index]==null?" ":cname[index]),
                                 subtitle: new Column(
                                   children: <Widget>[
                                     new Container(
@@ -1653,7 +1776,7 @@ class _cart2State extends State<cart2> {
                                       child: Padding(
                                           padding: EdgeInsets.all(8.0),
 
-                                          child:new Text("Price : ₹"+cprice[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
+                                          child:new Text("Price : ₹"+cprice[index].toString(),style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
                                       ),
                                       /*alignment: Alignment.topLeft,
                         child:new Text("Price is : ₹"+prod_price[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)*/
@@ -1663,7 +1786,7 @@ class _cart2State extends State<cart2> {
                                       child: Padding(
                                           padding: EdgeInsets.all(8.0),
 
-                                          child:new Text("Quantity : "+cquantity[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
+                                          child:new Text("Quantity : "+cquantity[index].toString(),style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
                                       ),
                                       //child:new Text("Quantity : "+item_units[index],style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),)
                                     ),
@@ -1677,7 +1800,7 @@ class _cart2State extends State<cart2> {
                           },
                               child:Text("Place Order")
                           ),*/
-                                        new FlatButton(
+                                        /*new FlatButton(
                                             color: Colors.red,
                                             onPressed: ()async{
 
@@ -1703,7 +1826,35 @@ class _cart2State extends State<cart2> {
                                               //Navigator.pop(context, MaterialPageRoute(builder: (context)=>new LogoutOverlay()));
                                               //Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart()));
 
-                                            }, child: Text("Delete")),
+                                            }, child: Text("Delete")),*/
+                                        new FlatButton.icon(
+                                            color: Colors.red,
+                                            onPressed: ()async{
+
+                                              pr.show();
+                                              FirebaseUser user=await FirebaseAuth.instance.currentUser();
+                                              /*for(int j=0;j<cseller.length;j++)
+                                  {
+                                    await Firestore.instance.collection('users').document(user.uid).collection('cart').document(loc).collection(cseller[j]).document().delete();
+
+                                  }*/
+                                              await Firestore.instance.collection('users').document(user.uid).collection('cart').document(loc).collection(cseller[index]).document(cid[index]).delete();
+                                              await getcartData();
+                                              pr.hide();
+                                              Navigator.pop(context);
+                                              Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart2()));
+
+
+                                              //l[index].toString().split(': ')[1].split(',')[0]
+                                              //firestore.collection('users').document(user.uid).collection('cart').document(u[index].data["ProductId"]).delete();
+
+
+                                              //refreshList();
+                                              //Navigator.pop(context, MaterialPageRoute(builder: (context)=>new LogoutOverlay()));
+                                              //Navigator.push(context, MaterialPageRoute(builder: (context)=>new cart()));
+
+                                            },
+                                         icon: Icon(Icons.delete), label: new Text("Delete"))
 
                                       ],
                                     ),
@@ -1785,7 +1936,7 @@ class _cart2State extends State<cart2> {
     );
   }
 }
-placeorder(String name,String cat,String image,String price,String quantity,String id,String seller) async {
+placeorder(String name,String cat,String image,String price,String quantity,String id,String seller,String paid) async {
   FirebaseUser user=await FirebaseAuth.instance.currentUser();
   DatabaseReference _database=FirebaseDatabase.instance.reference();
   var now = new DateTime.now();
@@ -1795,7 +1946,7 @@ placeorder(String name,String cat,String image,String price,String quantity,Stri
   String time=d.toString()+" "+t.toString();
   print(currrentseller);
 
-  Orders todo = new Orders(iadd, user.uid, seller, time, double.parse(price)," ");
+  Orders todo = new Orders(iadd, user.uid, seller, time, double.parse(price),paid);
   Products prod = new Products(id, cat, loc, double.parse(price), double.parse(quantity), seller);
   locs loc1 = new locs(latitude1, longitude1);
   DatabaseReference rootRef=FirebaseDatabase.instance.reference();

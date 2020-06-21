@@ -94,7 +94,14 @@ class _myordersState extends State<myorders> {
           ],
         ),
       ),
-      body:SingleChildScrollView(
+      body:
+      allorders.isEmpty?
+          Container(
+            child: Center(
+              child: new Text("Loading..."),
+            ),
+          ):
+      SingleChildScrollView(
           scrollDirection: Axis.vertical,
           physics: ScrollPhysics(),
           child: Column(

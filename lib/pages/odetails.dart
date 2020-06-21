@@ -27,7 +27,13 @@ class _odetailsState extends State<odetails> {
         backgroundColor: Color(0xff104670),
         title: new Text("Order"),
       ),
-        body:SingleChildScrollView(
+        body:
+        allP.isEmpty?Container(
+          child:Center(
+            child: new Text("Loading...."),
+          )
+        ):
+        SingleChildScrollView(
             scrollDirection: Axis.vertical,
             physics: ScrollPhysics(),
             child: Column(

@@ -300,12 +300,12 @@ Future<void> getData(String x,String cate) async {
 //          j++;
 //        }
           }
-            /*print(owner_phone);
+          /*print(owner_phone);
             print(owner_name);
             print(fshop_cat);
             print(fsellerlist);*/
 
-            h++;
+          h++;
 
 
         }
@@ -502,58 +502,58 @@ class _categoriesState extends State<categories> {
                       children: <Widget>[
                         new IconButton(
                           icon: new Icon(Icons.place),
-                            onPressed: () async{
+                          onPressed: () async{
 
-                              var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
-                              print("current state of gps");
-                              print(isGpsEnabled);
-                              if(isGpsEnabled==true) {
+                            var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
+                            print("current state of gps");
+                            print(isGpsEnabled);
+                            if(isGpsEnabled==true) {
 
-                                //loc = await _getCurrentLocation();
-                                //loc=bl;
+                              //loc = await _getCurrentLocation();
+                              //loc=bl;
 
-                                //Navigator.pop(context);
+                              //Navigator.pop(context);
 
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => xloc()),
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => xloc()),
+                              );
+
+                            }
+                            else{
+                              if (Theme.of(context).platform == TargetPlatform.android) {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text("Can't get current location"),
+                                      content:
+                                      const Text('Please make sure you enable GPS and try again'),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                          child: Text('Ok'),
+                                          onPressed: () async {
+                                            final AndroidIntent intent = AndroidIntent(
+                                                action: 'android.settings.LOCATION_SOURCE_SETTINGS');
+                                            Navigator.of(context, rootNavigator: true).pop();
+
+                                            await intent.launch();
+                                            print(isGpsEnabled);
+                                            await _getCurrentLocation();
+
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) => new xloc()));
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 );
-
                               }
-                              else{
-                                if (Theme.of(context).platform == TargetPlatform.android) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text("Can't get current location"),
-                                        content:
-                                        const Text('Please make sure you enable GPS and try again'),
-                                        actions: <Widget>[
-                                          FlatButton(
-                                            child: Text('Ok'),
-                                            onPressed: () async {
-                                              final AndroidIntent intent = AndroidIntent(
-                                                  action: 'android.settings.LOCATION_SOURCE_SETTINGS');
-                                              Navigator.of(context, rootNavigator: true).pop();
-
-                                              await intent.launch();
-                                              print(isGpsEnabled);
-                                              await _getCurrentLocation();
-
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) => new xloc()));
-                                            },
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                }
-                              }
-                            },
+                            }
+                          },
                         ),
                         SingleChildScrollView(
                           child: Container(
@@ -652,625 +652,625 @@ class _categoriesState extends State<categories> {
 
         child: GridView.count(
           crossAxisCount: 2,
-                  children: <Widget>[
-                    RaisedButton(
-                        onPressed: () async{
+          children: <Widget>[
+            RaisedButton(
+                onPressed: () async{
 
 
 
-                          var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
-                          print("current state of gps");
-                          print(isGpsEnabled);
-                          if(isGpsEnabled==true) {
-                            pr.show();
-                            //loc = await _getCurrentLocation();
-                            //loc=bl;
-                            if(loc==null){
-                              loc=await _getCurrentLocation();
-                            }
+                  var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
+                  print("current state of gps");
+                  print(isGpsEnabled);
+                  if(isGpsEnabled==true) {
+                    pr.show();
+                    //loc = await _getCurrentLocation();
+                    //loc=bl;
+                    if(loc==null){
+                      loc=await _getCurrentLocation();
+                    }
 
-                            await getData(loc,"Electronics");
-                            pr.hide();
-                            // Navigator.pop(context);
+                    await getData(loc,"Electronics");
+                    pr.hide();
+                    // Navigator.pop(context);
 
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => HomePage(null)),
-                            );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage(null)),
+                    );
 
-                          }
-                          else{
-                            if (Theme.of(context).platform == TargetPlatform.android) {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text("Can't get current location"),
-                                    content:
-                                    const Text('Please make sure you enable GPS and try again'),
-                                    actions: <Widget>[
-                                      FlatButton(
-                                        child: Text('Ok'),
-                                        onPressed: () async {
-                                          final AndroidIntent intent = AndroidIntent(
-                                              action: 'android.settings.LOCATION_SOURCE_SETTINGS');
-                                          Navigator.of(context, rootNavigator: true).pop();
+                  }
+                  else{
+                    if (Theme.of(context).platform == TargetPlatform.android) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("Can't get current location"),
+                            content:
+                            const Text('Please make sure you enable GPS and try again'),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('Ok'),
+                                onPressed: () async {
+                                  final AndroidIntent intent = AndroidIntent(
+                                      action: 'android.settings.LOCATION_SOURCE_SETTINGS');
+                                  Navigator.of(context, rootNavigator: true).pop();
 
-                                          await intent.launch();
-                                          print(isGpsEnabled);
+                                  await intent.launch();
+                                  print(isGpsEnabled);
 
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => new categories(null)));
-                                        },
-                                      ),
-                                    ],
-                                  );
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => new categories(null)));
                                 },
-                              );
-                            }
-                          }
-
-
-
+                              ),
+                            ],
+                          );
                         },
-                        textColor: Colors.white,
-                        padding: const EdgeInsets.all(0.0),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: <Color>[
-                                Color(0xFF0D47A1),
-                                Color(0xFF1976D2),
-                                Color(0xFF42A5F5),
-                              ],
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(15.0),
-                          child:
-                          const Text('Electronics', style: TextStyle(fontSize: 20)),)),
-                    RaisedButton(
-                        onPressed: ()async{
+                      );
+                    }
+                  }
 
 
 
-                          var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
-                          print("current state of gps");
-                          print(isGpsEnabled);
-                          if(isGpsEnabled==true) {
-                            pr.show();
-                            //loc = await _getCurrentLocation();
-                            //loc=bl;
-                            if(loc==null){
-                              loc=await _getCurrentLocation();
-                            }
+                },
+                textColor: Colors.white,
+                padding: const EdgeInsets.all(0.0),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: <Color>[
+                        Color(0xFF0D47A1),
+                        Color(0xFF1976D2),
+                        Color(0xFF42A5F5),
+                      ],
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(15.0),
+                  child:
+                  const Text('Electronics', style: TextStyle(fontSize: 20)),)),
+            RaisedButton(
+                onPressed: ()async{
 
-                            await getData(loc,"Grocery");
-                            pr.hide();
-                            // Navigator.pop(context);
 
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => HomePage(null)),
-                            );
 
-                          }
-                          else{
-                            if (Theme.of(context).platform == TargetPlatform.android) {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text("Can't get current location"),
-                                    content:
-                                    const Text('Please make sure you enable GPS and try again'),
-                                    actions: <Widget>[
-                                      FlatButton(
-                                        child: Text('Ok'),
-                                        onPressed: () async {
-                                          final AndroidIntent intent = AndroidIntent(
-                                              action: 'android.settings.LOCATION_SOURCE_SETTINGS');
-                                          Navigator.of(context, rootNavigator: true).pop();
+                  var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
+                  print("current state of gps");
+                  print(isGpsEnabled);
+                  if(isGpsEnabled==true) {
+                    pr.show();
+                    //loc = await _getCurrentLocation();
+                    //loc=bl;
+                    if(loc==null){
+                      loc=await _getCurrentLocation();
+                    }
 
-                                          await intent.launch();
-                                          print(isGpsEnabled);
+                    await getData(loc,"Grocery");
+                    pr.hide();
+                    // Navigator.pop(context);
 
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => new categories(null)));
-                                        },
-                                      ),
-                                    ],
-                                  );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage(null)),
+                    );
+
+                  }
+                  else{
+                    if (Theme.of(context).platform == TargetPlatform.android) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("Can't get current location"),
+                            content:
+                            const Text('Please make sure you enable GPS and try again'),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('Ok'),
+                                onPressed: () async {
+                                  final AndroidIntent intent = AndroidIntent(
+                                      action: 'android.settings.LOCATION_SOURCE_SETTINGS');
+                                  Navigator.of(context, rootNavigator: true).pop();
+
+                                  await intent.launch();
+                                  print(isGpsEnabled);
+
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => new categories(null)));
                                 },
-                              );
-                            }
-                          }
-
-
-
+                              ),
+                            ],
+                          );
                         },
-                        textColor: Colors.white,
-                        padding: const EdgeInsets.all(0.0),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: <Color>[
-                                Color(0xFF0D47A1),
-                                Color(0xFF1976D2),
-                                Color(0xFF42A5F5),
-                              ],
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(15.0),
-                          child:
-                          const Text('Grocery', style: TextStyle(fontSize: 20)),)),
-                    RaisedButton(
-                        onPressed: () async{
+                      );
+                    }
+                  }
 
 
 
-                          var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
-                          print("current state of gps");
-                          print(isGpsEnabled);
-                          if(isGpsEnabled==true) {
-                            pr.show();
-                            //loc = await _getCurrentLocation();
-                            //loc=bl;
-                            if(loc==null){
-                              loc=await _getCurrentLocation();
-                            }
+                },
+                textColor: Colors.white,
+                padding: const EdgeInsets.all(0.0),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: <Color>[
+                        Color(0xFF0D47A1),
+                        Color(0xFF1976D2),
+                        Color(0xFF42A5F5),
+                      ],
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(15.0),
+                  child:
+                  const Text('Grocery', style: TextStyle(fontSize: 20)),)),
+            RaisedButton(
+                onPressed: () async{
 
-                            await getData(loc,"Vegetables");
-                            pr.hide();
-                            // Navigator.pop(context);
 
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => HomePage(null)),
-                            );
 
-                          }
-                          else{
-                            if (Theme.of(context).platform == TargetPlatform.android) {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text("Can't get current location"),
-                                    content:
-                                    const Text('Please make sure you enable GPS and try again'),
-                                    actions: <Widget>[
-                                      FlatButton(
-                                        child: Text('Ok'),
-                                        onPressed: () async {
-                                          final AndroidIntent intent = AndroidIntent(
-                                              action: 'android.settings.LOCATION_SOURCE_SETTINGS');
-                                          Navigator.of(context, rootNavigator: true).pop();
+                  var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
+                  print("current state of gps");
+                  print(isGpsEnabled);
+                  if(isGpsEnabled==true) {
+                    pr.show();
+                    //loc = await _getCurrentLocation();
+                    //loc=bl;
+                    if(loc==null){
+                      loc=await _getCurrentLocation();
+                    }
 
-                                          await intent.launch();
-                                          print(isGpsEnabled);
+                    await getData(loc,"Vegetables");
+                    pr.hide();
+                    // Navigator.pop(context);
 
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => new categories(null)));
-                                        },
-                                      ),
-                                    ],
-                                  );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage(null)),
+                    );
+
+                  }
+                  else{
+                    if (Theme.of(context).platform == TargetPlatform.android) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("Can't get current location"),
+                            content:
+                            const Text('Please make sure you enable GPS and try again'),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('Ok'),
+                                onPressed: () async {
+                                  final AndroidIntent intent = AndroidIntent(
+                                      action: 'android.settings.LOCATION_SOURCE_SETTINGS');
+                                  Navigator.of(context, rootNavigator: true).pop();
+
+                                  await intent.launch();
+                                  print(isGpsEnabled);
+
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => new categories(null)));
                                 },
-                              );
-                            }
-                          }
-
-
-
+                              ),
+                            ],
+                          );
                         },
-                        textColor: Colors.white,
-                        padding: const EdgeInsets.all(0.0),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: <Color>[
-                                Color(0xFF0D47A1),
-                                Color(0xFF1976D2),
-                                Color(0xFF42A5F5),
-                              ],
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(15.0),
-                          child:
-                          const Text('Vegetables', style: TextStyle(fontSize: 20)),)),
-                    RaisedButton(
-                        onPressed: () async{
+                      );
+                    }
+                  }
 
 
 
-                          var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
-                          print("current state of gps");
-                          print(isGpsEnabled);
-                          if(isGpsEnabled==true) {
-                            pr.show();
-                            //loc = await _getCurrentLocation();
-                            //loc=bl;
-                            if(loc==null){
-                              loc=await _getCurrentLocation();
-                            }
+                },
+                textColor: Colors.white,
+                padding: const EdgeInsets.all(0.0),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: <Color>[
+                        Color(0xFF0D47A1),
+                        Color(0xFF1976D2),
+                        Color(0xFF42A5F5),
+                      ],
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(15.0),
+                  child:
+                  const Text('Vegetables', style: TextStyle(fontSize: 20)),)),
+            RaisedButton(
+                onPressed: () async{
 
-                            await getData(loc,"Non Veg");
-                            pr.hide();
-                            // Navigator.pop(context);
 
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => HomePage(null)),
-                            );
 
-                          }
-                          else{
-                            if (Theme.of(context).platform == TargetPlatform.android) {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text("Can't get current location"),
-                                    content:
-                                    const Text('Please make sure you enable GPS and try again'),
-                                    actions: <Widget>[
-                                      FlatButton(
-                                        child: Text('Ok'),
-                                        onPressed: () async {
-                                          final AndroidIntent intent = AndroidIntent(
-                                              action: 'android.settings.LOCATION_SOURCE_SETTINGS');
-                                          Navigator.of(context, rootNavigator: true).pop();
+                  var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
+                  print("current state of gps");
+                  print(isGpsEnabled);
+                  if(isGpsEnabled==true) {
+                    pr.show();
+                    //loc = await _getCurrentLocation();
+                    //loc=bl;
+                    if(loc==null){
+                      loc=await _getCurrentLocation();
+                    }
 
-                                          await intent.launch();
-                                          print(isGpsEnabled);
+                    await getData(loc,"Non Veg");
+                    pr.hide();
+                    // Navigator.pop(context);
 
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => new categories(null)));
-                                        },
-                                      ),
-                                    ],
-                                  );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage(null)),
+                    );
+
+                  }
+                  else{
+                    if (Theme.of(context).platform == TargetPlatform.android) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("Can't get current location"),
+                            content:
+                            const Text('Please make sure you enable GPS and try again'),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('Ok'),
+                                onPressed: () async {
+                                  final AndroidIntent intent = AndroidIntent(
+                                      action: 'android.settings.LOCATION_SOURCE_SETTINGS');
+                                  Navigator.of(context, rootNavigator: true).pop();
+
+                                  await intent.launch();
+                                  print(isGpsEnabled);
+
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => new categories(null)));
                                 },
-                              );
-                            }
-                          }
-
-
-
+                              ),
+                            ],
+                          );
                         },
-                        textColor: Colors.white,
-                        padding: const EdgeInsets.all(0.0),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: <Color>[
-                                Color(0xFF0D47A1),
-                                Color(0xFF1976D2),
-                                Color(0xFF42A5F5),
-                              ],
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(15.0),
-                          child:
-                          const Text('Non Veg', style: TextStyle(fontSize: 20)),)),
-                    RaisedButton(
-                        onPressed: () async{
+                      );
+                    }
+                  }
 
 
 
-                          var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
-                          print("current state of gps");
-                          print(isGpsEnabled);
-                          if(isGpsEnabled==true) {
-                            pr.show();
-                            //loc = await _getCurrentLocation();
-                            //loc=bl;
-                            if(loc==null){
-                              loc=await _getCurrentLocation();
-                            }
+                },
+                textColor: Colors.white,
+                padding: const EdgeInsets.all(0.0),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: <Color>[
+                        Color(0xFF0D47A1),
+                        Color(0xFF1976D2),
+                        Color(0xFF42A5F5),
+                      ],
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(15.0),
+                  child:
+                  const Text('Non Veg', style: TextStyle(fontSize: 20)),)),
+            RaisedButton(
+                onPressed: () async{
 
-                            await getData(loc,"Furnitures");
-                            pr.hide();
-                            // Navigator.pop(context);
 
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => HomePage(null)),
-                            );
 
-                          }
-                          else{
-                            if (Theme.of(context).platform == TargetPlatform.android) {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text("Can't get current location"),
-                                    content:
-                                    const Text('Please make sure you enable GPS and try again'),
-                                    actions: <Widget>[
-                                      FlatButton(
-                                        child: Text('Ok'),
-                                        onPressed: () async {
-                                          final AndroidIntent intent = AndroidIntent(
-                                              action: 'android.settings.LOCATION_SOURCE_SETTINGS');
-                                          Navigator.of(context, rootNavigator: true).pop();
+                  var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
+                  print("current state of gps");
+                  print(isGpsEnabled);
+                  if(isGpsEnabled==true) {
+                    pr.show();
+                    //loc = await _getCurrentLocation();
+                    //loc=bl;
+                    if(loc==null){
+                      loc=await _getCurrentLocation();
+                    }
 
-                                          await intent.launch();
-                                          print(isGpsEnabled);
+                    await getData(loc,"Furnitures");
+                    pr.hide();
+                    // Navigator.pop(context);
 
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => new categories(null)));
-                                        },
-                                      ),
-                                    ],
-                                  );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage(null)),
+                    );
+
+                  }
+                  else{
+                    if (Theme.of(context).platform == TargetPlatform.android) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("Can't get current location"),
+                            content:
+                            const Text('Please make sure you enable GPS and try again'),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('Ok'),
+                                onPressed: () async {
+                                  final AndroidIntent intent = AndroidIntent(
+                                      action: 'android.settings.LOCATION_SOURCE_SETTINGS');
+                                  Navigator.of(context, rootNavigator: true).pop();
+
+                                  await intent.launch();
+                                  print(isGpsEnabled);
+
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => new categories(null)));
                                 },
-                              );
-                            }
-                          }
-
-
-
+                              ),
+                            ],
+                          );
                         },
-                        textColor: Colors.white,
-                        padding: const EdgeInsets.all(0.0),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: <Color>[
-                                Color(0xFF0D47A1),
-                                Color(0xFF1976D2),
-                                Color(0xFF42A5F5),
-                              ],
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(15.0),
-                          child:
-                          const Text('Furnitures', style: TextStyle(fontSize: 20)),)),
-                    RaisedButton(
-                        onPressed: () async{
+                      );
+                    }
+                  }
 
 
 
-                          var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
-                          print("current state of gps");
-                          print(isGpsEnabled);
-                          if(isGpsEnabled==true) {
-                            pr.show();
-                            //loc = await _getCurrentLocation();
-                            //loc=bl;
-                            if(loc==null){
-                              loc=await _getCurrentLocation();
-                            }
+                },
+                textColor: Colors.white,
+                padding: const EdgeInsets.all(0.0),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: <Color>[
+                        Color(0xFF0D47A1),
+                        Color(0xFF1976D2),
+                        Color(0xFF42A5F5),
+                      ],
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(15.0),
+                  child:
+                  const Text('Furnitures', style: TextStyle(fontSize: 20)),)),
+            RaisedButton(
+                onPressed: () async{
 
-                            await getData(loc,"Clothing");
-                            pr.hide();
-                            // Navigator.pop(context);
 
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => HomePage(null)),
-                            );
 
-                          }
-                          else{
-                            if (Theme.of(context).platform == TargetPlatform.android) {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text("Can't get current location"),
-                                    content:
-                                    const Text('Please make sure you enable GPS and try again'),
-                                    actions: <Widget>[
-                                      FlatButton(
-                                        child: Text('Ok'),
-                                        onPressed: () async {
-                                          final AndroidIntent intent = AndroidIntent(
-                                              action: 'android.settings.LOCATION_SOURCE_SETTINGS');
-                                          Navigator.of(context, rootNavigator: true).pop();
+                  var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
+                  print("current state of gps");
+                  print(isGpsEnabled);
+                  if(isGpsEnabled==true) {
+                    pr.show();
+                    //loc = await _getCurrentLocation();
+                    //loc=bl;
+                    if(loc==null){
+                      loc=await _getCurrentLocation();
+                    }
 
-                                          await intent.launch();
-                                          print(isGpsEnabled);
+                    await getData(loc,"Clothing");
+                    pr.hide();
+                    // Navigator.pop(context);
 
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => new categories(null)));
-                                        },
-                                      ),
-                                    ],
-                                  );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage(null)),
+                    );
+
+                  }
+                  else{
+                    if (Theme.of(context).platform == TargetPlatform.android) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("Can't get current location"),
+                            content:
+                            const Text('Please make sure you enable GPS and try again'),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('Ok'),
+                                onPressed: () async {
+                                  final AndroidIntent intent = AndroidIntent(
+                                      action: 'android.settings.LOCATION_SOURCE_SETTINGS');
+                                  Navigator.of(context, rootNavigator: true).pop();
+
+                                  await intent.launch();
+                                  print(isGpsEnabled);
+
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => new categories(null)));
                                 },
-                              );
-                            }
-                          }
-
-
-
+                              ),
+                            ],
+                          );
                         },
-                        textColor: Colors.white,
-                        padding: const EdgeInsets.all(0.0),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: <Color>[
-                                Color(0xFF0D47A1),
-                                Color(0xFF1976D2),
-                                Color(0xFF42A5F5),
-                              ],
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(15.0),
-                          child:
-                          const Text('Clothing', style: TextStyle(fontSize: 20)),)),
-                    RaisedButton(
-                        onPressed: () async{
+                      );
+                    }
+                  }
 
 
 
-                          var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
-                          print("current state of gps");
-                          print(isGpsEnabled);
-                          if(isGpsEnabled==true) {
-                            pr.show();
-                            //loc = await _getCurrentLocation();
-                            //loc=bl;
-                            if(loc==null){
-                              loc=await _getCurrentLocation();
-                            }
+                },
+                textColor: Colors.white,
+                padding: const EdgeInsets.all(0.0),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: <Color>[
+                        Color(0xFF0D47A1),
+                        Color(0xFF1976D2),
+                        Color(0xFF42A5F5),
+                      ],
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(15.0),
+                  child:
+                  const Text('Clothing', style: TextStyle(fontSize: 20)),)),
+            RaisedButton(
+                onPressed: () async{
 
-                            await getData(loc,"Wine");
-                            pr.hide();
-                            // Navigator.pop(context);
 
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => HomePage(null)),
-                            );
 
-                          }
-                          else{
-                            if (Theme.of(context).platform == TargetPlatform.android) {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text("Can't get current location"),
-                                    content:
-                                    const Text('Please make sure you enable GPS and try again'),
-                                    actions: <Widget>[
-                                      FlatButton(
-                                        child: Text('Ok'),
-                                        onPressed: () async {
-                                          final AndroidIntent intent = AndroidIntent(
-                                              action: 'android.settings.LOCATION_SOURCE_SETTINGS');
-                                          Navigator.of(context, rootNavigator: true).pop();
+                  var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
+                  print("current state of gps");
+                  print(isGpsEnabled);
+                  if(isGpsEnabled==true) {
+                    pr.show();
+                    //loc = await _getCurrentLocation();
+                    //loc=bl;
+                    if(loc==null){
+                      loc=await _getCurrentLocation();
+                    }
 
-                                          await intent.launch();
-                                          print(isGpsEnabled);
+                    await getData(loc,"Wine");
+                    pr.hide();
+                    // Navigator.pop(context);
 
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => new categories(null)));
-                                        },
-                                      ),
-                                    ],
-                                  );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage(null)),
+                    );
+
+                  }
+                  else{
+                    if (Theme.of(context).platform == TargetPlatform.android) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("Can't get current location"),
+                            content:
+                            const Text('Please make sure you enable GPS and try again'),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('Ok'),
+                                onPressed: () async {
+                                  final AndroidIntent intent = AndroidIntent(
+                                      action: 'android.settings.LOCATION_SOURCE_SETTINGS');
+                                  Navigator.of(context, rootNavigator: true).pop();
+
+                                  await intent.launch();
+                                  print(isGpsEnabled);
+
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => new categories(null)));
                                 },
-                              );
-                            }
-                          }
-
-
-
+                              ),
+                            ],
+                          );
                         },
-                        textColor: Colors.white,
-                        padding: const EdgeInsets.all(0.0),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: <Color>[
-                                Color(0xFF0D47A1),
-                                Color(0xFF1976D2),
-                                Color(0xFF42A5F5),
-                              ],
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(15.0),
-                          child:
-                          const Text('Wine', style: TextStyle(fontSize: 20)),)),
-                    RaisedButton(
-                        onPressed: () async{
+                      );
+                    }
+                  }
 
 
 
-                          var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
-                          print("current state of gps");
-                          print(isGpsEnabled);
-                          if(isGpsEnabled==true) {
-                            pr.show();
-                            //loc = await _getCurrentLocation();
-                            //loc=bl;
-                            if(loc==null){
-                              loc=await _getCurrentLocation();
-                            }
+                },
+                textColor: Colors.white,
+                padding: const EdgeInsets.all(0.0),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: <Color>[
+                        Color(0xFF0D47A1),
+                        Color(0xFF1976D2),
+                        Color(0xFF42A5F5),
+                      ],
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(15.0),
+                  child:
+                  const Text('Wine', style: TextStyle(fontSize: 20)),)),
+            RaisedButton(
+                onPressed: () async{
 
-                            await getData(loc,"All");
-                            pr.hide();
-                            // Navigator.pop(context);
 
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => HomePage(null)),
-                            );
 
-                          }
-                          else{
-                            if (Theme.of(context).platform == TargetPlatform.android) {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text("Can't get current location"),
-                                    content:
-                                    const Text('Please make sure you enable GPS and try again'),
-                                    actions: <Widget>[
-                                      FlatButton(
-                                        child: Text('Ok'),
-                                        onPressed: () async {
-                                          final AndroidIntent intent = AndroidIntent(
-                                              action: 'android.settings.LOCATION_SOURCE_SETTINGS');
-                                          Navigator.of(context, rootNavigator: true).pop();
+                  var isGpsEnabled = await Geolocator().isLocationServiceEnabled();
+                  print("current state of gps");
+                  print(isGpsEnabled);
+                  if(isGpsEnabled==true) {
+                    pr.show();
+                    //loc = await _getCurrentLocation();
+                    //loc=bl;
+                    if(loc==null){
+                      loc=await _getCurrentLocation();
+                    }
 
-                                          await intent.launch();
-                                          print(isGpsEnabled);
+                    await getData(loc,"All");
+                    pr.hide();
+                    // Navigator.pop(context);
 
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => new categories(null)));
-                                        },
-                                      ),
-                                    ],
-                                  );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage(null)),
+                    );
+
+                  }
+                  else{
+                    if (Theme.of(context).platform == TargetPlatform.android) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("Can't get current location"),
+                            content:
+                            const Text('Please make sure you enable GPS and try again'),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('Ok'),
+                                onPressed: () async {
+                                  final AndroidIntent intent = AndroidIntent(
+                                      action: 'android.settings.LOCATION_SOURCE_SETTINGS');
+                                  Navigator.of(context, rootNavigator: true).pop();
+
+                                  await intent.launch();
+                                  print(isGpsEnabled);
+
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => new categories(null)));
                                 },
-                              );
-                            }
-                          }
-
-
-
+                              ),
+                            ],
+                          );
                         },
-                        textColor: Colors.white,
-                        padding: const EdgeInsets.all(0.0),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: <Color>[
-                                Color(0xFF0D47A1),
-                                Color(0xFF1976D2),
-                                Color(0xFF42A5F5),
-                              ],
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(15.0),
-                          child:
-                          const Text('All Categories', style: TextStyle(fontSize: 20)),)),
-                  ],
-                ),
+                      );
+                    }
+                  }
+
+
+
+                },
+                textColor: Colors.white,
+                padding: const EdgeInsets.all(0.0),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: <Color>[
+                        Color(0xFF0D47A1),
+                        Color(0xFF1976D2),
+                        Color(0xFF42A5F5),
+                      ],
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(15.0),
+                  child:
+                  const Text('All Categories', style: TextStyle(fontSize: 20)),)),
+          ],
+        ),
       ),
     );
   }

@@ -143,7 +143,7 @@ _getAddressFromLatLng() async {
   }
 
   var x=bl;
-  xl=x;
+  var xl=x;
   // print("location is : "+x);
   return x;
 }

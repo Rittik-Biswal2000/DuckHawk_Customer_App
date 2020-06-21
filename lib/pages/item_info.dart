@@ -15,6 +15,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/directions.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:intl/intl.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/model/Orders.dart';
 import 'package:project_duckhawk/model/Products.dart';
@@ -152,8 +153,8 @@ getpoint(String s)async{
     void openCheckout(){
       var options={
         "key":"rzp_test_dZOanZeg9WqGIe",
-        "amount":(double.parse(widget.p)/40)*100,
-        "name":"Sample App",
+        "amount":(double.parse(total.toString()))*100,
+        "name":"Duckhawk",
         "description":"Payment......",
         "prefill":{
           "contact":"",
@@ -198,7 +199,7 @@ getpoint(String s)async{
       print(currrentseller);
       return showDialog(context: context,builder: (context){
         return AlertDialog(
-          title: Text("We also accept Cash on Delivery as a mode of payment"),
+          title: Text("We accept both Cash on Delivery & Online Payment"),
           content: new Column(
             children: <Widget>[
               new Row(
@@ -209,35 +210,29 @@ getpoint(String s)async{
                 ],
               ),
 
+
               new Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  new Text("Pay only after you get the product in hand\nNo risk of loss of your hard earned money\nNo dependent on credit or debit cards"),
-                ],
-              ),
-              new Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  new RaisedButton(onPressed: (){
+                  new FlatButton.icon(onPressed: (){
                     openCheckout();
                   },
-                  child: new Text("Pay Online"),)
+                      icon: Icon(MdiIcons.creditCard), label: new Text("Pay Online"))
                 ],
               ),
               new Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  new RaisedButton(onPressed: (){
+                  new FlatButton.icon(onPressed: (){
         placeorder("COD");
         Navigator.of(context).pop();
         Navigator.push(context, MaterialPageRoute(builder: (context)=>new orderconfirm()));
 
 
         },
-                    child: new Text("COD"),)
+                      icon: Icon(MdiIcons.cash), label: new Text("COD"))
                 ],
               ),
 
@@ -1066,7 +1061,7 @@ getpoint(String s)async{
       ccat.add(l[i]['category']);
     }
     for (var i = 0; i < l.length; i++) {
-      ctotal += double.parse(cquantity[i]) * double.parse(cprice[i]);
+      ctotal += double.parse(cquantity[i].toString()) * double.parse(cprice[i].toString());
     }
   }
 

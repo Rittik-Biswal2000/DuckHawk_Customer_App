@@ -281,6 +281,13 @@ class _eState extends State<e> {
         ),
       ),
       body:
+          allProduct.isEmpty?
+              Container(
+                child:Center(
+                  child: new Text("Loading")
+                )
+              ):
+
       SingleChildScrollView(
           scrollDirection: Axis.vertical,
           physics: ScrollPhysics(),

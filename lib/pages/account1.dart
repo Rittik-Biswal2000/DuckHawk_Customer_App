@@ -23,6 +23,11 @@ ProgressDialog pr;
 
 class _acc1State extends State<acc1> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
     pr = new ProgressDialog(context, showLogs: true);
     pr.style(message: 'Please wait...');

@@ -20,6 +20,7 @@ dependencies:
   flutter:
     sdk: flutter
   firebase_auth: 0.15.4
+  material_design_icons_flutter: 3.2.4495
   carousel_pro: ^1.0.0
   firebase_database: ^3.1.1
   cloud_firestore: ^0.13.4
