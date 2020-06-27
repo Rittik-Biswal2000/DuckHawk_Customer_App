@@ -619,7 +619,7 @@ class _categoriesState extends State<categories> {
                   ],
                 ),
               )),
-          actions: <Widget>[
+         /* actions: <Widget>[
             // action button
             IconButton(
               icon: Icon(Icons.shopping_cart),
@@ -641,7 +641,7 @@ class _categoriesState extends State<categories> {
 
               },
             ),
-          ]
+          ]*/
         //leading:new Text("hi"),
 
       ),

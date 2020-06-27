@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:latlong/latlong.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:project_duckhawk/pages/account1.dart';
 
@@ -21,7 +23,10 @@ import 'package:project_duckhawk/pages/item_info.dart';
 import 'package:project_duckhawk/pages/location.dart';
 import 'package:project_duckhawk/pages/account1.dart';
 import 'package:project_duckhawk/src/loginPage.dart';
-
+class EachShop {
+  String s_img, o_name, o_phone, p_id, dis, s_cat,s_id;
+  EachShop(this.s_img, this.o_name, this.o_phone, this.p_id, this.dis, this.s_cat, this.s_id);
+}
 FirebaseUser user;
 String curlat, curlon;
 var len1;
@@ -83,6 +88,7 @@ Future<void> currentUser() async {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<EachShop> allshops = [];
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 
   Position _currentPosition;
@@ -106,6 +112,7 @@ class _HomePageState extends State<HomePage> {
 
     _getCurrentLocation();
     _getCurrentUser();
+    //_getdisplaydata();
     print("Here outside async");
   }
 
@@ -898,6 +905,277 @@ class _HomePageState extends State<HomePage> {
         .child('AgeVerify')
         .equalTo(user.uid)
         .reference();
+  }
+
+  void _getdisplaydata() async{
+    sellerlist.clear();
+    fsellerlist.clear();
+    shop_image.clear();
+    fshop_image.clear();
+    owner_name.clear();
+    owner_phone.clear();
+    fdistance.clear();
+    fowner_name.clear();
+    fowner_phone.clear();
+    distance.clear();
+    shop_cat.clear();
+    fshop_cat.clear();
+    prod_id.clear();
+    fprod_id.clear();
+    var cate="Electronics";
+    String link = "https://duckhawk-1699a.firebaseio.com/Seller/" + loc +".json";
+    print("in main page");
+    print(link);
+    final resource = await http.get(link);
+    //print(resource.body);
+    if (resource== null) {
+      print("The body is null");
+    }
+    if(resource.body!=null){
+      if (resource.statusCode == 200) {
+        // print(resource.body);
+        //var data = jsonDecode(resource.body)["Cuttack"];
+        LinkedHashMap<String, dynamic> data = jsonDecode(resource.body);
+//    Iterator hmIterator = data.entrySet().iterator();
+//    while (hmIterator.hasNext()) {
+//      Map.Entry mapElement = (Map.Entry)hmIterator.next();
+//      int marks = ((int)mapElement.getValue() + 10);
+//      print(mapElement.get)
+//  }
+//    var list = new List<int>.generate(data.length, (i) => i + 1);
+        print("Seller data is :");
+        //print(data.keys);
+        if (data != null){
+          List list = data.keys.toList();
+          length = list.length;
+          print('Seller list');
+          for (var i = 0; i < length; i++) {
+            sellerlist.add(list[i]);
+          }
+          //print(sellerlist);
+
+          //  print(data[list[3]]);
+
+          int h = 0;
+          while (h < list.length) {
+            LinkedHashMap<String, dynamic> data1 = jsonDecode(
+                resource.body)[list[h]];
+            List list1 = data1.keys.toList();
+            print("hi");
+            if(data1["Category"].toString()==cate){
+              print(cate);
+            }
+            if(data1["Category"].toString()==cate) {
+              print(data1["Category"]);
+              prod_id.add(list[h]);
+
+
+              double lati = data1["Latitude"];
+              owner_phone.add(data1["Owner_Number"].toString());
+              owner_name.add(data1["Shop_Name"]);
+              shop_cat.add(data1["Category"]);
+
+              if (data1["Shop_Image"] == null) {
+                shop_image.add("https://duckhawk.in/icon.jpeg");
+              } else {
+                shop_image.add(data1["Shop_Image"]);
+              }
+
+              double longi = data1["Longitude"];
+
+              LatLng l1 = new LatLng(double.parse(curlat), double.parse(curlon));
+              LatLng l2 = new LatLng(lati, longi);
+
+              Dio dio = new Dio();
+              final response_distance = await http.get(
+                  "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=" +
+                      l1.latitude.toString() + "," + l1.longitude.toString() +
+                      "&destinations=" + l2.latitude.toString() + "," +
+                      l2.longitude.toString() +
+                      "&key=AIzaSyCcH5Qy8dTYdMNvQ8ufSzW9wpHY2qGhFK4");
+              //print("Received Data is :");
+              LinkedHashMap<String, dynamic> data_distance = jsonDecode(
+                  response_distance.body);
+//      List list_distance = data_distance.keys.toList();
+////      print(list_distance);
+//      LinkedHashMap<String, dynamic> data_distance1 = jsonDecode(response_distance.body)["rows"][0];
+//      List list_distance1 = data_distance1.keys.toList();
+////      print(list_distance1);
+//      List< dynamic> data_distance2 = jsonDecode(response_distance.body)["rows"][0]["elements"];
+////      List list_distance2 = data_distance2.keys.toList();
+////      print(data_distance2);
+//      LinkedHashMap<String, dynamic> data_distance3 = jsonDecode(response_distance.body)["rows"][0]["elements"][0];
+//      List list_distance3 = data_distance3.keys.toList();
+////      print(list_distance3);
+//      LinkedHashMap<String, dynamic> data_distance4 = jsonDecode(response_distance.body)["rows"][0]["elements"][0]["distance"];
+//      List list_distance4 = data_distance4.keys.toList();
+////      print(list_distance4);
+              String data_distance5 = jsonDecode(
+                  response_distance
+                      .body)["rows"][0]["elements"][0]["distance"]["text"];
+
+              //print(data_distance5);
+              distance.add(data_distance5);
+//      print(data_distance2.values);
+              //double distanceInMeters = await Geolocator().distanceBetween(a.toDouble(),b.toDouble(),lati.toDouble(),longi.toDouble());
+              //print(distanceInMeters.toString());
+              /*final Distance distance = new Distance();
+      // km = 423
+      final int km = distance.as(LengthUnit.Kilometer,
+          new LatLng(a,b),new LatLng(lati,longi));
+      print("Distance is :");
+      print(km.toString());*/
+
+
+              // meter = 422591.551
+              /* final int meter = distance(
+          new LatLng(52.518611,13.408056),
+          new LatLng(51.519475,7.46694444)
+      );*/
+//
+//        LinkedHashMap<String, dynamic> data3 = jsonDecode(resource.body)[list[h]]["Products"];
+//        List list3 = data3.keys.toList();
+//        int j = 0;
+//        while (j < list3.length) {
+//          LinkedHashMap<String, dynamic> data4 = jsonDecode(
+//              resource.body)[list[h]]["Products"][list3[j]];
+//          List list4 = data4.keys.toList();
+//          print("City: " + data4[list4[0]].toString());
+//          print("Cat: " + data4[list4[1]]);
+//          print("Cat: " + data4[list4[2]]);
+//          j++;
+//        }
+            }
+            else if(cate=="All") {
+              print(data1["Category"]);
+              prod_id.add(list[h]);
+
+
+              double lati = (data1["Latitude"])==null?0.000:data1["Latitude"];
+              owner_phone.add(data1["Owner_Number"].toString());
+              owner_name.add(data1["Shop_Name"]);
+              shop_cat.add(data1["Category"]);
+
+              if (data1["Shop_Image"] == null) {
+                shop_image.add("https://duckhawk.in/icon.jpeg");
+              } else {
+                shop_image.add(data1["Shop_Image"]);
+              }
+
+              double longi = (data1["Longitude"])==null?0.000:data1["Longitude"];
+
+              LatLng l1 = new LatLng(double.parse(curlat), double.parse(curlon));
+              LatLng l2 = new LatLng(lati, longi);
+
+              Dio dio = new Dio();
+              final response_distance = await http.get(
+                  "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=" +
+                      l1.latitude.toString() + "," + l1.longitude.toString() +
+                      "&destinations=" + l2.latitude.toString() + "," +
+                      l2.longitude.toString() +
+                      "&key=AIzaSyCcH5Qy8dTYdMNvQ8ufSzW9wpHY2qGhFK4");
+              //print("Received Data is :");
+              LinkedHashMap<String, dynamic> data_distance = jsonDecode(
+                  response_distance.body);
+//      List list_distance = data_distance.keys.toList();
+////      print(list_distance);
+//      LinkedHashMap<String, dynamic> data_distance1 = jsonDecode(response_distance.body)["rows"][0];
+//      List list_distance1 = data_distance1.keys.toList();
+////      print(list_distance1);
+//      List< dynamic> data_distance2 = jsonDecode(response_distance.body)["rows"][0]["elements"];
+////      List list_distance2 = data_distance2.keys.toList();
+////      print(data_distance2);
+//      LinkedHashMap<String, dynamic> data_distance3 = jsonDecode(response_distance.body)["rows"][0]["elements"][0];
+//      List list_distance3 = data_distance3.keys.toList();
+////      print(list_distance3);
+//      LinkedHashMap<String, dynamic> data_distance4 = jsonDecode(response_distance.body)["rows"][0]["elements"][0]["distance"];
+//      List list_distance4 = data_distance4.keys.toList();
+////      print(list_distance4);
+              String data_distance5 = jsonDecode(
+                  response_distance
+                      .body)["rows"][0]["elements"][0]["distance"]["text"];
+
+              //print(data_distance5);
+              distance.add(data_distance5);
+//      print(data_distance2.values);
+              //double distanceInMeters = await Geolocator().distanceBetween(a.toDouble(),b.toDouble(),lati.toDouble(),longi.toDouble());
+              //print(distanceInMeters.toString());
+              /*final Distance distance = new Distance();
+      // km = 423
+      final int km = distance.as(LengthUnit.Kilometer,
+          new LatLng(a,b),new LatLng(lati,longi));
+      print("Distance is :");
+      print(km.toString());*/
+
+
+              // meter = 422591.551
+              /* final int meter = distance(
+          new LatLng(52.518611,13.408056),
+          new LatLng(51.519475,7.46694444)
+      );*/
+//
+//        LinkedHashMap<String, dynamic> data3 = jsonDecode(resource.body)[list[h]]["Products"];
+//        List list3 = data3.keys.toList();
+//        int j = 0;
+//        while (j < list3.length) {
+//          LinkedHashMap<String, dynamic> data4 = jsonDecode(
+//              resource.body)[list[h]]["Products"][list3[j]];
+//          List list4 = data4.keys.toList();
+//          print("City: " + data4[list4[0]].toString());
+//          print("Cat: " + data4[list4[1]]);
+//          print("Cat: " + data4[list4[2]]);
+//          j++;
+//        }
+            }
+            /*print(owner_phone);
+            print(owner_name);
+            print(fshop_cat);
+            print(fsellerlist);*/
+
+            h++;
+
+
+          }
+        }
+        else{
+
+        }
+
+//  for (i in list1)
+//  print(data[i]);
+//    for(Map i in data){
+//      print(i);}
+
+//  var rest = data['Cuttack'];
+//
+//  print(rest);
+
+        //for (a in data1["Cuttack"])
+        //print(a);
+
+        //list = rest.map<Article>((json) => Article.fromJson(json)).toList();
+      }
+    }
+    for(int i=0;i<distance.length;i++)
+    {
+      fdistance.add(distance[i]);
+    }
+
+    distance.sort();
+    for(int i=0;i<distance.length;i++)
+    {
+      int x=fdistance.indexOf(distance[i]);
+      fowner_name.add(owner_name[x]);
+      fowner_phone.add(owner_phone[x]);
+      fsellerlist.add(sellerlist[x]);
+      fprod_id.add(prod_id[x]);
+      fshop_cat.add(shop_cat[x]);
+      fshop_image.add(shop_image[x]);
+      print("shop name in main page");
+      print(fowner_name);
+    }
+
+
   }
 }
 

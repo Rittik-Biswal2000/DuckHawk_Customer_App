@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -97,6 +98,7 @@ class _xlocState extends State<xloc> {
                 // target: LatLng(21.5007, 83.8995),
                 target: LatLng(double.parse(curlat),double.parse(curlon)),
                 zoom: 15.0,),
+              onTap: _htap,
               markers: _markers.values.toSet(),
 
             ),
@@ -300,6 +302,16 @@ class _xlocState extends State<xloc> {
 
 
 
+
+  void _htap(LatLng argument) {
+    Fluttertoast.showToast(
+        msg: "press hold the marker and drag it to your desired location",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        fontSize: 16.0
+    );
+  }
 }
 
 
